@@ -16,9 +16,9 @@ typedef uint64_t      BL_1u64_t;
 typedef float       BL_1r32_t;
 typedef double      BL_1r64_t;
 typedef long double BL_1r128_t;
-typedef _Complex float BL_1c64_t;
-typedef _Complex double BL_1c128_t;
-typedef _Complex long double BL_1c256_t;
+typedef float _Complex BL_1c64_t;
+typedef double _Complex BL_1c128_t;
+typedef long double _Complex BL_1c256_t;
 
 typedef BL_1i8_t        BL_2i8_t[2];
 typedef BL_1i16_t        BL_2i16_t[2];

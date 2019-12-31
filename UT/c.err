@@ -1,0 +1,2 @@
+mkdir -p ../Debug
+cc -o ../Debug/UT.exe Debug/containers.o -L../gtest/Debug/lib -lgtestd -lgtest_maind -lstdc++ -lpthread

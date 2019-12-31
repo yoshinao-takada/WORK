@@ -1,6 +1,7 @@
 #ifndef BL_CONTAINERS_H_
 #define BL_CONTAINERS_H_
-#include <BL_types.h>
+#include "base_l/BL_base.h"
+#include "base_l/BL_types.h"
 #include <stdbool.h>
 
 #ifdef __cplusplus
@@ -15,17 +16,25 @@ typedef const BL_array_t *pcBL_array_t;
 #define BL_free(ppobj)  if (ppobj && *ppobj) { free(*ppobj); *ppobj = NULL; }
 
 #define BL_CB_ARRAY_HEAD    sizeof(BL_array_t)
-#define BL_CB_ARRAY_DATA(unit_count_, unit_type_)   (unit_count_ * sizeof(unit_type_))
-#define BL_CB_ARRAY(unit_count_, unit_type_)    (BL_CB_ARRAY_HEAD + BL_CB_ARRAY_DATA(unit_count_, unit_type_))
 
-#define BL_array_new(unit_count_, unit_type_)  \
-    (unit_type_)calloc(BL_CB_ARRAY(unit_count_, unit_type_), 1)
-#define BL_array_begin(ptr)   { (int8_t*)(ptr + 1) }
-#define BL_array_cbegin(ptr)  { (const int8_t*)(ptr + 1) }
+inline pBL_array_t BL_alloc_aray(uint32_t unit_count, uint32_t unit_size)
+{
+    pBL_array_t p = (pBL_array_t)calloc(BL_CB_ARRAY_HEAD + unit_count * unit_size, 1);
+    if (p == NULL)
+    {
+        return p;
+    }
+    p->unit_count = unit_count;
+    return p;
+}
+
+#define BL_array_new(unit_count_, unit_type_)  BL_alloc_aray(unit_count_, sizeof(unit_type_))
+#define BL_array_begin(ptr)   { (int8_t*)((ptr) + 1) }
+#define BL_array_cbegin(ptr)  { (const int8_t*)((ptr) + 1) }
 #define BL_array_end(ptr, unit_type_) \
-    { (int8_t*)(ptr + 1) + BL_CB_ARRAY_DATA(ptr->unit_count, unit_type_) }
+    { (int8_t*)((ptr) + 1) + ((ptr)->unit_count * sizeof(unit_type_)) }
 #define BL_array_cend(ptr, unit_type_)  \
-    { (const int8_t*)(ptr + 1) + BL_CB_ARRAY_DATA(ptr->unit_count, unit_type_) }
+    { (const int8_t*)((ptr) + 1) + ((ptr)->unit_count * sizeof(unit_type_)) }
 
 typedef struct BL_linkable {
     struct BL_linkable *prev;
@@ -34,6 +43,7 @@ typedef struct BL_linkable {
 
 typedef const BL_linkable_t* pcBL_linkable_t;
 
+#define BL_linkable_declare_anchor(name)    BL_linkable_t name = { &name, &name }
 typedef struct {
     BL_linkable_t link;
     BL_array_t data;
@@ -45,25 +55,36 @@ typedef const BL_linkable_array_t *pcBL_linkable_array_t;
 #define BL_CB_LINKABLE_ARRAY(unit_count_, unit_type_) \
    (BL_CB_LINKABLE_ARRAY_HEAD + BL_CB_ARRAY_DATA(unit_count_, unit_type_))
 
-#define BL_linkable_array_new(unit_count_, unit_type_)  \
-    (unit_type_)clalloc(BL_CB_LINKABLE_ARRAY(unit_count_, unit_type_), 1)
+inline pBL_linkable_array_t BL_alloc_linkable_array(uint32_t unit_count, uint32_t unit_size)
+{
+    pBL_linkable_array_t p = (pBL_linkable_array_t)calloc(BL_CB_LINKABLE_ARRAY_HEAD + unit_count * unit_size, 1);
+    if (p == NULL)
+    {
+        return p;
+    }
+    p->link.next = p->link.prev = &(p->link);
+    p->data.unit_count = unit_count;
+    return p;
+}
+
+#define BL_linkable_array_new(unit_count_, unit_type_)  BL_alloc_linkable_array(unit_count_, sizeof(unit_type_))
 #define BL_linkable_array_begin(ptr)    BL_array_begin(ptr)
 #define BL_linkable_array_cbegin(ptr)    BL_array_cbegin(ptr)
 #define BL_linkable_array_end(ptr)      BL_array_end(ptr)
 #define BL_linkable_array_cend(ptr)      BL_array_cend(ptr)
 
 #define BL_linkable_link_prev(anchor, node) { \
-    anchor->prev->next = node; \
-    node->prev = anchor->prev; \
-    node->next = anchor; \
-    anchor->prev = node; \
+    (anchor)->prev->next = node; \
+    (node)->prev = (anchor)->prev; \
+    (node)->next = (anchor); \
+    (anchor)->prev = node; \
 }
 
 #define BL_linkable_link_next(anchor, node) { \
-    anchor->next->prev = node; \
-    node->next = anchor->next; \
-    node->prev = anchor; \
-    anchor->next = node; \
+    (anchor)->next->prev = (node); \
+    (node)->next = (anchor)->next; \
+    (node)->prev = (anchor); \
+    (anchor)->next = (node); \
 }
 
 inline pBL_linkable_t BL_linkable_remove_prev(pBL_linkable_t anchor)
@@ -92,7 +113,7 @@ inline pBL_linkable_t BL_linkable_remove_next(pBL_linkable_t anchor)
     return removed;
 }
 
-typedef bool (*BL_LINKABLE_MATCH)(pcBL_linkable_t nodeA, const void* conditions);
+typedef bool (*BL_LINKABLE_MATCH)(pcBL_linkable_t node, const void* conditions);
 
 inline pcBL_linkable_t BL_linkable_find(pcBL_linkable_t anchor, const void* conditions, BL_LINKABLE_MATCH test_func)
 {
@@ -153,7 +174,19 @@ inline void BL_copy_dims(const BL_arrayMD_dims dims_src, BL_arrayMD_dims dims_ds
     *ptr_dst = *ptr_src;
 }
 
-#define BL_arrayMD_new(dims_, unit_type_) (unit_type_)calloc(BL_CB_ARRAYMD_HEAD + BL_CB_ARRAY_DATA(BL_prodict_dims(dims_), unit_type_), 1)
+inline pBL_arrayMD_t BL_alloc_arrayMD(const BL_arrayMD_dims dims, uint32_t unit_size)
+{
+    uint32_t unit_count = BL_product_dims(dims);
+    pBL_arrayMD_t p = (pBL_arrayMD_t)calloc(BL_CB_ARRAYMD_HEAD + unit_size * unit_count, 1);
+    if (p == NULL)
+    {
+        return p;
+    }
+    BL_copy_dims(dims, p->dims);
+    p->data.unit_count = unit_count;
+    return p;
+}
+#define BL_arrayMD_new(dims_, unit_type_)  BL_alloc_arrayMD(dims_, sizeof(unit_type_))
 #define BL_arrayMD_begin(ptr)   BL_array_begin(ptr)
 #define BL_arrayMD_cbegin(ptr)  BL_array_cbegin(ptr)
 #define BL_arrayMD_end(ptr, unit_type_) BL_array_end(ptr, unit_type_)
