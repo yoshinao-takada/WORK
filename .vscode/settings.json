@@ -7,6 +7,8 @@
         "bl_diag.h": "c",
         "time.h": "c",
         "stdint.h": "c",
-        "struct_timespec.h": "c"
+        "struct_timespec.h": "c",
+        "bl_containers.h": "c",
+        "bl_locker.h": "c"
     }
 }

@@ -10,6 +10,10 @@ extern "C" {
 #endif
     void BL_futils_split(char* pathstr);
 
+    const char* BL_futils_findfilename(const char* filepath);
+
+    char* BL_futils_copydirpath(const char* filepath);
+
     char* BL_futils_append(const char* path_left, const char* path_right);
 
     uint32_t BL_futils_size(const char* path);

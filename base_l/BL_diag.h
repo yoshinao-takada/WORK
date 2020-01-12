@@ -17,12 +17,12 @@ int BL_diag_realtime(struct timespec* time);
 /*!
 \brief get process user time as struct timespec
 */
-int BL_diag_process_user_time(struct timespec* time);
+int BL_diag_process_time(struct timespec* utime, struct timespec* stime);
 
 /*!
 \brief get thread user time as struct timespec
 */
-int BL_diag_thread_user_time(struct timespec* time);
+int BL_diag_thread_time(struct timespec* utime, struct timespec* stime);
 
 /*!
 \brief get working set and peak working set

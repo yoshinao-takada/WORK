@@ -28,7 +28,7 @@ int BL_diag_realtime(struct timespec* time)
 /*!
 \brief get process user time as struct timespec
 */
-int BL_diag_process_user_time(struct timespec* time)
+int BL_diag_process_time(struct timespec* utime, struct timespec* stime)
 {
     int err = ESUCCESS;
     do {
@@ -37,8 +37,10 @@ int BL_diag_process_user_time(struct timespec* time)
         {
             err = errno;
         }
-        time->tv_sec = r.ru_utime.tv_sec;
-        time->tv_nsec = r.ru_utime.tv_usec * 1000;
+        utime->tv_sec = r.ru_utime.tv_sec;
+        utime->tv_nsec = r.ru_utime.tv_usec * 1000;
+        stime->tv_sec = r.ru_stime.tv_sec;
+        stime->tv_nsec = r.ru_stime.tv_usec * 1000;
     } while (false);
     return err;
 }
@@ -46,12 +48,25 @@ int BL_diag_process_user_time(struct timespec* time)
 /*!
 \brief get thread user time as struct timespec
 */
-int BL_diag_thread_user_time(struct timespec* time)
+int BL_diag_thread_time(struct timespec* utime, struct timespec* stime)
 {
-    int err = EINVAL; // WSL does not support thread time.
+#if !defined(_GNU_SOURCE)
+    return EINVAL;
+#else
+    int err = ESUCCESS;
     do {
+        struct rusage r;
+        if (-1 == getrusage(RUSAGE_THREAD, &))
+        {
+            err = errno;
+        }
+        utime->tv_sec = r.ru_utime.tv_sec;
+        utime->tv_nsec = r.ru_utime.tv_usec * 1000;
+        stime->tv_sec = r.ru_stime.tv_sec;
+        stime->tv_nsec = r.ru_stime.tv_usec * 1000;
     } while (false);
     return err;
+#endif
 }
 
 /*!
@@ -60,7 +75,7 @@ int BL_diag_thread_user_time(struct timespec* time)
 int BL_diag_working_set(uint32_t* current, uint32_t* peak)
 {
     static const char* headers[] = { "VmSize:", "VmPeak:" };
-    static const int header_lengths[] = { sizeof(headers[0]), sizeof(headers[1]) };
+    static const int header_lengths[] = { sizeof(headers[0])-1, sizeof(headers[1])-1 };
     int err = ESUCCESS;
     FILE *pf = NULL;
     char str_buf[128];

@@ -19,6 +19,8 @@ typedef long double BL_1r128_t;
 typedef float _Complex BL_1c64_t;
 typedef double _Complex BL_1c128_t;
 typedef long double _Complex BL_1c256_t;
+typedef intptr_t    BL_1iptr_t;
+typedef uintptr_t   BL_1uptr_t;
 
 typedef BL_1i8_t        BL_2i8_t[2];
 typedef BL_1i16_t        BL_2i16_t[2];
@@ -34,6 +36,8 @@ typedef BL_1r128_t        BL_2r128_t[2];
 typedef BL_1c64_t        BL_2c64_t[2];
 typedef BL_1c128_t        BL_2c128_t[2];
 typedef BL_1c256_t        BL_2c256_t[2];
+typedef BL_1iptr_t      BL_2iptr_t[2];
+typedef BL_1uptr_t      BL_2uptr_t[2];
 
 typedef BL_1i8_t        BL_3i8_t[3];
 typedef BL_1i16_t        BL_3i16_t[3];
@@ -49,6 +53,8 @@ typedef BL_1r128_t        BL_3r128_t[3];
 typedef BL_1c64_t        BL_3c64_t[3];
 typedef BL_1c128_t        BL_3c128_t[3];
 typedef BL_1c256_t        BL_3c256_t[3];
+typedef BL_1iptr_t      BL_3iptr_t[3];
+typedef BL_1uptr_t      BL_3uptr_t[3];
 
 typedef BL_1i8_t        BL_4i8_t[4];
 typedef BL_1i16_t        BL_4i16_t[4];
@@ -64,6 +70,8 @@ typedef BL_1r128_t        BL_4r128_t[4];
 typedef BL_1c64_t        BL_4c64_t[4];
 typedef BL_1c128_t        BL_4c128_t[4];
 typedef BL_1c256_t        BL_4c256_t[4];
+typedef BL_1iptr_t      BL_4iptr_t[4];
+typedef BL_1uptr_t      BL_4uptr_t[4];
 #pragma endregion
 
 typedef union {
@@ -81,6 +89,8 @@ typedef union {
     BL_1c64_t    *_1c64;
     BL_1c128_t    *_1c128;
     BL_1c256_t    *_1c256;
+    BL_1iptr_t  *_1iptr;
+    BL_1uptr_t  *_1uptr;
 
     BL_2i8_t    *_2i8;
     BL_2i16_t    *_2i16;
@@ -96,6 +106,8 @@ typedef union {
     BL_2c64_t    *_2c64;
     BL_2c128_t    *_2c128;
     BL_2c256_t    *_2c256;
+    BL_2iptr_t  *_2iptr;
+    BL_2uptr_t  *_2uptr;
 
     BL_3i8_t    *_3i8;
     BL_3i16_t    *_3i16;
@@ -111,6 +123,8 @@ typedef union {
     BL_3c64_t    *_3c64;
     BL_3c128_t    *_3c128;
     BL_3c256_t    *_3c256;
+    BL_3iptr_t  *_3iptr;
+    BL_3uptr_t  *_3uptr;
 
     BL_4i8_t    *_4i8;
     BL_4i16_t    *_4i16;
@@ -126,6 +140,8 @@ typedef union {
     BL_4c64_t    *_4c64;
     BL_4c128_t    *_4c128;
     BL_4c256_t    *_4c256;
+    BL_4iptr_t  *_4iptr;
+    BL_4uptr_t  *_4uptr;
 } BL_ptr_t, *pBL_ptr_t;
 
 typedef const BL_ptr_t *pcBL_ptr_t;
@@ -145,6 +161,8 @@ typedef union {
     const BL_1c64_t    *_1c64;
     const BL_1c128_t    *_1c128;
     const BL_1c256_t    *_1c256;
+    const BL_1iptr_t  *_1iptr;
+    const BL_1uptr_t  *_1uptr;
 
     const BL_2i8_t    *_2i8;
     const BL_2i16_t    *_2i16;
@@ -160,6 +178,8 @@ typedef union {
     const BL_2c64_t    *_2c64;
     const BL_2c128_t    *_2c128;
     const BL_2c256_t    *_2c256;
+    const BL_2iptr_t  *_2iptr;
+    const BL_2uptr_t  *_2uptr;
 
     const BL_3i8_t    *_3i8;
     const BL_3i16_t    *_3i16;
@@ -175,6 +195,8 @@ typedef union {
     const BL_3c64_t    *_3c64;
     const BL_3c128_t    *_3c128;
     const BL_3c256_t    *_3c256;
+    const BL_3iptr_t  *_3iptr;
+    const BL_3uptr_t  *_3uptr;
 
     const BL_4i8_t    *_4i8;
     const BL_4i16_t    *_4i16;
@@ -190,6 +212,8 @@ typedef union {
     const BL_4c64_t    *_4c64;
     const BL_4c128_t    *_4c128;
     const BL_4c256_t    *_4c256;
+    const BL_4iptr_t  *_4iptr;
+    const BL_4uptr_t  *_4uptr;
 } BL_cptr_t, *pBL_cptr_t;
 
 typedef const BL_cptr_t *pcBL_cptr_t;
