@@ -117,13 +117,17 @@ void* BL_diag_timeout(void* params)
 {
     pBL_timeout_t timeout = (pBL_timeout_t)params;
     if (timeout->status == BL_timeout_after || timeout->timeout.tv_nsec >= 1000000000)
-    {
+    { // timeout has invalid values.
         errno = EINVAL;
         return NULL;
     }
+
+    // sleep for the time duration set in timeout.
     struct timespec wait_time = { timeout->timeout.tv_sec, timeout->timeout.tv_nsec };
     struct timespec remaining;
     int err = nanosleep(&wait_time, &remaining);
+
+    // set timeout->status for notification to waiting threads.
     timeout->status = BL_timeout_after;
     return params;
 }

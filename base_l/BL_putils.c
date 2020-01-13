@@ -28,7 +28,7 @@ int BL_putils_execv(char* const argv[], HANDLE* ph_proc)
         pid_t   pid = fork();
         if (pid == 0) 
         { // child process
-            if  (-1 == (err = execv(argv[0], argv)))
+            if  (-1 == execv(argv[0], argv))
             {
                 err = errno;
                 break;
@@ -46,9 +46,10 @@ int BL_putils_execv(char* const argv[], HANDLE* ph_proc)
 int BL_putils_wait_process(HANDLE h_proc, int* exit_code)
 {
     int err = ESUCCESS;
+    pid_t pid = (pid_t)(intptr_t)h_proc;
     do {
         int status = 0;
-        if (-1 == waitpid((pid_t)(intptr_t)h_proc, &status, WEXITED))
+        if (-1 == waitid(P_PID, pid, NULL, WEXITED))
         {
             err = errno;
             break;

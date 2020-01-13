@@ -39,7 +39,13 @@ typedef union _ULARGE_INTEGER {
   ULONGLONG QuadPart;
 } ULARGE_INTEGER;
 #endif
-
+#ifdef __linux__
+#define CHR_DIRSEP  '/'
+#define STR_DIRSEP  "/"
+#elif defined(_WIN32)
+#define CHR_DIRSEP  '\\'
+#define STR_DIRSEP  "\\"
+#endif
 inline struct timespec BL_timespec_add(const struct timespec* ts0, const struct timespec* ts1)
 {
     static const long int _1e9 = 1000000000L;
@@ -73,7 +79,7 @@ inline struct timespec BL_timespec_subtract(const struct timespec* ts0, const st
 
 inline double BL_timespec_to_double(const struct timespec* ts)
 {
-    (double)(ts->tv_sec) + 1.0e-9 * (double)(ts->tv_nsec);
+    return (double)(ts->tv_sec) + 1.0e-9 * (double)(ts->tv_nsec);
 }
 
 #ifdef __cplusplus

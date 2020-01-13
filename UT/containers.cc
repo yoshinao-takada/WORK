@@ -40,7 +40,7 @@ namespace
         ASSERT_EQ(ARRAYSIZE(nodes), node_count);
         for (int i = 0; i < ARRAYSIZE(nodes); i++)
         {
-            pBL_linkable_array_t node = (pBL_linkable_array_t)BL_linkable_remove_next(&anchor);
+            pBL_linkable_array_t node = (pBL_linkable_array_t)BL_linkable_unlink_next(&anchor);
             ASSERT_EQ((void*)nodes[i], (void*)node);
         }
 
@@ -52,7 +52,7 @@ namespace
         ASSERT_EQ(ARRAYSIZE(nodes), node_count);
         for (int i = 0; i < ARRAYSIZE(nodes); i++)
         {
-            pBL_linkable_array_t node = (pBL_linkable_array_t)BL_linkable_remove_prev(&anchor);
+            pBL_linkable_array_t node = (pBL_linkable_array_t)BL_linkable_unlink_prev(&anchor);
             ASSERT_EQ((void*)nodes[i], (void*)node);
             BL_free(&node);
         }
