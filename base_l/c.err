@@ -1,5 +1,0 @@
-mkdir -p Debug
-gcc -g -c -I.. -o Debug/BL_loggerbase.o BL_loggerbase.c
-mkdir -p ../Debug
-ar r ../Debug/libbase_l.a Debug/BL_putils.o Debug/BL_diag.o Debug/BL_futils.o Debug/BL_locker.o Debug/BL_loggerbase.o
-ranlib ../Debug/libbase_l.a

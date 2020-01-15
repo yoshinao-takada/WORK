@@ -49,7 +49,7 @@ int BL_putils_wait_process(HANDLE h_proc, int* exit_code)
     pid_t pid = (pid_t)(intptr_t)h_proc;
     do {
         int status = 0;
-        if (-1 == waitid(P_PID, pid, NULL, WEXITED))
+        if (-1 == waitpid(pid, &status, 0))
         {
             err = errno;
             break;
