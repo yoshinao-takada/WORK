@@ -39,7 +39,7 @@ typedef union _ULARGE_INTEGER {
   ULONGLONG QuadPart;
 } ULARGE_INTEGER;
 #endif
-#ifdef __linux__
+#ifdef __unix__
 #define CHR_DIRSEP  '/'
 #define STR_DIRSEP  "/"
 #elif defined(_WIN32)

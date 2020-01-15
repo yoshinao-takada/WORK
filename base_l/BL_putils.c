@@ -3,7 +3,9 @@
 #include <stdbool.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#ifdef __linux__
 #include <wait.h>
+#endif
 #include <unistd.h>
 #include <errno.h>
 

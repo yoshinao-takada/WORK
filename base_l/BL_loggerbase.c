@@ -158,7 +158,7 @@ int BL_logger_beginrecord(HANDLE h, FILE**ppf)
         *ppf = loggers[id].pf;
         if (*ppf == NULL)
         {
-            err = ENOSR;
+            err = EINVAL;
             break;
         }
         err = BL_locker_lock(h);

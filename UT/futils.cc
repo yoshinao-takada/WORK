@@ -3,6 +3,7 @@
 #include "base_l/BL_futils.h"
 
 #define SUIT    futils
+#define DATADIR UTDATA
 
 namespace
 {
@@ -64,7 +65,7 @@ namespace
         }
     }
 
-#define SAMPLE_FILE "/home/yoshinao/REPOS/WORK_A0/UTData/In/sample-abc.txt"
+#define SAMPLE_FILE DATADIR "In/sample-abc.txt"
     TEST(SUIT, filesize)
     {
         uint32_t cb_filesize;
@@ -73,8 +74,8 @@ namespace
         ASSERT_EQ(4, cb_filesize);
     }
 
-#define TEST_DIRECTORIES    "/home/yoshinao/REPOS/WORK_A0/UTData/Out/1/2/3"
-#define TEST_DIRECTORIES2   "/home/yoshinao/REPOS/WORK_A0/UTData/Out/1"
+#define TEST_DIRECTORIES    DATADIR "Out/1/2/3"
+#define TEST_DIRECTORIES2   DATADIR "Out/1"
 
     TEST(SUIT, create_remove_directories)
     {

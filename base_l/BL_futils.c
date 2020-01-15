@@ -108,10 +108,17 @@ int BL_futils_open(FILE* *ppf, const char* path, const char* mode)
 }
 
 #include "base_l/BL_putils.h"
+#ifdef __linux__
+#define MKDIR_CMD   "/usr/bin/mkdir"
+#define RM_CMD      "/usr/bin/rm"
+#else
+#define MKDIR_CMD   "/bin/mkdir"
+#define RM_CMD      "/bin/rm"
+#endif
 
 int BL_futils_create_directories(const char* path)
 {
-    char cmd_path[] = "/usr/bin/mkdir";
+    char cmd_path[] = MKDIR_CMD;
     char cmd_flag[] = "-p";
     char* const argv[] = {
         cmd_path, cmd_flag, strdup(path), NULL
@@ -125,7 +132,7 @@ int BL_futils_create_directories(const char* path)
 
 int BL_futils_remove_directories(const char* path)
 {
-    char cmd_path[] = "/usr/bin/rm";
+    char cmd_path[] = RM_CMD;
     char cmd_flag[] = "-rf";
     char* const argv[] = {
         cmd_path, cmd_flag, strdup(path), NULL

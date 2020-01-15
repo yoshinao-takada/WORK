@@ -3,6 +3,11 @@
 #include "base_l/BL_putils.h"
 #include "base_l/BL_diag.h"
 #include "base_l/BL_futils.h"
+#ifdef __linux__
+#define SLEEP_CMD   "/usr/bin/sleep"
+#else
+#define SLEEP_CMD   "/bin/sleep"
+#endif
 
 #define SUIT    putils
 
@@ -19,7 +24,7 @@ namespace
         int err = BL_diag_realtime(&time_begin);
 
         // invoke "sleep 10" as a new process.
-        char cmd_path[] = "/usr/bin/sleep";
+        char cmd_path[] = SLEEP_CMD;
         char cmd_arg[] = "5";
         char* const args[] = { cmd_path, cmd_arg, NULL };
         HANDLE h;
@@ -44,9 +49,15 @@ namespace
     /*!
     execute a child process synchronously.
     */
-#define DATA_DIR    "/home/yoshinao/REPOS/WORK_A0/UTData/"
+#define DATA_DIR    UTDATA
 #define DATA_DIR_OUT    DATA_DIR "Out/"
 #define TOUCH_FILE      DATA_DIR_OUT "touch_file.txt"
+#define TOUCH_CMD   "/usr/bin/touch"
+#ifdef  __linux__
+#define RM_CMD  "/usr/bin/rm"
+#else
+#define RM_CMD  "/bin/rm"
+#endif
 
     TEST(SUIT, exec_sync)
     {
@@ -54,7 +65,7 @@ namespace
         ASSERT_EQ(ESUCCESS, err);
         // execute touch
         {
-            char cmd_path[] = "/usr/bin/touch";
+            char cmd_path[] = TOUCH_CMD;
             char cmd_arg[] = TOUCH_FILE;
             char* const args[] = { cmd_path, cmd_arg, NULL };
             int exit_code = 0;
@@ -69,7 +80,7 @@ namespace
 
         // execute rm
         {
-            char cmd_path[] = "/usr/bin/rm";
+            char cmd_path[] = RM_CMD;
             char cmd_arg[] = TOUCH_FILE;
             char* const args[] = { cmd_path, cmd_arg, NULL };
             int exit_code = 0;

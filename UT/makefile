@@ -2,7 +2,7 @@ WORK_DIR = ..
 GTEST_INCPATH = $(WORK_DIR)/gtest/include
 GTEST_DEBUG_LIBPATH = $(WORK_DIR)/gtest/lib
 GTEST_RELEASE_LIBPATH = $(WORK_DIR)/gtest/lib
-DEBUG_CC_FLAGS = -c -g
+DEBUG_CC_FLAGS = -c -g -DUTDATA="\"$(HOME)/REPOS/WORK/UTData/\""
 RELEASE_CC_FLAGS = -c -O2
 DEBUG_TARGET = $(WORK_DIR)/Debug/UT.exe
 RELEASE_TARGET = $(WORK_DIR)/Release/UT.exe
@@ -11,7 +11,7 @@ DEBUG_LIB_FLAGS = $(DEBUG_LIB_DIR) -lbase_l -lgtestd -lgtest_maind -lstdc++ -lpt
 RELEASE_LIB_DIR = -L../Release -L$(GTEST_RELEASE_LIBPATH)
 RELEASE_LIB_FLAGS = $(RELEASE_LIB_DIR) -lbase_l -lgtest -lgtest_main -lstdc++ -lpthread
 INCFLAGS = -I../gtest/include -I..
-CC = gcc
+CC = cc
 
 debug	:	$(DEBUG_TARGET)
 
@@ -21,23 +21,23 @@ DEBUG_OBJECTS = Debug/containers.o Debug/putils.o Debug/diag.o Debug/futils.o
 
 $(DEBUG_TARGET)	:	$(DEBUG_OBJECTS)
 	mkdir -p $(WORK_DIR)/Debug
-	$(CC) -o $@ $^ $(DEBUG_LIB_FLAGS)
+	$(CC) -o $@ $(DEBUG_OBJECTS) $(DEBUG_LIB_FLAGS)
 
 Debug/containers.o	:	containers.cc
 	mkdir -p Debug
-	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $<
+	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
 
 Debug/putils.o	:	putils.cc
 	mkdir -p Debug
-	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $<
+	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
 
 Debug/diag.o	:	diag.cc
 	mkdir -p Debug
-	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $<
+	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
 
 Debug/futils.o	:	futils.cc
 	mkdir -p Debug
-	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $<
+	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
 
 clean_debug	:
 	rm -f Debug/*.o
