@@ -1,0 +1,1 @@
+void BL_ringbuffer_gets(pBL_ringbuffer_t rb, uint8_t* pchar, uint16_t* length);
