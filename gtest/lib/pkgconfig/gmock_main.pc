@@ -1,5 +1,5 @@
-libdir=/usr/home/yoshinao/REPOS/WORK/gtest/lib
-includedir=/usr/home/yoshinao/REPOS/WORK/gtest/include
+libdir=/home/yoshinao/REPOS/WORK_A0/gtest/lib
+includedir=/home/yoshinao/REPOS/WORK_A0/gtest/include
 
 Name: gmock_main
 Description: GoogleMock (with main() function)

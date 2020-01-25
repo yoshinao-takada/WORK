@@ -1,0 +1,10 @@
+@startuml
+/'
+@overview of half-duplex serial communication over RS-485 I/F
+@item   master  Master terminal of master/slave communication
+@item   slave   Slave terminal of master/slave communication
+'/
+boundary    port1
+control     buffer1
+control     
+@enduml

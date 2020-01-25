@@ -17,7 +17,7 @@ debug	:	$(DEBUG_TARGET)
 
 release	:	$(RELEASE_TARGET)
 
-DEBUG_OBJECTS = Debug/crc.o
+DEBUG_OBJECTS = Debug/crc.o Debug/ringbuffer.o
 
 $(DEBUG_TARGET)	:	$(DEBUG_OBJECTS)
 	mkdir -p $(WORK_DIR)/Debug
@@ -27,10 +27,14 @@ Debug/crc.o	:	crc.cc
 	mkdir -p Debug
 	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
 
+Debug/ringbuffer.o	:	ringbuffer.cc
+	mkdir -p Debug
+	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
+
 clean_debug	:
 	rm -f Debug/*.o
-	rm -f ../Debug/*.exe
+	rm -f $(DEBUG_TARGET)
 
 clean_release	:
 	rm -f Release/*.o
-	rm -f ../Release/*.exe
+	rm -f $(RELEASE_TARGET)
