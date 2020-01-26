@@ -16,10 +16,17 @@ extern "C" {
 
     typedef const BL_packet_header_t *pcBL_packet_header_t;
 
-    // get payload size in bytes excluding CRC.
-    #define BL_packet_payload_size(ph)  ((ph->e.PT & 0x80) ? (int32_t)(ph->e.POPT) : (int32_t)0)
+    typedef struct {
+        BL_packet_header_t header;
+        uint8_t payload[0];
+    } BL_packet_t, *pBL_packet_t;
 
-    #define BL_packet_alloc(cb_payload) (pBL_packet_header_t)calloc(sizeof(BL_packet_header_t) +  cb_payload + 2,1)
+    typedef const BL_packet_t *pcBL_packet_t;
+
+    // get payload size in bytes excluding CRC.
+    #define BL_packet_payload_size(ph)  (((ph)->e.PT & 0x80) ? (int32_t)((ph)->e.POPT) : (int32_t)0)
+
+    #define BL_packet_alloc(cb_payload) (pBL_packet_t)calloc(sizeof(BL_packet_t) +  cb_payload + 2,1)
 
 // packet type definitions without payload
     #define BLPT(n)     ((uint8_t)n)
@@ -35,6 +42,7 @@ extern "C" {
     #define BLPT_MSTBUSOCC  BPLT(8)
     #define BLPT_DEVDESC    BLPT(9)
     #define BLPT_DEVSTAT    BLPT(10)
+    #define BLPT_END_NOPL   BLPT(11) /* end of BLPT definitions */
     
     // packet type definitions with payload
     #define BLPT2(n)    ((uint8_t)(0x80 | n))
@@ -43,6 +51,7 @@ extern "C" {
     #define BLPT_DEVDESCREPLY   BLPT2(2)
     #define BLPT_DEVSTATREPLY   BLPT2(3)
     #define BLPT_CONTINUE   BLPT2(4)
+    #define BLPT_END_PL     BLPT2(5) /* end of definitions of BLPT with payload */
 
     /*!
     \brief set packet header info
