@@ -7,17 +7,26 @@ DEBUG_TARGET_DIR = ../Debug
 RELEASE_TARGET_DIR = ../Release
 DEBUG_TARGET = $(DEBUG_TARGET_DIR)/libbase_c.a
 RELEASE_TARGET = $(RELEASE_TARGET_DIR)/libbase_c.a
+DEBUG_APP_TARGET = ../Debug/APP_packet0
 DEBUG_OBJECTS = Debug/BL_crc.o Debug/BL_packet.o Debug/BL_ringbuffer.o
 RELEASE_OBJECTS = Release/BL_crc.o Release/BL_packet.o Release/BL_ringbuffer.o
+DEBUG_APP_OBJECTS = Debug/APP_packet0.o
+RELEASE_APP_OBJECTS = Release/APP_packet0.o
 
 .PHONY	:	debug
 
 debug	:	$(DEBUG_TARGET)
 
+debug_app	:	$(DEBUG_APP_TARGET)
+
 $(DEBUG_TARGET)	:	$(DEBUG_OBJECTS)
 	mkdir -p $(DEBUG_TARGET_DIR)
 	ar -r $@ $(DEBUG_OBJECTS)
 	ranlib $@
+
+$(DEBUG_APP_TARGET)	:	$(DEBUG_APP_OBJECTS)
+	mkdir -p $(DEBUG_TARGET_DIR)
+	$(CC) -o $@ $^ -L$(DEBUG_TARGET_DIR) -lbase_c -lbase_l -lpthread -lm
 
 Debug/BL_crc.o	:	BL_crc.c BL_crc.h
 	mkdir -p Debug
@@ -31,6 +40,10 @@ Debug/BL_ringbuffer.o	:	BL_ringbuffer.c BL_ringbuffer.h
 	mkdir -p Debug
 	$(CC) $(DEBUG_CCFLAGS) -o $@ BL_ringbuffer.c
 
+Debug/APP_packet0.o	:	APP_packet0.c APP_packet0.h
+	mkdir -p Debug
+	$(CC) $(DEBUG_CCFLAGS) -o $@ APP_packet0.c
+	
 .PHONY	:	clean_debug
 
 clean_debug	:

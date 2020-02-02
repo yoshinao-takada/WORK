@@ -9,6 +9,9 @@
         "stdint.h": "c",
         "struct_timespec.h": "c",
         "bl_containers.h": "c",
-        "bl_locker.h": "c"
+        "bl_locker.h": "c",
+        "bl_types.h": "c",
+        "app_packet0.h": "c",
+        "string.h": "c"
     }
 }

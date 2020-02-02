@@ -14,4 +14,8 @@ void BL_fsm_eval(pBL_fsm_t fsm, pBL_fsm_msg_t msg)
         fsm->msg = msg;
         fsm->state->ah_enter(fsm);
     }
+    else
+    {
+        fsm->msg = msg;
+    }
 }

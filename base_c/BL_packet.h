@@ -2,6 +2,7 @@
 #define BL_PACKET_H_
 #include <stdint.h>
 #include "base_l/BL_base.h"
+#include "base_l/BL_containers.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -91,6 +92,13 @@ extern "C" {
     \return ESUCCESS: no CRC error, EINVAL: CRC error
     */
     int BL_packet_payload_check_CRC(pcBL_packet_header_t ph, const uint8_t* pl);
+
+    /*!
+    \brief create a packet buffer
+    \param max_payload_size [in] maximum payload size the buffer can hold. Is counted in bytes.
+    \return the allocated buffer
+    */
+    pBL_packet_header_t BL_Packet_create_buffer(uint8_t max_payload_size);
 #ifdef __cplusplus
 }
 #endif

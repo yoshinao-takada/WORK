@@ -1,6 +1,7 @@
 #include "base_c/BL_packet.h"
 #include "base_c/BL_crc.h"
 #include <errno.h>
+#include <stdlib.h>
 
 
 void BL_packet_header_set(pBL_packet_header_t ph, uint8_t ra, uint8_t sa, uint8_t pt, uint8_t opt)
@@ -57,4 +58,10 @@ int BL_packet_payload_check_CRC(pcBL_packet_header_t ph, const uint8_t* pl)
     BL_crc_init(&crc, CRC_CCITT_LE, 0);
     BL_crc_puts(&crc, pl, payload_length + 2);
     return (crc.crc.u16[0] == 0) ? ESUCCESS : EINVAL;
+}
+
+pBL_packet_header_t BL_Packet_create_buffer(uint8_t max_payload_size)
+{
+    uint32_t cballoc = ((uint32_t)max_payload_size + sizeof(BL_packet_header_t) + 2);
+    return (pBL_packet_header_t)calloc(cballoc, 1);
 }
