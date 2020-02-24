@@ -17,7 +17,8 @@ debug	:	$(DEBUG_TARGET)
 
 release	:	$(RELEASE_TARGET)
 
-DEBUG_OBJECTS = Debug/containers.o Debug/putils.o Debug/diag.o Debug/futils.o Debug/json.o
+DEBUG_OBJECTS = Debug/containers.o Debug/putils.o Debug/diag.o Debug/futils.o Debug/json.o \
+	Debug/json2.o
 
 $(DEBUG_TARGET)	:	$(DEBUG_OBJECTS)
 	mkdir -p $(WORK_DIR)/Debug
@@ -40,6 +41,10 @@ Debug/futils.o	:	futils.cc
 	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
 
 Debug/json.o	:	json.cc
+	mkdir -p Debug
+	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
+
+Debug/json2.o	:	json2.cc
 	mkdir -p Debug
 	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
 

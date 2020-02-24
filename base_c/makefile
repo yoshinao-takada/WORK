@@ -8,8 +8,8 @@ RELEASE_TARGET_DIR = ../Release
 DEBUG_TARGET = $(DEBUG_TARGET_DIR)/libbase_c.a
 RELEASE_TARGET = $(RELEASE_TARGET_DIR)/libbase_c.a
 DEBUG_APP_TARGET = ../Debug/APP_packet0
-DEBUG_OBJECTS = Debug/BL_crc.o Debug/BL_packet.o Debug/BL_ringbuffer.o
-RELEASE_OBJECTS = Release/BL_crc.o Release/BL_packet.o Release/BL_ringbuffer.o
+DEBUG_OBJECTS = Debug/BL_crc.o Debug/BL_packet.o Debug/BL_ringbuffer.o Debug/BL_serialportconf.o
+RELEASE_OBJECTS = Release/BL_crc.o Release/BL_packet.o Release/BL_ringbuffer.o Release/BL_serialportconf.o
 DEBUG_APP_OBJECTS = Debug/APP_packet0.o
 RELEASE_APP_OBJECTS = Release/APP_packet0.o
 
@@ -39,6 +39,10 @@ Debug/BL_packet.o	:	BL_packet.c BL_packet.h
 Debug/BL_ringbuffer.o	:	BL_ringbuffer.c BL_ringbuffer.h
 	mkdir -p Debug
 	$(CC) $(DEBUG_CCFLAGS) -o $@ BL_ringbuffer.c
+
+Debug/BL_serialportconf.o	:	BL_serialportconf.cc BL_serialportconf.h
+	mkdir -p Debug
+	$(CC) $(DEBUG_CCFLAGS) -o $@ BL_serialportconf.cc
 
 Debug/APP_packet0.o	:	APP_packet0.c APP_packet0.h
 	mkdir -p Debug
