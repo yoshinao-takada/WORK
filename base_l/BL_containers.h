@@ -13,6 +13,10 @@ typedef struct {
     uintptr_t unit_count;
 } BL_array_t, *pBL_array_t;
 
+#define BL_ALIGN(a,N)   (((a) & (N-1)) ? (((a) | (N-1)) + 1) : (a))
+#define BL_ALIGN4(a)    BL_ALIGN(a,4)
+#define BL_ALIGN8(a)    BL_ALIGN(a,8)
+
 typedef const BL_array_t *pcBL_array_t;
 
 #define BL_free(ppobj)  if (ppobj && *ppobj) { free(*ppobj); *ppobj = NULL; }

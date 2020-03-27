@@ -72,6 +72,40 @@ typedef BL_1c128_t        BL_4c128_t[4];
 typedef BL_1c256_t        BL_4c256_t[4];
 typedef BL_1iptr_t      BL_4iptr_t[4];
 typedef BL_1uptr_t      BL_4uptr_t[4];
+
+typedef BL_1i8_t        BL_5i8_t[5];
+typedef BL_1i16_t        BL_5i16_t[5];
+typedef BL_1i32_t        BL_5i32_t[5];
+typedef BL_1i64_t        BL_5i64_t[5];
+typedef BL_1u8_t        BL_5u8_t[5];
+typedef BL_1u16_t        BL_5u16_t[5];
+typedef BL_1u32_t        BL_5u32_t[5];
+typedef BL_1u64_t        BL_5u64_t[5];
+typedef BL_1r32_t        BL_5r32_t[5];
+typedef BL_1r64_t        BL_5r64_t[5];
+typedef BL_1r128_t        BL_5r128_t[5];
+typedef BL_1c64_t        BL_5c64_t[5];
+typedef BL_1c128_t        BL_5c128_t[5];
+typedef BL_1c256_t        BL_5c256_t[5];
+typedef BL_1iptr_t      BL_5iptr_t[5];
+typedef BL_1uptr_t      BL_5uptr_t[5];
+
+typedef BL_1i8_t        BL_6i8_t[6];
+typedef BL_1i16_t        BL_6i16_t[6];
+typedef BL_1i32_t        BL_6i32_t[6];
+typedef BL_1i64_t        BL_6i64_t[6];
+typedef BL_1u8_t        BL_6u8_t[6];
+typedef BL_1u16_t        BL_6u16_t[6];
+typedef BL_1u32_t        BL_6u32_t[6];
+typedef BL_1u64_t        BL_6u64_t[6];
+typedef BL_1r32_t        BL_6r32_t[6];
+typedef BL_1r64_t        BL_6r64_t[6];
+typedef BL_1r128_t        BL_6r128_t[6];
+typedef BL_1c64_t        BL_6c64_t[6];
+typedef BL_1c128_t        BL_6c128_t[6];
+typedef BL_1c256_t        BL_6c256_t[6];
+typedef BL_1iptr_t      BL_6iptr_t[6];
+typedef BL_1uptr_t      BL_6uptr_t[6];
 #pragma endregion
 
 typedef union {
@@ -142,6 +176,40 @@ typedef union {
     BL_4c256_t    *_4c256;
     BL_4iptr_t  *_4iptr;
     BL_4uptr_t  *_4uptr;
+
+    BL_5i8_t    *_5i8;
+    BL_5i16_t    *_5i16;
+    BL_5i32_t    *_5i32;
+    BL_5i64_t    *_5i64;
+    BL_5u8_t    *_5u8;
+    BL_5u16_t    *_5u16;
+    BL_5u32_t    *_5u32;
+    BL_5u64_t    *_5u64;
+    BL_5r32_t    *_5r32;
+    BL_5r64_t    *_5r64;
+    BL_5r128_t    *_5r128;
+    BL_5c64_t    *_5c64;
+    BL_5c128_t    *_5c128;
+    BL_5c256_t    *_5c256;
+    BL_5iptr_t  *_5iptr;
+    BL_5uptr_t  *_5uptr;
+
+    BL_6i8_t    *_6i8;
+    BL_6i16_t    *_6i16;
+    BL_6i32_t    *_6i32;
+    BL_6i64_t    *_6i64;
+    BL_6u8_t    *_6u8;
+    BL_6u16_t    *_6u16;
+    BL_6u32_t    *_6u32;
+    BL_6u64_t    *_6u64;
+    BL_6r32_t    *_6r32;
+    BL_6r64_t    *_6r64;
+    BL_6r128_t    *_6r128;
+    BL_6c64_t    *_6c64;
+    BL_6c128_t    *_6c128;
+    BL_6c256_t    *_6c256;
+    BL_6iptr_t  *_6iptr;
+    BL_6uptr_t  *_6uptr;
 } BL_ptr_t, *pBL_ptr_t;
 
 typedef const BL_ptr_t *pcBL_ptr_t;
@@ -214,6 +282,40 @@ typedef union {
     const BL_4c256_t    *_4c256;
     const BL_4iptr_t  *_4iptr;
     const BL_4uptr_t  *_4uptr;
+
+    const BL_5i8_t    *_5i8;
+    const BL_5i16_t    *_5i16;
+    const BL_5i32_t    *_5i32;
+    const BL_5i64_t    *_5i64;
+    const BL_5u8_t    *_5u8;
+    const BL_5u16_t    *_5u16;
+    const BL_5u32_t    *_5u32;
+    const BL_5u64_t    *_5u64;
+    const BL_5r32_t    *_5r32;
+    const BL_5r64_t    *_5r64;
+    const BL_5r128_t    *_5r128;
+    const BL_5c64_t    *_5c64;
+    const BL_5c128_t    *_5c128;
+    const BL_5c256_t    *_5c256;
+    const BL_5iptr_t  *_5iptr;
+    const BL_5uptr_t  *_5uptr;
+
+    const BL_6i8_t    *_6i8;
+    const BL_6i16_t    *_6i16;
+    const BL_6i32_t    *_6i32;
+    const BL_6i64_t    *_6i64;
+    const BL_6u8_t    *_6u8;
+    const BL_6u16_t    *_6u16;
+    const BL_6u32_t    *_6u32;
+    const BL_6u64_t    *_6u64;
+    const BL_6r32_t    *_6r32;
+    const BL_6r64_t    *_6r64;
+    const BL_6r128_t    *_6r128;
+    const BL_6c64_t    *_6c64;
+    const BL_6c128_t    *_6c128;
+    const BL_6c256_t    *_6c256;
+    const BL_6iptr_t  *_6iptr;
+    const BL_6uptr_t  *_6uptr;
 } BL_cptr_t, *pBL_cptr_t;
 
 typedef const BL_cptr_t *pcBL_cptr_t;

@@ -12,6 +12,7 @@
         "bl_locker.h": "c",
         "bl_types.h": "c",
         "app_packet0.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "bl_oomesh.h": "c"
     }
 }
