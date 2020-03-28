@@ -32,12 +32,12 @@ $(RELEASE_TARGET)	:	$(RELEASE_OBJECTS)
 	ar r $@ $(RELEASE_OBJECTS)
 	ranlib $@
 
-RELEASE_BL_oomesh.o	:	BL_oomesh.c BL_oomesh.h
-	mkdir -p Debug
+Release/BL_oomesh.o	:	BL_oomesh.c BL_oomesh.h
+	mkdir -p Release
 	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ BL_oomesh.c
 
-RELEASE_BL_tristrip.o	:	BL_tristrip.c BL_tristrip.h
-	mkdir -p Debug
+Release/BL_tristrip.o	:	BL_tristrip.c BL_tristrip.h
+	mkdir -p Release
 	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ BL_tristrip.c
 
 clean	:

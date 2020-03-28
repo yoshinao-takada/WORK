@@ -1,18 +1,19 @@
 WORK_DIR = ..
+VCPKG_ROOT  = $(HOME)/REPOS/vcpkg/installed/x64-linux
 GTEST_INCPATH = $(WORK_DIR)/gtest/include
-GTEST_DEBUG_LIBPATH = $(WORK_DIR)/gtest/lib
-GTEST_RELEASE_LIBPATH = $(WORK_DIR)/gtest/lib
+GTEST_DEBUG_LIBPATH = $(WORK_DIR)/gtest/lib64
+GTEST_RELEASE_LIBPATH = $(WORK_DIR)/gtest/lib64
 DEBUG_CC_FLAGS = -c -g -DUTDATA="\"$(HOME)/REPOS/WORK/UTData/\""
 RELEASE_CC_FLAGS = -c -O2 -DUTDATA="\"$(HOME)/REPOS/WORK/UTData/\""
-DEBUG_TARGET = $(WORK_DIR)/Debug/UTbase_c.exe
-RELEASE_TARGET = $(WORK_DIR)/Release/UTbase_c.exe
+DEBUG_TARGET = $(WORK_DIR)/Debug/UTbase_cg.exe
+RELEASE_TARGET = $(WORK_DIR)/Release/UTbase_cg.exe
 DEBUG_LIB_DIR = -L../Debug -L$(GTEST_DEBUG_LIBPATH)
 DEBUG_OPENCV_LIBS = -lopencv_imgcodecs -lopencv_imgproc -lopencv_core
 DEBUG_LIB_FLAGS = $(DEBUG_LIB_DIR) $(DEBUG_OPENCV_LIBS) -lbase_cg -lbase_l -lgtestd -lgtest_maind -lstdc++ -lpthread -lm
 RELEASE_LIB_DIR = -L../Release -L$(GTEST_RELEASE_LIBPATH)
 RELEASE_OPENCV_LIBS = -lopencv_imgcodecs -lopencv_imgproc -lopencv_core
 RELEASE_LIB_FLAGS = $(RELEASE_LIB_DIR) $(RELEASE_OPENCV_LIBS) -lbase_cg -lbase_l -lgtest -lgtest_main -lstdc++ -lpthread -lm
-INCFLAGS = -I../gtest/include -I.. -I/usr/local/include/opencv4
+INCFLAGS = -I../gtest/include -I.. -I/usr/include/opencv4
 CC = cc
 DEBUG_OBJECTS = Debug/oomesh.o Debug/tristrip.o
 RELEASE_OBJECTS = Release/oomesh.o Release/tristrip.o
