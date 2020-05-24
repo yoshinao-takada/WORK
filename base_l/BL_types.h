@@ -1,5 +1,6 @@
 #ifndef BL_TYPES_H_
 #define BL_TYPES_H_
+#include <stdint.h>
 #include <complex.h>
 #ifdef __cplusplus
 extern "C" {
@@ -319,6 +320,14 @@ typedef union {
 } BL_cptr_t, *pBL_cptr_t;
 
 typedef const BL_cptr_t *pcBL_cptr_t;
+
+#define BL_copy2(dst,src) { dst[0] = src[0]; dst[1] = src[1]; }
+#define BL_copy3(dst,src) { dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2]; }
+#define BL_copy4(dst,src) { dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2]; dst[3] = src[3]; }
+#define BL_copy5(dst,src) { dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2]; dst[3] = src[3]; \
+    dst[4] = src[4]; }
+#define BL_copy6(dst,src) { dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2]; dst[3] = src[3]; \
+    dst[4] = src[4]; dst[5] = src[5]; }
 
 #ifdef __cplusplus
 }

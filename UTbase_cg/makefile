@@ -9,14 +9,16 @@ DEBUG_TARGET = $(WORK_DIR)/Debug/UTbase_cg.exe
 RELEASE_TARGET = $(WORK_DIR)/Release/UTbase_cg.exe
 DEBUG_LIB_DIR = -L../Debug -L$(GTEST_DEBUG_LIBPATH)
 DEBUG_OPENCV_LIBS = -lopencv_imgcodecs -lopencv_imgproc -lopencv_core
-DEBUG_LIB_FLAGS = $(DEBUG_LIB_DIR) $(DEBUG_OPENCV_LIBS) -lbase_cg -lbase_l -lgtestd -lgtest_maind -lstdc++ -lpthread -lm
+DEBUG_OPENGL_LIBS = -lGL -lGLU -lxcb-glx -lX11
+DEBUG_LIB_FLAGS = $(DEBUG_LIB_DIR) $(DEBUG_OPENCV_LIBS) -lbase_cg -lbase_l -lgtestd -lgtest_maind -lstdc++ -lpthread $(DEBUG_OPENGL_LIBS) -lm
 RELEASE_LIB_DIR = -L../Release -L$(GTEST_RELEASE_LIBPATH)
 RELEASE_OPENCV_LIBS = -lopencv_imgcodecs -lopencv_imgproc -lopencv_core
-RELEASE_LIB_FLAGS = $(RELEASE_LIB_DIR) $(RELEASE_OPENCV_LIBS) -lbase_cg -lbase_l -lgtest -lgtest_main -lstdc++ -lpthread -lm
+RELEASE_OPENGL_LIBS = -lGL -lGLU -lxcb-glx -lX11
+RELEASE_LIB_FLAGS = $(RELEASE_LIB_DIR) $(RELEASE_OPENCV_LIBS) -lbase_cg -lbase_l -lgtest -lgtest_main -lstdc++ -lpthread $(RELEASE_OPENGL_LIBS) -lm
 INCFLAGS = -I../gtest/include -I.. -I/usr/include/opencv4
 CC = cc
-DEBUG_OBJECTS = Debug/oomesh.o Debug/tristrip.o
-RELEASE_OBJECTS = Release/oomesh.o Release/tristrip.o
+DEBUG_OBJECTS = Debug/oomesh.o Debug/tristrip.o Debug/viewer0.o
+RELEASE_OBJECTS = Release/oomesh.o Release/tristrip.o Release/viewer0.o
 
 #----------------------------------------------------------
 # debug build
@@ -28,6 +30,10 @@ $(DEBUG_TARGET)	:	$(DEBUG_OBJECTS)
 	$(CC) -o $@ $(DEBUG_OBJECTS) $(DEBUG_LIB_FLAGS)
 
 Debug/oomesh.o	:	oomesh.cc
+	mkdir -p Debug
+	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
+
+Debug/viewer0.o	:	viewer0.cc
 	mkdir -p Debug
 	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
 
@@ -46,6 +52,10 @@ $(RELEASE_TARGET)	:	$(RELEASE_OBJECTS)
 	$(CC) -o $@ $(RELEASE_OBJECTS) $(RELEASE_LIB_FLAGS)
 
 Release/oomesh.o	:	oomesh.cc
+	mkdir -p Release
+	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $?
+
+Release/viewer0.o	:	viewer0.cc
 	mkdir -p Release
 	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $?
 

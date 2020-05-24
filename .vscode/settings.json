@@ -13,6 +13,24 @@
         "bl_types.h": "c",
         "app_packet0.h": "c",
         "string.h": "c",
-        "bl_oomesh.h": "c"
-    }
+        "bl_oomesh.h": "c",
+        "bl_glctx.h": "c",
+        "bl_data2d.h": "c",
+        "xutil.h": "c",
+        "bl_glxctx.h": "c",
+        "test0.h": "c",
+        "catmacro.h": "c",
+        "defr32ui32.h": "c",
+        "globaldefr32rm.h": "c",
+        "globaldefr64rm.h": "c",
+        "*.tcc": "c",
+        "optional": "c",
+        "cmath": "c",
+        "numeric": "c",
+        "bl_mesh.h": "c",
+        "stdbool.h": "c",
+        "errno.h": "c",
+        "stdlib.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }

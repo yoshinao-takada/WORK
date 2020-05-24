@@ -7,9 +7,11 @@ RELEASE_CC_FLAGS = -c -O2
 RELEASE_TARGET_DIR = ../Release
 RELEASE_TARGET = $(RELEASE_TARGET_DIR)/libbase_l.a
 DEBUG_OBJECTS = Debug/BL_putils.o Debug/BL_diag.o Debug/BL_futils.o Debug/BL_locker.o \
-	Debug/BL_loggerbase.o Debug/BL_fsm.o Debug/BL_serializebase.o
+	Debug/BL_loggerbase.o Debug/BL_fsm.o Debug/BL_serializebase.o Debug/BL_data2D.o \
+	Debug/BL_debutil.o
 RELEASE_OBJECTS = Release/BL_putils.o Release/BL_diag.o Release/BL_futils.o Release/BL_locker.o \
-	Release/BL_loggerbase.o Release/BL_fsm.o Release/BL_serializebase.o
+	Release/BL_loggerbase.o Release/BL_fsm.o Release/BL_serializebase.o Release/BL_data2D.o \
+	Release/BL_debutil.o
 
 debug	:	$(DEBUG_TARGET)
 
@@ -48,6 +50,14 @@ Debug/BL_serializebase.o	:	BL_serializebase.c
 	mkdir -p Debug
 	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ BL_serializebase.c
 
+Debug/BL_data2D.o	:	BL_data2D.c
+	mkdir -p Debug
+	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ BL_data2D.c
+
+Debug/BL_debutil.o	:	BL_debutil.c
+	mkdir -p Debug
+	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ BL_debutil.c
+
 $(RELEASE_TARGET)	:	$(RELEASE_OBJECTS)
 	mkdir -p $(RELEASE_TARGET_DIR)
 	ar r $@ $(RELEASE_OBJECTS)
@@ -81,8 +91,18 @@ Release/BL_serializebase.o	:	BL_serializebase.c
 	mkdir -p Release
 	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ BL_serializebase.c
 
-clean	:
+Release/BL_data2D.o	:	BL_data2D.c
+	mkdir -p Release
+	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ BL_data2D.c
+
+Release/BL_debutil.o	:	BL_debutil.c
+	mkdir -p Release
+	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ BL_debutil.c
+
+clean_debug	:
 	rm -f Debug/*
-	rm -f Release/*
 	rm -f $(DEBUG_TARGET)
+
+clean_release	:
+	rm -f Release/*
 	rm -f $(RELEASE_TARGET)
