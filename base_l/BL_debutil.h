@@ -32,6 +32,19 @@ void BL_debutil_write_2r32(FILE* pf, BL_cptr_t* ptr);
 */
 void BL_debutil_write_1u16(FILE* pf, BL_cptr_t* ptr);
 
+/*!
+\brief element writer for BL_1u32_t element
+*/
+void BL_debutil_write_1u32(FILE* pf, BL_cptr_t* ptr);
+
+/*!
+\brief write an array in .csv file.
+\param pf [in] output stream
+\param array [in] an array to write.
+\param header [in] csv header string excluding new line character or characters
+\param element_writer [in] a function to render an element in array
+*/
+void BL_debutil_fwrite_array(FILE* pf, pcBL_array_t array, const char* header, BL_DEBUTIL_FWRITE_ELEMENT  element_writer);
 #ifdef __cplusplus
 }
 #endif

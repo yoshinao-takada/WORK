@@ -46,6 +46,7 @@ static CPnum mul(CPnum m0, CPnum m1, Pnum m, Tsize nc, Tsize ni, Tsize nr);
 static CPnum setsub(Pnum m0, CPnum m1, Tsize nc0, Tsize nr0, Tsize nc1, Tsize nr1, Tsize ncoff, Tsize nroff);
 static CPnum getsub(CPnum m0, Pnum m1, Tsize nc0, Tsize nr0, Tsize nc1, Tsize nr1, Tsize ncoff, Tsize nroff);
 static CPnum inv(CPnum m0, Pnum m, Pnum mwork, Tsize n);
+static Tenum soldense(Pnum m0, Tsize nc0, Tsize nr0, Pnum m1);
 static Tenum writef(CPnum m0, Tsize nc0, Tsize nr0, FILE* pf);
 static Tenum readf(Pnum* ppm0, Psize nc0, Psize nr0, FILE* pf);
 #if defined(MATLAYOUTRM)
@@ -369,10 +370,14 @@ static CPnum inv(CPnum m0, Pnum m, Pnum mwork, Tsize n)
     Tsize n_row_length = _2n;
     Tsize n_partial_sum_range = n;
     Tsize irow = 0;
-    // delete lower-left triangle of the left half of mwork
+    // Gaussian elimination
     for (int irow = 0; irow != (int)n; irow++, ipivot += step_pivot, n_row_length--, n_partial_sum_range--)
     {
         Tsize irow_best = find_best_pivot_row(mwork, _2n, n, irow);
+        if (irow_best == n)
+        {
+            return (CPnum)NULL; // singular matrix error
+        }
         if (irow_best != irow)
         { // swap rows if a better swap row is found.
             Pnum i0 = ipivot;
@@ -404,6 +409,83 @@ static CPnum inv(CPnum m0, Pnum m, Pnum mwork, Tsize n)
         }
     }
     return getsub(mwork, m, _2n, n, n, n, n, 0);
+}
+
+static Tenum soldense(Pnum m0, Tsize nc0, Tsize nr0, Pnum m1)
+{
+    Tenum err = ESUCCESS;
+    Pnum ipivot = m0;
+    Tsize n_row_length = nc0;
+    Tsize nr0_1 = nr0 - 1;
+    Tsize step_pivot = nc0 + 1;
+    do {
+        if (nc0 <= nr0)
+        {
+            err = ERR_MATRIX_ILLFORMED;
+            break;
+        }
+        // Gaussian elimination to get upper triangle matrix
+        for (Tsize irow=0; irow != (int)nr0; irow++, n_row_length--, ipivot += step_pivot)
+        { // swap rows if a better swap row is found
+            Tsize irow_best = find_best_pivot_row(m0, nc0, nr0, irow);
+            if (irow_best == nr0)
+            {
+                err = ERR_MATRIX_SINGULAR;
+                break;
+            }
+            if (irow_best != irow)
+            { // different best row was found, swap the default pivot row and the best one.
+                Pnum i0 = ipivot;
+                Pnum i1 = i0 + nc0 * (irow_best - irow);
+                for (Tsize i = 0; i != n_row_length; i++, i0++, i1++)
+                {
+                    swap(i0, i1);
+                }
+            }
+            { // normalize the pivot row
+                Tnum coeff = _1 / *ipivot; // reciprocal of the pivot element
+                Pnum i0 = ipivot;
+                Tsize iter_ctr = n_row_length;
+                do {
+                    *i0++ *= coeff;
+                } while (--iter_ctr);
+            }
+            if (irow != nr0_1)
+            { // delete elements below pivot in the same column
+                for (Tsize irow1 = irow + 1; irow1 != nr0; irow1++)
+                {
+                    Pnum itarget = ipivot + nc0 * (irow1 - irow); // target element of the elimination
+                    Pnum isource = ipivot;
+                    Tnum coeff = -(*itarget);
+                    Tsize iter_ctr = n_row_length;
+                    do {
+                        *itarget++ += coeff * *isource++;
+                    } while (--iter_ctr);
+                }
+            }
+        }
+        if (err == ESUCCESS)
+        { // If no error was found in the Gaussian elimination above, do back-substitution.
+            Tsize irow = nr0;
+            Tsize ncols_x = nc0 - nr0; // solution matrix column count
+            do {
+                --irow;
+                Pnum ix = m1 + ncols_x * irow; // solution element ptr
+                CPnum iy = m0 + nc0 * irow + nr0; // equation RHS element ptr
+                for (Tsize icolx = 0; icolx != ncols_x; icolx++, ix++, iy++)
+                {
+                    *ix = *iy;
+                    CPnum iLHS = m0 + irow * nc0 + irow + 1;
+                    CPnum ix_determined = ix + ncols_x;
+                    for (Tsize icolm0 = irow+1; icolm0 < nr0; icolm0++, ix_determined+=ncols_x)
+                    {
+                        *ix -= *iLHS++ * *ix_determined;
+                    }
+                }
+            } while (irow);
+        }        
+    } while (0);
+    return err;
 }
 
 static Tenum writef(CPnum m0, Tsize nc0, Tsize nr0, FILE* pf)
@@ -604,7 +686,7 @@ static CPnum inv(CPnum m0, Pnum m, Pnum mwork, Tsize n)
                 swap(i0, i1);
             }
         }
-        { // normalize the pivot element
+        { // normalize the pivot row
             Tnum coeff = _1 / *ipivot; // reciprocal of the pivot element
             Pnum i0 = ipivot;
             Tsize iter_ctr = n_row_length;
@@ -629,6 +711,88 @@ static CPnum inv(CPnum m0, Pnum m, Pnum mwork, Tsize n)
         }
     }
     return getsub(mwork, m, _2n, n, n, n, n, 0);
+}
+
+static Tenum soldense(Pnum m0, Tsize nc0, Tsize nr0, Pnum m1)
+{
+    Tenum err = ESUCCESS;
+    Pnum ipivot = m0;
+    Tsize n_row_length = nc0;
+    Tsize nr0_1 = nr0 - 1;
+    Tsize step_pivot = nr0 + 1;
+    do {
+        if (nc0 <= nr0)
+        {
+            err = ERR_MATRIX_ILLFORMED;
+            break;
+        }
+        // Gaussian elimination to get upper triangle matrix
+        for (Tsize irow = 0; irow != nr0; irow++, n_row_length--, ipivot += step_pivot)
+        {
+            Tsize irow_best = find_best_pivot_row(m0, nr0, irow);
+            if (irow_best == nr0)
+            {
+                err = ERR_MATRIX_SINGULAR;
+                break;
+            }
+            if (irow_best != irow)
+            { // swap rows if a better swap row is found
+                Pnum i0 = ipivot;
+                Pnum i1 = i0 + (irow_best - irow);
+                for (Tsize i = 0; i != n_row_length; i++, i0+=nr0, i1+=nr0)
+                {
+                    swap(i0, i1);
+                }
+            }
+            { // normalize the pivot row
+                Tnum coeff = _1 / *ipivot; // reciprocal of the pivot element
+                Pnum i0 = ipivot;
+                Tsize iter_ctr = n_row_length;
+                do {
+                    *i0 *= coeff;
+                    i0 += nr0; // move to the next column
+                } while (--iter_ctr);
+            }
+            if (irow != nr0_1)
+            { // delete pivot column elements below the pivot
+                for (Tsize irow1 = irow+1; irow1 != nr0; irow1++)
+                {
+                    Pnum itarget = ipivot + irow1 - irow;
+                    Pnum isource = ipivot;
+                    Tnum coeff = -(*itarget);
+                    Tsize iter_ctr = n_row_length;
+                    do {
+                        *itarget += coeff * *isource;
+                        itarget += nr0; // move to the next column
+                        isource += nr0;
+                    } while (--iter_ctr);
+                }
+            }
+        }
+        if (err == ESUCCESS)
+        { // if no error was found in the Gaussian elimination above, do back-substitution
+            Tsize irow = nr0;
+            Tsize ncols_x = nc0 - nr0;
+            do {
+                --irow;
+                Pnum ix = m1 + irow; // solution element ptr
+                CPnum iy = m0 + nr0 * nr0 + irow; // equation RHS element ptr
+                for (Tsize icolx = 0; icolx != ncols_x; icolx++, ix+=nr0, iy+=nr0)
+                {
+                    *ix = *iy;
+                    CPnum iLHS = m0 + nr0 * irow + irow + nr0;
+                    CPnum ix_determined = ix + 1;
+                    for (Tsize icolm0 = irow+1; icolm0 < nr0; icolm0++)
+                    {
+                        *ix -= *iLHS * *ix_determined;
+                        iLHS += nr0; // move to next column
+                        ix_determined++;
+                    }
+                }
+            } while (irow);
+        }
+    } while (0);
+    return err;
 }
 
 static Tenum writef(CPnum m0, Tsize nc0, Tsize nr0, FILE* pf)
@@ -663,6 +827,7 @@ static const STFNTABLE_T g_fntable = {
     add, sub, mul, inv,
     setsub, getsub,
     writef,writeb,readf,readb,
+    soldense
 };
 
 CPSTFNTABLE_T   FNGET() { return &g_fntable; }

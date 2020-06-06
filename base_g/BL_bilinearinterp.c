@@ -92,8 +92,8 @@ int BL_bilinearinterp_calc_value(pcBL_bilinearinterp_t obj, const BL_2r32_t xy, 
             break;
         }
         const BL_2r32_t in_cell_offset_xy = {
-            xy[0] - (float)cell_index[0] * obj->grid_pitch[0],
-            xy[1] - (float)cell_index[1] * obj->grid_pitch[1]
+            in_table_offset[0] - (float)cell_index[0] * obj->grid_pitch[0],
+            in_table_offset[1] - (float)cell_index[1] * obj->grid_pitch[1]
         };
         BL_cptr_t i_coeff = BL_arrayMD_cbegin(obj->coeff);
         i_coeff._4r32 += (cell_index[0] + cell_index[1] * obj->coeff->dims[0]);

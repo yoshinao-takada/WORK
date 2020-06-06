@@ -6,7 +6,7 @@
                 "${workspaceFolder}/**",
                 "/usr/include/opencv4/**",
             ],
-            "defines": [],
+            "defines": ["NUMTYPEr32", "MATLAYOUTRM"],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c11",
             "cppStandard": "c++17",

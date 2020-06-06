@@ -1,7 +1,0 @@
-mkdir -p Debug
-gcc -I/usr/include/opencv4 -I.. -c -g -o Debug/BL_discriminate.o BL_discriminate.c
-mkdir -p ../Debug
-rm -f ../Debug/libbase_g.a
-ar -r ../Debug/libbase_g.a Debug/BL_matr32RM.o Debug/BL_matr64RM.o Debug/BL_matr32CM.o Debug/BL_matr64CM.o Debug/BL_mesh.o Debug/BL_texture.o Debug/BL_distortion.o Debug/BL_bilinearinterp.o Debug/BL_discriminate.o
-ar: creating ../Debug/libbase_g.a
-ranlib ../Debug/libbase_g.a

@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <time.h>
 #include <stddef.h>
+#include  "base_l/BL_errno.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -18,12 +19,10 @@ extern "C" {
 #define __min(a,b)  ((a < b) ? a : b)
 #endif
 
-#define ESUCCESS    0
-
 #define BL_ALIGN(a,N)   (((a) & (N-1)) ? (((a) | (N-1)) + 1) : (a))
 #define BL_ALIGN4(a)    BL_ALIGN(a,4)
 #define BL_ALIGN8(a)    BL_ALIGN(a,8)
-#define BL_CALLOC(nmemb,unit_type)  (unit_type)calloc(nmemb,sizeof(unit_type))
+#define BL_CALLOC(nmemb,unit_type)  (unit_type*)calloc(nmemb,sizeof(unit_type))
 #define BL_SAFEFREE(ppobj)  if (*ppobj) { free((void*)(*ppobj)); *ppobj = NULL; }
 
 #ifndef _WIN32

@@ -30,7 +30,9 @@
         "bl_mesh.h": "c",
         "stdbool.h": "c",
         "errno.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "cstdlib": "c",
+        "algorithm": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

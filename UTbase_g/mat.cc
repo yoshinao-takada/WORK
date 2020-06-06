@@ -1,6 +1,7 @@
 #include    <gtest/gtest.h>
 #include    <base_g/BL_matexport.h>
 #include    <base_l/BL_futils.h>
+#include    <stdlib.h>
 #define     SUIT    mat
 #define     TEST_MAT_ROWS   3
 #define     TEST_MAT_COLS   4
@@ -12,6 +13,7 @@ namespace
     bool Equalr32(BL_1r32_t r0, BL_1r32_t r1, BL_1r32_t tol)
     {
         BL_1r32_t abssum = fabsf(r0 + r1);
+        if (abssum < tolr32)    abssum+=tolr32;
         BL_1r32_t absdiff = fabsf(r0 - r1);
         return (absdiff/abssum) < tol;
     }
@@ -23,6 +25,17 @@ namespace
         return (absdiff/abssum) < tol;
     }
 
+    bool EqualMatr32(BL_1r32_t* m0, BL_1r32_t* m1, uint32_t nr, uint32_t nc, BL_1r32_t tol)
+    {
+        bool are_eq = true;
+        for (uint32_t i = 0; i != (nr * nc); i++)
+        {
+            are_eq &= Equalr32(*m0, *m1, tol);
+            m0++;
+            m1++;
+        }
+        return are_eq;
+    }
     static pcBL_matfnr32RM_t matfnr32RM = BL_matfnr32RM();
     static pcBL_matfnr64RM_t matfnr64RM = BL_matfnr64RM();
     static pcBL_matfnr32CM_t matfnr32CM = BL_matfnr32CM();
@@ -406,5 +419,81 @@ namespace
         ASSERT_TRUE(Equalr32(1.0f, v1[1] + 1.0f, tolr32));
         ASSERT_TRUE(Equalr32(-1.0f, v1[2], tolr32));
         ASSERT_TRUE(Equalr32(1.0f, v1[3], tolr32));
+    }
+
+    void setLHSRM(size_t N, BL_1r32_t* LHS)
+    {
+        for (int irow = 0; irow != N; irow++)
+        {
+            for (int icol=0; icol != N; icol++)
+            {
+                LHS[icol + irow*N] = (float)rand()/(float)RAND_MAX;
+            }
+        }
+    }
+
+    void setRHSRM(size_t N, size_t NBC, BL_1r32_t* RHS)
+    {
+        for (size_t i = 0; i != (N*NBC); i++)
+        {
+            *RHS++ = (float)rand() / (float)RAND_MAX;
+        }
+    }
+
+    TEST(SUIT, soldense_r32RM)
+    {
+        const size_t N = 5; // number of linear equations
+        const size_t NBC = 3; // number of boundary conditions
+        BL_1r32_t LHS[N*N];
+        BL_1r32_t RHS[N*NBC];
+        BL_1r32_t x[N*NBC];
+        BL_1r32_t m[ARRAYSIZE(LHS)+ARRAYSIZE(RHS)];
+        setLHSRM(N, LHS);
+        setRHSRM(N, NBC, RHS);
+        matfnr32RM->setsubmat(m, LHS, N+NBC, N, N, N, 0, 0);
+        matfnr32RM->setsubmat(m, RHS, N+NBC, N, NBC, N, N, 0);
+        Tenum err = matfnr32RM->soldense(m, N+NBC, N, x);
+        ASSERT_EQ(ESUCCESS, (int)err);
+        BL_1r32_t RHS_restored[ARRAYSIZE(RHS)];
+        matfnr32RM->mul(LHS, x, RHS_restored, NBC, N, N);
+        ASSERT_TRUE(EqualMatr32(RHS, RHS_restored, N, NBC, tolr32));
+    }
+
+
+    void setLHSCM(size_t N, BL_1r32_t* LHS)
+    {
+        for (int irow = 0; irow != N; irow++)
+        {
+            for (int icol=0; icol != N; icol++)
+            {
+                LHS[irow + icol*N] = (float)rand()/(float)RAND_MAX;
+            }
+        }
+    }
+
+    void setRHSCM(size_t N, size_t NBC, BL_1r32_t* RHS)
+    {
+        for (size_t i = 0; i != (N*NBC); i++)
+        {
+            *RHS++ = (float)rand() / (float)RAND_MAX;
+        }
+    }
+    TEST(SUIT, soldense_r32CM)
+    {
+        const size_t N = 5; // number of linear equations
+        const size_t NBC = 3; // number of boundary conditions
+        BL_1r32_t LHS[N*N];
+        BL_1r32_t RHS[N*NBC];
+        BL_1r32_t x[N*NBC];
+        BL_1r32_t m[ARRAYSIZE(LHS)+ARRAYSIZE(RHS)];
+        setLHSCM(N, LHS);
+        setRHSCM(N, NBC, RHS);
+        matfnr32CM->setsubmat(m, LHS, N+NBC, N, N, N, 0, 0);
+        matfnr32CM->setsubmat(m, RHS, N+NBC, N, NBC, N, N, 0);
+        Tenum err = matfnr32CM->soldense(m, N+NBC, N, x);
+        ASSERT_EQ(ESUCCESS, (int)err);
+        BL_1r32_t RHS_restored[ARRAYSIZE(RHS)];
+        matfnr32CM->mul(LHS, x, RHS_restored, NBC, N, N);
+        ASSERT_TRUE(EqualMatr32(RHS, RHS_restored, N, NBC, tolr32));
     }
 }

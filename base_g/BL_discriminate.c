@@ -1,6 +1,17 @@
 #include    "base_g/BL_discriminate.h"
+
+static void fill_padding_top(pBL_arrayMD_t ii, const BL_2u32_t src_img_wh, uint32_t n_padding);
+static void fill_padding_bottom(pBL_arrayMD_t ii, const BL_2u32_t src_img_wh, uint32_t n_padding);
+static void fill_padding_left(pBL_arrayMD_t ii, const BL_2u32_t src_img_wh, uint32_t n_padding);
+static void fill_padding_right(pBL_arrayMD_t ii, const BL_2u32_t src_img_wh, uint32_t n_padding);
+static void fill_padding_topleft(pBL_arrayMD_t ii, const BL_2u32_t src_img_wh, uint32_t n_padding);
+static void fill_padding_topright(pBL_arrayMD_t ii, const BL_2u32_t src_img_wh, uint32_t n_padding);
+static void fill_padding_bottomleft(pBL_arrayMD_t ii, const BL_2u32_t src_img_wh, uint32_t n_padding);
+static void fill_padding_bottomright(pBL_arrayMD_t ii, const BL_2u32_t src_img_wh, uint32_t n_padding);
 // #define II_PROCESSING_VIEW_CSV      DEBUG_DATA_DIR  "II_PROCESSING.csv"
 // #include    "base_l/BL_futils.h"
+// #include    "base_l/BL_debutil.h"
+// #define     COUNTERS_CSV                DEBUG_DATA_DIR  "counters.csv"
 
 pBL_arrayMD_t BL_IIu8u32(pcBL_arrayMD_t image, uint32_t n_ch, uint32_t i_ch, uint32_t n_padding)
 {
@@ -28,6 +39,7 @@ pBL_arrayMD_t BL_IIu8u32(pcBL_arrayMD_t image, uint32_t n_ch, uint32_t i_ch, uin
         }
         p_ii += ii_skip;
     }
+    // fill padding area
     // integration
     p_ii = i_ii._1u32 + ii->dims[0] + 1;
     for (uint16_t iy = 1; iy != ii->dims[1]; iy++)
@@ -41,6 +53,41 @@ pBL_arrayMD_t BL_IIu8u32(pcBL_arrayMD_t image, uint32_t n_ch, uint32_t i_ch, uin
         p_ii++;
     }
     return ii;
+}
+
+
+static void fill_padding_top(pBL_arrayMD_t ii, const BL_2u32_t src_img_wh, uint32_t n_padding)
+{
+
+}
+static void fill_padding_bottom(pBL_arrayMD_t ii, const BL_2u32_t src_img_wh, uint32_t n_padding)
+{
+
+}
+static void fill_padding_left(pBL_arrayMD_t ii, const BL_2u32_t src_img_wh, uint32_t n_padding)
+{
+
+}
+static void fill_padding_right(pBL_arrayMD_t ii, const BL_2u32_t src_img_wh, uint32_t n_padding)
+{
+
+}
+
+static void fill_padding_topleft(pBL_arrayMD_t ii, const BL_2u32_t src_img_wh, uint32_t n_padding)
+{
+
+}
+static void fill_padding_topright(pBL_arrayMD_t ii, const BL_2u32_t src_img_wh, uint32_t n_padding)
+{
+
+}
+static void fill_padding_bottomleft(pBL_arrayMD_t ii, const BL_2u32_t src_img_wh, uint32_t n_padding)
+{
+
+}
+static void fill_padding_bottomright(pBL_arrayMD_t ii, const BL_2u32_t src_img_wh, uint32_t n_padding)
+{
+
 }
 
 uint32_t BL_IIu32_partialsum(pcBL_arrayMD_t ii, const BL_4i16_t sum_area, uint32_t n_padding)
@@ -163,48 +210,30 @@ pBL_arrayMD_t BL_discriminate2(pcBL_arrayMD_t index_map, uint8_t ref_index)
     return binary_map;
 }
 
-static uint16_t get_adjacent_segID(const uint16_t* pbegin, uint16_t iy, uint16_t ix, uint16_t stride)
+void setID_recursively(
+    uint16_t segID,
+    int16_t ix, int16_t iy, int16_t width, int16_t height,
+    const uint8_t* p_binary_map_begin,
+    uint16_t* p_segID_map_begin)
 {
-    uint16_t foundID = 0;
-    const uint16_t* pthis_pixel = pbegin + ix + iy * stride;
-    uint16_t stride_m1 = stride - 1;
-    do {
-        if (iy)
-        { // check previous row
-            const uint16_t* pprev_row = pthis_pixel - stride;
-            if (ix)
-            { // check previous column
-                if (*(pprev_row - 1))
-                {
-                    foundID = *(pprev_row - 1);
-                    break;
-                }
-            }
-            // check this column
-            if (*pprev_row)
-            {
-                foundID = *pprev_row;
-                break;
-            }
-            if (ix < stride_m1)
-            { // check the next column
-                if (*(pprev_row + 1))
-                {
-                    foundID = *pprev_row;
-                    break;
-                }
-            }
+    static const BL_2i16_t offset[] = {
+        {-1,-1}, {0, -1}, {1, -1},
+        {-1, 0}, {1, 0},
+        {-1, 1}, {0, 1}, {1, 1}
+    };
+    // printf("%d,%d,%d,%d\n", ix, iy, width, height);
+    *(p_segID_map_begin + ix + iy * width) = segID;
+    for (uint16_t i = 0; i != ARRAYSIZE(offset); i++)
+    {
+        int16_t new_ix = ix + offset[i][0];
+        int16_t new_iy = iy + offset[i][1];
+        if (new_ix < 0 || new_iy < 0 || new_ix >= width || new_iy >= height) continue; // out of range
+        if (*(p_binary_map_begin + new_ix + new_iy * width) &&
+            (*(p_segID_map_begin + new_ix + new_iy * width) == 0))
+        {
+            setID_recursively(segID, new_ix, new_iy, width, height, p_binary_map_begin, p_segID_map_begin);
         }
-        if (ix)
-        { // check previous column in the same row
-            if (*(pthis_pixel - 1))
-            {
-                foundID = *(pthis_pixel - 1);
-                break;
-            }
-        }
-    } while (false);
-    return foundID;
+    }
 }
 
 pBL_arrayMD_t BL_segmentIDs(pcBL_arrayMD_t binary_map)
@@ -213,26 +242,73 @@ pBL_arrayMD_t BL_segmentIDs(pcBL_arrayMD_t binary_map)
     pBL_arrayMD_t segID_map = BL_arrayMD_new(binary_map->dims, BL_1u16_t);
     BL_cptr_t i_binary_map = BL_arrayMD_cbegin(binary_map);
     BL_ptr_t i_segID_map = BL_arrayMD_begin(segID_map);
-    const uint16_t* p_segID_map_begin = i_segID_map._1u16;
     for (uint16_t iy = 0; iy != binary_map->dims[1]; iy++)
     {
         for (uint16_t ix = 0; ix != binary_map->dims[0]; ix++)
         {
-            if (*i_binary_map._1u8)
+            if (*(i_binary_map._1u8 + ix + iy * binary_map->dims[0]) &&
+                (*(i_segID_map._1u16 + ix + iy * binary_map->dims[0]) == 0))
             {
-                uint16_t foundID = get_adjacent_segID(p_segID_map_begin,iy,ix,segID_map->dims[0]);
-                if (foundID != 0)
-                {
-                    *i_segID_map._1u16 = foundID;
-                }
-                else
-                {
-                    *i_segID_map._1u16 = segID_counter++;
-                }                
+                setID_recursively(
+                    segID_counter++, 
+                    (int16_t)ix, (int16_t)iy,
+                    (int16_t)binary_map->dims[0], (int16_t)binary_map->dims[1],
+                    i_binary_map._1u8, i_segID_map._1u16);
             }
-            i_binary_map._1u8++;
-            i_segID_map._1u16++;
         }
     }
     return segID_map;
+}
+
+static uint16_t get_max(pcBL_arrayMD_t segID_map)
+{
+    uint16_t u = 0;
+    BL_cptr_t i_segID_map = BL_arrayMD_cbegin(segID_map);
+    uint32_t element_count = segID_map->data.unit_count;
+    do {
+        u = __max(u, *i_segID_map._1u16);
+        i_segID_map._1u16++;
+    } while (--element_count);
+    return u;
+}
+
+pBL_array_t BL_segment_centers(pcBL_arrayMD_t segID_map)
+{
+    uint16_t segID_max = get_max(segID_map);
+    pBL_array_t accumulators = BL_array_new(segID_max, BL_2r64_t);
+    pBL_array_t counters = BL_array_new(segID_max, BL_1u32_t);
+    {
+        BL_cptr_t i_segID_map = BL_arrayMD_cbegin(segID_map);
+        BL_ptr_t i_accumulators = BL_array_begin(accumulators);
+        BL_ptr_t i_counters = BL_array_begin(counters);
+        for (uint16_t iy = 0; iy < segID_map->dims[1]; iy++)
+        {
+            for (uint16_t ix = 0; ix < segID_map->dims[0]; ix++)
+            {
+                uint16_t segID = *i_segID_map._1u16++;
+                if (segID)
+                {
+                    segID--;
+                    i_counters._1u32[segID]++;
+                    i_accumulators._2r64[segID][0] += (double)ix;
+                    i_accumulators._2r64[segID][1] += (double)iy;
+                }
+            }
+        }
+    }
+    pBL_array_t centers = BL_array_new(segID_max, BL_2r32_t);
+    {
+        BL_ptr_t i_centers = BL_array_begin(centers);
+        BL_cptr_t i_accumulators = BL_array_cbegin(accumulators);
+        BL_cptr_t i_counters = BL_array_cbegin(counters);
+        for (uint32_t i = 0; i != centers->unit_count; i++)
+        {
+            double r_seg_area = 1.0 / (double)(*i_counters._1u32++); // reciprocal of segment area
+            (*i_centers._2r32)[0] = (*i_accumulators._2r64)[0] * r_seg_area;
+            (*i_centers._2r32++)[1] = (*i_accumulators._2r64++)[1] * r_seg_area;
+        }
+    }
+    free((void*)accumulators);
+    free((void*)counters);
+    return centers;
 }

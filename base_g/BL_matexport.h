@@ -3,9 +3,6 @@
 #include    "base_l/BL_base.h"
 #include    "base_l/BL_types.h"
 #include    <stdio.h>
-#ifdef __cplusplus
-extern "C" {
-#endif
 #define     MATLAYOUTRM
 #define     NUMTYPEr32
 #include    "base_g/localdefr32.h"
@@ -34,7 +31,4 @@ extern "C" {
 #include    "base_g/undefglobal.h"
 #undef      NUMTYPEr64
 #undef      MATLAYOUTCM
-#ifdef __cplusplus
-}
-#endif
 #endif

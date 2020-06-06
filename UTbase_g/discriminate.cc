@@ -20,6 +20,8 @@
 #define COLOR_INDEX_MAP_CSV UTDATA  "color_index_map.csv"
 #define RED_DOT_SEGIDS_CSV  UTDATA  "red_dot_segIDs.csv"
 #define BLUE_DOT_SEGIDS_CSV UTDATA  "blue_dot_segIDs.csv"
+#define BLUE_DOT_CENTERS_CSV    UTDATA  "blue_dot_centers.csv"
+#define RED_DOT_CENTERS_CSV     UTDATA  "red_dot_centers.csv"
 
 #define SUIT    discriminate
 namespace
@@ -160,12 +162,90 @@ namespace
         }
     }
 
-    
+    bool is_in(const cv::Point2i& end, const cv::Point2i& point_under_test)
+    {
+        return
+            (point_under_test.x >= 0) &&
+            (point_under_test.y >= 0) &&
+            (point_under_test.x < end.x) &&
+            (point_under_test.y < end.y);
+    }
+
+    int DrawCenterMarks(const char* cvimg_path, pcBL_array_t blue_dot_centers, pcBL_array_t red_dot_centers)
+    {
+        int err = ESUCCESS;
+        do {
+            cv::Vec3b white_dot(255,255,255);
+            cv::Vec3b black_dot(0,0,0);
+            cv::Mat3b img = cv::imread(cvimg_path);
+            if (img.cols < 100 || img.rows < 100)
+            { // invalid image file
+                err = EINVAL;
+                break;
+            }
+            cv::Point2i pix_end = { img.cols, img.rows };
+            {
+                BL_cptr_t i_centers = BL_array_cbegin(blue_dot_centers);
+                for (uint32_t i = 0; i != blue_dot_centers->unit_count; i++)
+                {
+                    for (int j = -10; j <= 10; j++)
+                    {
+                        BL_2r32_t offset1 = { (float)j, (float)j }, offset2 = { -(float)j, (float)j };
+                        cv::Point2i target1 = {
+                            (int32_t)lroundf(i_centers._2r32[i][0] + offset1[0]),
+                            (int32_t)lroundf(i_centers._2r32[i][1] + offset1[1])
+                        };
+                        cv::Point2i target2 = {
+                            (int32_t)lroundf(i_centers._2r32[i][0] + offset2[0]),
+                            (int32_t)lroundf(i_centers._2r32[i][1] + offset2[1])
+                        };
+                        if (is_in(pix_end, target1))
+                        {
+                            img(target1) = white_dot;
+                        }
+                        if (is_in(pix_end, target2))
+                        {
+                            img(target2) = white_dot;
+                        }
+                    }
+                }
+            }
+            {
+                BL_cptr_t i_centers = BL_array_cbegin(red_dot_centers);
+                for (uint32_t i = 0; i != red_dot_centers->unit_count; i++)
+                {
+                    for (int j = -10; j <= 10; j++)
+                    {
+                        BL_2r32_t offset1 = { (float)j, 0.0f }, offset2 = { 0.0f, (float)j };
+                        cv::Point2i target1 = {
+                            (int32_t)lroundf(i_centers._2r32[i][0] + offset1[0]),
+                            (int32_t)lroundf(i_centers._2r32[i][1] + offset1[1])
+                        };
+                        cv::Point2i target2 = {
+                            (int32_t)lroundf(i_centers._2r32[i][0] + offset2[0]),
+                            (int32_t)lroundf(i_centers._2r32[i][1] + offset2[1])
+                        };
+                        if (is_in(pix_end, target1))
+                        {
+                            img(target1) = black_dot;
+                        }
+                        if (is_in(pix_end, target2))
+                        {
+                            img(target2) = black_dot;
+                        }
+                    }
+                }
+            }
+            cv::imwrite(cvimg_path, img);
+        } while (false);
+        return err;
+    }
+
     TEST(SUIT, color_discriminate)
     {
         BL_checkerconf2_t texture_conf = {
             { false, { 640, 480 }, { 64, 64 }, { COLOR_ORANGE, COLOR_WHITE }},
-            { 256, 256 }, { COLOR_BLUEGREEN, COLOR_WHITE }
+            { 256, 128 }, { COLOR_BLUEGREEN, COLOR_WHITE }
         };
         pBL_arrayMD_t src_image = BL_texture_circulardots2(&texture_conf);
         pBL_arrayMD_t blured_image = blur(src_image, 8);
@@ -178,6 +258,7 @@ namespace
         }
         const BL_3u8_t ref_colors[] = { COLOR_WHITE, COLOR_RED, COLOR_BLUE };
         pBL_arrayMD_t color_index_map = BL_discriminate(src_image, ARRAYSIZE(ref_colors), ref_colors);
+        free((void*)src_image);
         pBL_arrayMD_t retrieved_red_dots = BL_discriminate2(color_index_map, 1);
         pBL_arrayMD_t retrieved_blue_dots = BL_discriminate2(color_index_map, 2);
         ASSERT_EQ((uint8_t)2, get_max(color_index_map));
@@ -202,5 +283,28 @@ namespace
         free((void*)color_index_map);
         free((void*)retrieved_blue_dots);
         free((void*)retrieved_red_dots);
+        pBL_array_t blue_dot_centers = BL_segment_centers(blue_dot_segIDs);
+        pBL_array_t red_dot_centers = BL_segment_centers(red_dot_segIDs);      
+        free((void*)blue_dot_segIDs);
+        free((void*)red_dot_segIDs);
+        {
+            FILE *pf = nullptr;
+            int err = BL_futils_open(&pf, BLUE_DOT_CENTERS_CSV, "w");
+            ASSERT_EQ(ESUCCESS, err);
+            BL_debutil_fwrite_array(pf, blue_dot_centers, "i,x,y", BL_debutil_write_2r32);
+            fclose(pf);
+        }
+        {
+            FILE *pf = nullptr;
+            int err = BL_futils_open(&pf, RED_DOT_CENTERS_CSV, "w");
+            ASSERT_EQ(ESUCCESS, err);
+            BL_debutil_fwrite_array(pf, red_dot_centers, "i,x,y", BL_debutil_write_2r32);
+            fclose(pf);
+        }
+        {
+            int err = DrawCenterMarks(IMAGE_FOR_COLOR_DISCRIMINATION, blue_dot_centers, red_dot_centers);
+        }
+        free((void*)blue_dot_centers);
+        free((void*)red_dot_centers);
     }
 }

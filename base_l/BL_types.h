@@ -328,6 +328,9 @@ typedef const BL_cptr_t *pcBL_cptr_t;
     dst[4] = src[4]; }
 #define BL_copy6(dst,src) { dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2]; dst[3] = src[3]; \
     dst[4] = src[4]; dst[5] = src[5]; }
+#define BL_copy_array(dst,src,count)    {for (uint32_t i = 0; i != count; i++) { dst[i] = src[i]; }}
+#define BL_copy9(dst,src)   BL_copy_array(dst,src,9)
+#define BL_copy16(dst,src)  BL_copy_array(dst,src,16)
 
 #ifdef __cplusplus
 }

@@ -1,0 +1,81 @@
+Running main() from /home/yoshinao/REPOS/ARCHIVES/googletest/googletest/src/gtest_main.cc
+[==========] Running 28 tests from 6 test suites.
+[----------] Global test environment set-up.
+[----------] 14 tests from mat
+[ RUN      ] mat.unit_r32
+[       OK ] mat.unit_r32 (0 ms)
+[ RUN      ] mat.add_sub_r32
+[       OK ] mat.add_sub_r32 (0 ms)
+[ RUN      ] mat.mul_r32RM
+[       OK ] mat.mul_r32RM (0 ms)
+[ RUN      ] mat.mul_r32CM
+[       OK ] mat.mul_r32CM (0 ms)
+[ RUN      ] mat.submat_r32RM
+[       OK ] mat.submat_r32RM (0 ms)
+[ RUN      ] mat.submat_r32CM
+[       OK ] mat.submat_r32CM (0 ms)
+[ RUN      ] mat.inv_r32RM
+[       OK ] mat.inv_r32RM (0 ms)
+[ RUN      ] mat.inv_r32CM
+[       OK ] mat.inv_r32CM (0 ms)
+[ RUN      ] mat.transpose_r32RM
+[       OK ] mat.transpose_r32RM (0 ms)
+[ RUN      ] mat.transpose_r32CM
+[       OK ] mat.transpose_r32CM (0 ms)
+[ RUN      ] mat.rotmat_r32RM
+[       OK ] mat.rotmat_r32RM (0 ms)
+[ RUN      ] mat.rotmat_r32CM
+[       OK ] mat.rotmat_r32CM (0 ms)
+[ RUN      ] mat.soldense_r32RM
+[       OK ] mat.soldense_r32RM (0 ms)
+[ RUN      ] mat.soldense_r32CM
+[       OK ] mat.soldense_r32CM (0 ms)
+[----------] 14 tests from mat (0 ms total)
+
+[----------] 5 tests from texture
+[ RUN      ] texture.new_delete
+[       OK ] texture.new_delete (0 ms)
+[ RUN      ] texture.tex_checker
+[       OK ] texture.tex_checker (7 ms)
+[ RUN      ] texture.tex_checker2
+[       OK ] texture.tex_checker2 (7 ms)
+[ RUN      ] texture.tex_dots
+[       OK ] texture.tex_dots (4 ms)
+[ RUN      ] texture.tex_dots2
+[       OK ] texture.tex_dots2 (5 ms)
+[----------] 5 tests from texture (23 ms total)
+
+[----------] 1 test from mesh
+[ RUN      ] mesh.new_delete
+[       OK ] mesh.new_delete (0 ms)
+[----------] 1 test from mesh (0 ms total)
+
+[----------] 1 test from Dist
+[ RUN      ] Dist.remap
+[       OK ] Dist.remap (431 ms)
+[----------] 1 test from Dist (431 ms total)
+
+[----------] 3 tests from interp
+[ RUN      ] interp.new_delete
+[       OK ] interp.new_delete (0 ms)
+[ RUN      ] interp.simple_interpolation
+126.719994
+[       OK ] interp.simple_interpolation (1 ms)
+[ RUN      ] interp._4cell_interpolation
+[       OK ] interp._4cell_interpolation (0 ms)
+[----------] 3 tests from interp (1 ms total)
+
+[----------] 4 tests from discriminate
+[ RUN      ] discriminate.sum1x1
+[       OK ] discriminate.sum1x1 (0 ms)
+[ RUN      ] discriminate.boxfilter
+[       OK ] discriminate.boxfilter (10 ms)
+[ RUN      ] discriminate.nearest_color
+[       OK ] discriminate.nearest_color (0 ms)
+[ RUN      ] discriminate.color_discriminate
+[       OK ] discriminate.color_discriminate (198 ms)
+[----------] 4 tests from discriminate (208 ms total)
+
+[----------] Global test environment tear-down
+[==========] 28 tests from 6 test suites ran. (663 ms total)
+[  PASSED  ] 28 tests.

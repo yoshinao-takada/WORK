@@ -3,7 +3,9 @@
 #define PSTFNTABLE_T PSTTYPE(matfn,r32,RM)
 #define CPSTFNTABLE_T CPSTTYPE(matfn,r32,RM)
 #define FNGET   FNNAME(matfn,r32,RM)
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 // Matrix value, Scalar variable function (fill, unit, 3D rotation, etc.)
 typedef CPnum   (* FNTYPE(M_Sm,r32,RM) )(Tnum s0, Pnum m);
 typedef CPnum   (* FNTYPE(M_SmN,r32,RM) )(Tnum s0, Pnum m, Tsize n);
@@ -25,6 +27,8 @@ typedef CPnum    (* FNTYPE(M_MmNNNNNN,r32,RM) )(CPnum m0, Pnum m1, Tsize nc0, Ts
 // formated I/O
 typedef Tenum   (* FNTYPE(E_MNNF,r32,RM) )(CPnum m0, Tsize nc0, Tsize nr0, FILE* pf);
 typedef Tenum   (* FNTYPE(E_pmnnF,r32,RM) )(Pnum* ppm0, Psize nc0, Psize nr0, FILE* pf);
+// dense matrix linear equation
+typedef Tenum   (* FNTYPE(E_mNNm,r32,RM))(Pnum m0, Tsize nc0, Tsize nr0, Pnum m1);
 typedef struct {
     const FNTYPE(M_Sm,r32,RM)   rotxrad; // rotation matrix around x-axis, angle unit: radian
     const FNTYPE(M_Sm,r32,RM)   rotyrad; // rotation matrix around y-axis, angle unit: radian
@@ -46,6 +50,10 @@ typedef struct {
     const FNTYPE(E_MNNF,r32,RM) writeb; // write as CPU dependent binary
     const FNTYPE(E_pmnnF,r32,RM) readf; // read as formated text
     const FNTYPE(E_pmnnF,r32,RM) readb; // read as CPU dependent binary
-}   STTYPE(matfn,r32,RM), * PSTTYPE(matfn,r32,RM) ;
-typedef const STTYPE(matfn,r32,RM) * CPSTTYPE(matfn,r32,RM);
+    const FNTYPE(E_mNNm,r32,RM) soldense; // solve dense linear equation
+}   STFNTABLE_T, * PSTFNTABLE_T ;
+typedef const STFNTABLE_T * CPSTFNTABLE_T;
 CPSTFNTABLE_T   FNGET();
+#ifdef __cplusplus
+}
+#endif

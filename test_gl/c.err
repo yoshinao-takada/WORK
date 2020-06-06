@@ -1,0 +1,3 @@
+mkdir -p Debug
+gcc -c -g -I.. -o Debug/BL_glxcommon.o BL_glxcommon.c
+make: *** No rule to make target 'Debug/main.o', needed by '../Debug/test_gl.exe'.  Stop.

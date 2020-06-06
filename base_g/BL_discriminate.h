@@ -82,6 +82,13 @@ uint8_t BL_nearest_color(const BL_3u8_t color_under_test, uint32_t color_count, 
 \return segment ID map of uint16_t
 */
 pBL_arrayMD_t BL_segmentIDs(pcBL_arrayMD_t binary_map);
+
+/*!
+\brief get segment ID center pixel coordinates
+\param segID_map [in] segment ID map
+\return center coordinates of segments in segID_map. element type is BL_2r32_t.
+*/
+pBL_array_t BL_segment_centers(pcBL_arrayMD_t segID_map);
 #ifdef __cplusplus
 }
 #endif
