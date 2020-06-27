@@ -1,0 +1,28 @@
+Powell's interpolation algorithm description
+
+[0] Estimating minimum using known three points
+f0 = F(x0), f1 = F(x1), f2 = F(x2)
+xm = { F(x0,x1,x2)(x0 + x1) - F(x0,x1) }/ (2.0 * F(x0,x1,x2))
+    = P(f,x)
+
+[1] Iterative procedure
+
+h = sqrt(hmin*hmax)
+x = { -h, 0, h }
+do {
+    f = F(x)
+    if (max(f) - min(f) < DFMIN)
+    {
+        h *= 2
+        continue
+    }
+    xm = P(f,x)
+    if (xm - x[2] > hmax || x[0] - xm > hmax) {
+        h = min(2*h, hmax)
+    } else if (x[0] < xm && xm < x[2]) {
+        h = max(h/2, hmin)
+    }
+    x[0] = xm - h
+    x[1] = xm
+    x[2] = xm + h
+} while (--iter_max)

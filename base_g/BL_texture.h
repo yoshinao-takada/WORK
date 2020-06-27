@@ -49,7 +49,7 @@ pBL_texture_t BL_texture_checker2(pcBL_checkerconf2_t conf);
 \param map [in] mapping table
 \return unix errno compatible number
 */
-int BL_texture_remap(pBL_texture_t in, pBL_texture_t out, pBL_map2D_t map);
+int BL_texture_remap(pBL_texture_t in, pBL_texture_t out, pBL_arrayMD_t map);
 
 /*!
 \brief create a texture image of uniformly aligned circular dots

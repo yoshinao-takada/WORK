@@ -6,6 +6,7 @@
 #define SUIT    interp
 #define IMAGE_SAVE_PATH0    UTDATA  "img0.jpg"
 #define IMAGE_SAVE_PATH1    UTDATA  "img1.jpg"
+#define IMAGE_SAVE_PATH2    UTDATA  "imgc.jpg"
 namespace
 {
     static const float tolF = 1.0e-5f;
@@ -122,5 +123,51 @@ namespace
         }
         cv::imwrite(IMAGE_SAVE_PATH1, img);
         BL_bilinearinterp_delete(&interpolator);
+    }
+
+    // 4-cell interpolation 3-ch
+    TEST(SUIT, _4cell3ch_interpolation)
+    {
+        const float node_value_ref[] = {
+            // ch0
+            0.0f, 127.0f, 0.0f,
+            0.0f, 255.0f, 0.0f,
+            0.0f, 127.0f, 0.0f,
+            // ch1
+            0.0f, 0.0f, 0.0f,
+            127.0f, 255.0f, 127.0f,
+            0.0f, 0.0f, 0.0f,
+            // ch2
+            127.0f, 0.0f, 0.0f,
+            0.0f, 255.0f, 0.0f,
+            0.0f, 0.0f, 127.0f
+        };
+        const BL_2u32_t wh_nodes = { 3, 3 };
+        const BL_2r32_t table_origin = { 0.0f, 0.0f };
+        const BL_2r32_t grid_pitch = { 100, 100 };
+        pBL_bilinearinterp_t interpolator = BL_bilinearinterpv_new(wh_nodes, table_origin, grid_pitch, 3);
+        BL_ptr_t i_values = BL_arrayMD_begin(interpolator->values);
+        for (uint16_t i = 0; i != ARRAYSIZE(node_value_ref); i++)
+        {
+            i_values._1r32[i] = node_value_ref[i];
+        }
+        BL_bilinearinterpv_fill_coeff(interpolator);
+        cv::Mat3b img(200,200);
+        cv::Point2i i_img;
+        for (i_img.y = 0; i_img.y != img.rows; i_img.y++)
+        {
+            for (i_img.x = 0; i_img.x != img.cols; i_img.x++)
+            {
+                BL_3r32_t value;
+                BL_2r32_t xy = { (BL_1r32_t)i_img.x, (BL_1r32_t)i_img.y };
+                int err = BL_bilinearinterpv_calc_value(interpolator, xy, value);
+                img(i_img)[0] = clamp(value[0]);
+                img(i_img)[1] = clamp(value[1]);
+                img(i_img)[2] = clamp(value[2]);
+                
+            }
+        }
+        cv::imwrite(IMAGE_SAVE_PATH2, img);
+        BL_bilinearinterpv_delete(&interpolator);
     }
 }

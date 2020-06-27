@@ -32,7 +32,8 @@
         "errno.h": "c",
         "stdlib.h": "c",
         "cstdlib": "c",
-        "algorithm": "c"
+        "algorithm": "c",
+        "ranges": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

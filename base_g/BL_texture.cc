@@ -81,7 +81,7 @@ pBL_texture_t BL_texture_checker2(pcBL_checkerconf2_t conf)
     return p;
 }
 
-int BL_texture_remap(pBL_texture_t in, pBL_texture_t out, pBL_map2D_t map)
+int BL_texture_remap(pBL_texture_t in, pBL_texture_t out, pBL_arrayMD_t map)
 {
     int err = ESUCCESS;
     do {

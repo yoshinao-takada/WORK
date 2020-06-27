@@ -1,0 +1,7 @@
+mkdir -p Debug
+gcc -I.. -c -g -DDEBUG_DATA_DIR="\"../UTData/\"" -D_DEBUG -o Debug/BL_cg.o BL_cg.c
+mkdir -p ../Debug
+rm -f ../Debug/libbase_o.a
+ar -r ../Debug/libbase_o.a Debug/BL_linesearch.o Debug/BL_optimize.o Debug/BL_steepestdescent.o Debug/BL_cg.o
+ar: creating ../Debug/libbase_o.a
+ranlib ../Debug/libbase_o.a

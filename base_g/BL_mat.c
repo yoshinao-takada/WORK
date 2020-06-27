@@ -35,6 +35,8 @@ static CPnum rotydeg(Tnum s0, Pnum m);
 static CPnum rotzdeg(Tnum s0, Pnum m);
 static Tenum writeb(CPnum m0, Tsize nc0, Tsize nr0, FILE* pf);
 static Tenum readb(Pnum* ppm0, Psize nc0, Psize nr0, FILE* pf);
+static Tenum equalv(CPnum m0, CPnum m1, Tsize nc0, Tnum s0);
+static CPnum muls(CPnum m0, Tsize nc0, Tsize nr0, Tnum s0, Pnum m);
 #pragma endregion
 #pragma region matlayout_dependent
 static CPnum transpose(CPnum m0, Pnum m, Tsize nc, Tsize nr);
@@ -105,6 +107,17 @@ static CPnum sub(CPnum m0, CPnum m1, Pnum m, Tsize nc, Tsize nr)
     CPnum im1 = m1;
     do {
         *im++ = *im0++ - *im1++;
+    } while (--n);
+    return m;
+}
+
+static CPnum muls(CPnum m0, Tsize nc0, Tsize nr0, Tnum s0, Pnum m)
+{
+    Tsize n = nc0 * nr0;
+    Pnum im = m;
+    CPnum im0 = m0;
+    do {
+        *im++ = *im0++ * s0;
     } while (--n);
     return m;
 }
@@ -190,6 +203,25 @@ static Tenum readb(Pnum* ppm0, Psize nc0, Psize nr0, FILE* pf)
         }
     } while (0);
     return err;
+}
+
+// check vector equality
+static Tenum equalv(CPnum m0, CPnum m1, Tsize nc0, Tnum s0)
+{
+    Tnum sumsqdiff = _0, sumsqadd = _0;
+    for (Tsize i = 0; i != nc0; i++)
+    {
+        Tnum diff_i = m0[i] - m1[i];
+        Tnum add_i = m0[i] + m1[i];
+        sumsqdiff += diff_i * diff_i;
+        sumsqadd += add_i * add_i;
+    }
+    Tnum sq_s0 = s0 * s0;
+    if (sumsqadd < sq_s0)
+    {
+        sumsqadd += sq_s0;
+    }
+    return (sumsqdiff / sumsqadd) < sq_s0 ? 1 : 0;
 }
 #pragma endregion
 #if defined(MATLAYOUTRM)
@@ -824,10 +856,11 @@ static const STFNTABLE_T g_fntable = {
     rotxdeg,rotydeg,rotzdeg,
     translate,
     unit, fill, transpose,
-    add, sub, mul, inv,
+    add, sub, mul, muls, inv,
     setsub, getsub,
     writef,writeb,readf,readb,
-    soldense
+    soldense,
+    equalv
 };
 
 CPSTFNTABLE_T   FNGET() { return &g_fntable; }

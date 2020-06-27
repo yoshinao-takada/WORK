@@ -99,6 +99,71 @@ in the world space.
     \param end [out] end of the range
     */
     void    BL_bilinearinterp_xy_range(pcBL_bilinearinterp_t obj, BL_2r32_t begin, BL_2r32_t end);
+
+    /*!
+    \brief create a new bilinear interp table object
+    \param wh_nodes [in] node count in width and height directions
+    \param table_origin [in] coordinate of the table origin node in world coordinate space
+    \param grid_pitch [in] horizontal and vertical distances between two adjacent nodes.
+    \param dim [in] dimension of each value
+    */
+    pBL_bilinearinterp_t BL_bilinearinterpv_new(
+        const BL_2u32_t wh_nodes,
+        const BL_2r32_t table_origin,
+        const BL_2r32_t grid_pitch,
+        uint32_t dim);
+
+    
+    /*!
+    \brief delete an existing object and set the pointer NULL, preventing from deleting
+        not-initialized or already-deleted objects.
+    \param ppobj [in,out] pointer-pointer to an object
+    */
+    void BL_bilinearinterpv_delete(pBL_bilinearinterp_t* ppobj);
+
+
+    /*!
+    \brief fill coeff table
+    \param obj [in,out]
+    */
+    void BL_bilinearinterpv_fill_coeff(pBL_bilinearinterp_t obj);
+
+
+    /*!
+    \brief execute bilinear interpolation to get an approximaged value of function represented by values
+    \param obj [in] interpolating object
+    \param xy [in]
+    \param value [out]
+    \return unix errno compatible error number
+    */
+    int BL_bilinearinterpv_calc_value(pcBL_bilinearinterp_t obj, const BL_2r32_t xy, BL_1r32_t* value);
+
+
+    /*!
+    \brief execute bilinear interpolation on uniformly aligned 2D grid
+    \param obj [in] interpolating object
+    \param begin [in] begining of the grid
+    \param pitch [in] grid pitch of the grid
+    \param wh [in] width and height of grid count
+    \param ppvalues [out] values on the grid nodes
+    \return unix errno compatible error number
+    */
+    int BL_bilinearinterpv_calc_values(
+        pcBL_bilinearinterp_t obj,
+        const BL_2r32_t begin,
+        const BL_2r32_t pitch,
+        pBL_arrayMD_t values);
+
+    pBL_bilinearinterp_t BL_bilinearinterpv_new2(
+        const BL_2u32_t wh_nodes,
+        const BL_3u8_t* bgr_pixels
+    );
+
+
+    pBL_bilinearinterp_t BL_bilinearinterpv_new3(
+        const BL_2u32_t wh_nodes,
+        const BL_4u8_t* bgra_pixels
+    );
 #ifdef __cplusplus
 }
 #endif
