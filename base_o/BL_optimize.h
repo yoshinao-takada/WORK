@@ -19,6 +19,9 @@ extern "C" {
 */
 typedef int (*BL_OBJECTIVE_FUNC)(uint32_t vardim, const BL_1r32_t* x, const void* params, BL_1r32_t* f);
 
+typedef BL_OBJECTIVE_FUNC   BL_CONSTRAINTEQ_FUNC; // equality constraint function
+typedef BL_OBJECTIVE_FUNC   BL_CONSTRAINTGE_FUNC; // greater-than-or-equal-to constraint function
+
 /*!
 \brief 1st and 2nd order divided difference
 https://en.wikipedia.org/wiki/Divided_differences

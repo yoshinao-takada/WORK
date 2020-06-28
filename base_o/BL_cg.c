@@ -1,6 +1,5 @@
 #include    "base_o/BL_cg.h"
 #include    "base_l/BL_errno.h"
-#include    "base_o/BL_gradient.h"
 #include    "base_o/BL_linesearch.h"
 #include    "base_g/BL_matexport.h"
 #include    <stdlib.h>
@@ -142,10 +141,10 @@ int BL_cg_run(pBL_cg_t p, uint32_t iter_max)
 void BL_cg_trace_base(pcBL_cg_t p)
 {
     if (!(p->trace)) return;
-    fprintf(p->trace, "BL_cg,%s,xv");
+    fprintf(p->trace, "BL_cg,xv");
     for (uint32_t i = 0; i != p->vardim; i++)
     {
         fprintf(p->trace, ",%f", p->xv[i]);
     }
-    fprintf(p->trace, "f(xv),%f\n", p->f);
+    fprintf(p->trace, ",f(xv),%f\n", p->f);
 }

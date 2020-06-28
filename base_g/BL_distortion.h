@@ -18,7 +18,9 @@ pBL_arrayMD_t BL_dist_polymodel_create_distmap(pcBL_dist_polymodel_t model);
 
 pBL_arrayMD_t BL_disp_polymodel_create_undistmap(pcBL_dist_polymodel_t model);
 
+float  fan_angle(const BL_2r32_t point, uint32_t n_corner, const BL_2r32_t* corners);
 
+bool is_in_polygon(const BL_2r32_t point, uint32_t n_corner, const BL_2r32_t* corners);
 #ifdef __cplusplus
 }
 #endif

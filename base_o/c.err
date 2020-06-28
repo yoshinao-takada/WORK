@@ -1,7 +1,19 @@
 mkdir -p Debug
-gcc -I.. -c -g -DDEBUG_DATA_DIR="\"../UTData/\"" -D_DEBUG -o Debug/BL_cg.o BL_cg.c
-mkdir -p ../Debug
-rm -f ../Debug/libbase_o.a
-ar -r ../Debug/libbase_o.a Debug/BL_linesearch.o Debug/BL_optimize.o Debug/BL_steepestdescent.o Debug/BL_cg.o
-ar: creating ../Debug/libbase_o.a
-ranlib ../Debug/libbase_o.a
+gcc -I.. -c -g -DDEBUG_DATA_DIR="\"../UTData/\"" -D_DEBUG -o Debug/BL_testappeqc.o BL_testappeqc.c
+BL_testappeqc.c: In function ‘TEST_create’:
+BL_testappeqc.c:3:26: error: storage class specified for parameter ‘fnmat’
+    3 | static pcBL_matfnr32RM_t fnmat = NULL;
+      |                          ^~~~~
+BL_testappeqc.c:3:1: error: parameter ‘fnmat’ is initialized
+    3 | static pcBL_matfnr32RM_t fnmat = NULL;
+      | ^~~~~~
+BL_testappeqc.c:12:1: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+   12 | {
+      | ^
+BL_testappeqc.c:3:26: error: declaration for parameter ‘fnmat’ but no such parameter
+    3 | static pcBL_matfnr32RM_t fnmat = NULL;
+      |                          ^~~~~
+BL_testappeqc.c:84: error: expected ‘{’ at end of input
+   84 | */
+      | 
+make: *** [makefile:52: Debug/BL_testappeqc.o] Error 1

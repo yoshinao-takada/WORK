@@ -1,7 +1,7 @@
 #include    "base_o/BL_optimize.h"
 #include    "base_l/BL_errno.h"
 #include    "base_l/BL_base.h"
-
+#include    <stdlib.h>
 
 BL_1r32_t   BL_dd1(const BL_2r32_t xy0, const BL_2r32_t xy1)
 {

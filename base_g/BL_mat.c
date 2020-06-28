@@ -37,6 +37,8 @@ static Tenum writeb(CPnum m0, Tsize nc0, Tsize nr0, FILE* pf);
 static Tenum readb(Pnum* ppm0, Psize nc0, Psize nr0, FILE* pf);
 static Tenum equalv(CPnum m0, CPnum m1, Tsize nc0, Tnum s0);
 static CPnum muls(CPnum m0, Tsize nc0, Tsize nr0, Tnum s0, Pnum m);
+static CPnum crossproduct(CPnum m0, CPnum m1, Pnum m);
+static CPnum normalize(CPnum m0, Pnum m, Tsize ndim);
 #pragma endregion
 #pragma region matlayout_dependent
 static CPnum transpose(CPnum m0, Pnum m, Tsize nc, Tsize nr);
@@ -222,6 +224,21 @@ static Tenum equalv(CPnum m0, CPnum m1, Tsize nc0, Tnum s0)
         sumsqadd += sq_s0;
     }
     return (sumsqdiff / sumsqadd) < sq_s0 ? 1 : 0;
+}
+
+static CPnum crossproduct(CPnum m0, CPnum m1, Pnum m)
+{
+    m[0] = m0[1] * m1[2] - m0[2] * m1[1];
+    m[1] = m0[2] * m1[0] - m0[0] * m1[2];
+    m[2] = m0[0] * m1[1] - m0[1] * m1[0];
+}
+
+static CPnum normalize(CPnum m0, Pnum m, Tsize ndim)
+{
+    Tnum L2norm;
+    mul(m0, m0, &L2norm, 1, ndim, 1);
+    Tnum normalize_coeff = _1 / MATH_SQRT(L2norm);
+    return muls(m0, ndim, 1, normalize_coeff, m);
 }
 #pragma endregion
 #if defined(MATLAYOUTRM)
@@ -860,7 +877,8 @@ static const STFNTABLE_T g_fntable = {
     setsub, getsub,
     writef,writeb,readf,readb,
     soldense,
-    equalv
+    equalv,
+    crossproduct, normalize
 };
 
 CPSTFNTABLE_T   FNGET() { return &g_fntable; }

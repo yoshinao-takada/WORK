@@ -20,13 +20,17 @@ CC = cc
 #---------------------------------------------------
 debug	:	$(DEBUG_TARGET)
 
-DEBUG_OBJECTS = Debug/linesearch.o
+DEBUG_OBJECTS = Debug/linesearch.o Debug/lagrange_mult.o
 
 $(DEBUG_TARGET)	:	$(DEBUG_OBJECTS)
 	mkdir -p $(WORK_DIR)/Debug
 	$(CC) -o $@ $(DEBUG_OBJECTS) $(DEBUG_LIB_FLAGS)
 
 Debug/linesearch.o	:	linesearch.cc
+	mkdir -p Debug
+	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
+
+Debug/lagrange_mult.o	:	lagrange_mult.cc
 	mkdir -p Debug
 	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
 
@@ -39,13 +43,17 @@ clean_debug	:
 #---------------------------------------------------
 release	:	$(RELEASE_TARGET)
 
-RELEASE_OBJECTS = Release/linesearch.o
+RELEASE_OBJECTS = Release/linesearch.o Release/lagrange_mult.o
 
 $(RELEASE_TARGET)	:	$(RELEASE_OBJECTS)
 	mkdir -p $(WORK_DIR)/Release
 	$(CC) -o $@ $(RELEASE_OBJECTS) $(RELEASE_LIB_FLAGS)
 
 Release/linesearch.o	:	linesearch.cc
+	mkdir -p Release
+	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $?
+
+Release/lagrange_mult.o	:	lagrange_mult.cc
 	mkdir -p Release
 	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $?
 

@@ -33,6 +33,10 @@ typedef Tenum   (* FNTYPE(E_pmnnF,r32,CM) )(Pnum* ppm0, Psize nc0, Psize nr0, FI
 typedef Tenum   (* FNTYPE(E_mNNm,r32,CM))(Pnum m0, Tsize nc0, Tsize nr0, Pnum m1);
 // vector equality discrimination
 typedef Tenum   (* FNTYPE(E_MMNS,r32,CM))(CPnum m0, CPnum m1, Tsize nc0, Tnum s0);
+// vector cross product
+typedef CPnum   (* FNTYPE(M_MMm,r32,CM))(CPnum m0, CPnum m1, Pnum m0xm1);
+// vector normalize
+typedef CPnum   (* FNTYPE(M_MmN,r32,CM))(CPnum m0, Pnum m, Tsize ndim);
 typedef struct {
     const FNTYPE(M_Sm,r32,CM)   rotxrad; // rotation matrix around x-axis, angle unit: radian
     const FNTYPE(M_Sm,r32,CM)   rotyrad; // rotation matrix around y-axis, angle unit: radian
@@ -57,6 +61,8 @@ typedef struct {
     const FNTYPE(E_pmnnF,r32,CM) readb; // read as CPU dependent binary
     const FNTYPE(E_mNNm,r32,CM) soldense; // solve dense linear equation
     const FNTYPE(E_MMNS,r32,CM) equalv; // 1: m0 == m1 within s0 tolerance
+    const FNTYPE(M_MMm,r32,CM) crossproduct;   // cross product of two vectors which is 1x3 or 3x1 matrices.
+    const FNTYPE(M_MmN,r32,CM) normalize;   // normalize a vector
 }   STTYPE(matfn,r32,CM), * PSTTYPE(matfn,r32,CM) ;
 typedef const STTYPE(matfn,r32,CM) * CPSTTYPE(matfn,r32,CM);
 CPSTFNTABLE_T   FNGET();

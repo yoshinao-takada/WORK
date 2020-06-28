@@ -1,5 +1,4 @@
 #include    "base_o/BL_steepestdescent.h"
-#include    "base_o/BL_gradient.h"
 #include    "base_l/BL_base.h"
 #include    "base_l/BL_errno.h"
 #include    <stdlib.h>
