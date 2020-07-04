@@ -1,1 +1,23 @@
-make: Nothing to be done for 'debug'.
+mkdir -p Debug
+gcc -I/usr/include/opencv4 -I.. -c -g -DDEBUG_DATA_DIR="\"../UTData/\"" -o Debug/BL_bilinearinterp.o BL_bilinearinterp.c
+BL_bilinearinterp.c: In function ‘BL_bilinearinterpv_fill_coeff’:
+BL_bilinearinterp.c:196:35: error: ‘iV’ undeclared (first use in this function); did you mean ‘iv’?
+  196 |             for (uint16_t iv = 0; iV != dims_coeff[0]; iv++)
+      |                                   ^~
+      |                                   iv
+BL_bilinearinterp.c:196:35: note: each undeclared identifier is reported only once for each function it appears in
+BL_bilinearinterp.c: In function ‘BL_bilinearinterpv_calc_values’:
+BL_bilinearinterp.c:287:32: warning: passing argument 3 of ‘scan_end’ from incompatible pointer type [-Wincompatible-pointer-types]
+  287 |         scan_end(begin, pitch, wh, grid_end);
+      |                                ^~
+      |                                |
+      |                                const BL_1u32_t * {aka const unsigned int *}
+BL_bilinearinterp.c:123:84: note: expected ‘const BL_1u16_t *’ {aka ‘const short unsigned int *’} but argument is of type ‘const BL_1u32_t *’ {aka ‘const unsigned int *’}
+  123 | static void scan_end(const BL_2r32_t begin, const BL_2r32_t pitch, const BL_2u16_t grid_wh,
+      |                                                                    ~~~~~~~~~~~~~~~~^~~~~~~
+BL_bilinearinterp.c: In function ‘BL_bilinearinterpv_getBGR’:
+BL_bilinearinterp.c:347:68: error: ‘bgin’ undeclared (first use in this function); did you mean ‘begin’?
+  347 |         if (ESUCCESS != (err = BL_bilinearinterpv_calc_values(obj, bgin, pitch, wh, &values))) { break; }
+      |                                                                    ^~~~
+      |                                                                    begin
+make: *** [makefile:61: Debug/BL_bilinearinterp.o] Error 1

@@ -126,5 +126,25 @@ namespace
         ASSERT_EQ(33 * 37 * 22, p->data.unit_count);
         BL_free(&p);
     }
+
+    /*!
+    \brief BL_arrayMD_t BL_arrayMD_pushdims, BL_arrayMD_popdims
+    */
+    TEST(SUIT, arrayMD_pushpopdims)
+    {
+        BL_arrayMD_dims dims = { 640, 480 };
+        pBL_arrayMD_t p = BL_arrayMD_new(dims, BL_3r32_t);
+        ASSERT_EQ(dims[0], p->dims[0]);
+        ASSERT_EQ(dims[1], p->dims[1]);
+        BL_arrayMD_pushdims(p, 3);
+        ASSERT_EQ((uint16_t)3, p->dims[0]);
+        ASSERT_EQ(dims[0], p->dims[1]);
+        ASSERT_EQ(dims[1], p->dims[2]);
+        uint32_t popped_dim = 0;
+        BL_arrayMD_popdims(p, &popped_dim);
+        ASSERT_EQ((uint32_t)3, popped_dim);
+        ASSERT_EQ(dims[0], p->dims[0]);
+        ASSERT_EQ(dims[1], p->dims[1]);
+    }
 } // namespace
 

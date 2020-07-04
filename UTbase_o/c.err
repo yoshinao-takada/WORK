@@ -1,4 +1,0 @@
-mkdir -p Debug
-cc -I/usr/include/opencv4 -c -g -DUTDATA="\"/home/yoshinao/REPOS/WORK/UTData/\"" -D_DEBUG -I../gtest/include -I.. -o Debug/lagrange_mult.o lagrange_mult.cc
-mkdir -p ../Debug
-cc -o ../Debug/UTbase_o.exe Debug/linesearch.o Debug/lagrange_mult.o -L../Debug -L../gtest/lib -L/usr/lib64 -lbase_o -lbase_g -lbase_l -lgtestd -lgtest_maind -lopencv_imgcodecs -lopencv_imgproc -lopencv_core -lstdc++ -lpthread -lm

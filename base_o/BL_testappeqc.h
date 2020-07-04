@@ -7,6 +7,7 @@ extern "C" {
 #endif
 
 int TEST_lagrange(uint32_t vardim, const BL_1r32_t* x, const void* params, BL_1r32_t* f);
+int TEST_penalty(uint32_t vardim, const BL_1r32_t* x, const void* params, BL_1r32_t* f);
 
 
 
@@ -62,6 +63,7 @@ f_eqc(Ps, param(P0,Vd,R))
 int TEST_eqc1(uint32_t vardim, const BL_1r32_t* x, const void* params, BL_1r32_t* f);
 
 int TEST_create(pcTEST_plane_t plane, pcTEST_cylinder_t cylinder, pBL_cg_t* optimizer);
+int TEST_create_penalty(pcTEST_plane_t plane, pcTEST_cylinder_t cylinder, pBL_cg_t* optimizer);
 
 void TEST_destroy(pBL_cg_t* ppoptimizer);
 #ifdef __cplusplus

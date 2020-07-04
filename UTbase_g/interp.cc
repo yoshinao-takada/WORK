@@ -129,22 +129,13 @@ namespace
     TEST(SUIT, _4cell3ch_interpolation)
     {
         const float node_value_ref[] = {
-            // ch0
-            0.0f, 127.0f, 0.0f,
-            0.0f, 255.0f, 0.0f,
-            0.0f, 127.0f, 0.0f,
-            // ch1
-            0.0f, 0.0f, 0.0f,
-            127.0f, 255.0f, 127.0f,
-            0.0f, 0.0f, 0.0f,
-            // ch2
-            127.0f, 0.0f, 0.0f,
-            0.0f, 255.0f, 0.0f,
-            0.0f, 0.0f, 127.0f
+            0, 0, 0,   0, 127, 0,   0, 255, 0,
+            127, 0, 0,   0, 0, 127,   0, 0, 0,
+            255, 0, 0,   0, 0, 0,   0, 0, 255
         };
         const BL_2u32_t wh_nodes = { 3, 3 };
-        const BL_2r32_t table_origin = { 0.0f, 0.0f };
-        const BL_2r32_t grid_pitch = { 100, 100 };
+        const BL_2r32_t table_origin = { -100.0f, -100.0f };
+        const BL_2r32_t grid_pitch = { 150, 150 };
         pBL_bilinearinterp_t interpolator = BL_bilinearinterpv_new(wh_nodes, table_origin, grid_pitch, 3);
         BL_ptr_t i_values = BL_arrayMD_begin(interpolator->values);
         for (uint16_t i = 0; i != ARRAYSIZE(node_value_ref); i++)
@@ -169,5 +160,11 @@ namespace
         }
         cv::imwrite(IMAGE_SAVE_PATH2, img);
         BL_bilinearinterpv_delete(&interpolator);
+    }
+
+    // serious floating number vector interpolation with 4-cells
+    TEST(SUIT, _4cell3ch_real_number_vector_interpolation)
+    {
+        
     }
 }

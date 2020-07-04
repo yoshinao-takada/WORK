@@ -42,7 +42,7 @@ namespace
 
     TEST(SUIT, linesearch)
     {
-        const ellipsoidal_distance_t param_obj = { { 1.1f, 2.0f, -0.5f }, { 2.0f, 1.5f, 0.7f }};
+        const ellipsoidal_distance_t param_obj = { { 1.1f, -2.0f, -0.5f }, { 2.0f, 1.5f, 0.7f }};
         const void* params = (const void*)&param_obj;
         const BL_3r32_t xv0 = { 0.0f, 0.0f, 0.0f };
         // const BL_3r32_t vdir = { 1.0f, 0.0f, 0.0f };
@@ -55,7 +55,7 @@ namespace
 
     TEST(SUIT, steepestdescent)
     {
-        const ellipsoidal_distance_t param_obj = { { 1.1f, 2.0f, -0.5f }, { 2.0f, 1.5f, 0.7f }};
+        const ellipsoidal_distance_t param_obj = { { 1.1f, -2.0f, -0.5f }, { 2.0f, 1.5f, 0.7f }};
         const void* params = (const void*)&param_obj;
         const BL_3r32_t xv0 = { 0.0f, 0.0f, 0.0f };
         BL_1r32_t hmin = 1.0e-4f;
@@ -69,14 +69,15 @@ namespace
 
     TEST(SUIT, cg)
     {
-        const ellipsoidal_distance_t param_obj = { { 1.1f, 2.0f, -0.5f }, { 2.0f, 1.5f, 0.7f }};
+        const ellipsoidal_distance_t param_obj = { { 1.1f, -2.0f, -0.5f }, { 2.0f, 1.5f, 0.7f }};
         const void* params = (const void*)&param_obj;
         const BL_3r32_t xv0 = { 0.0f, 0.0f, 0.0f };
         BL_1r32_t hmin = 1.0e-4f;
         pBL_cg_t p = BL_cg_new(3, hmin, xv0, SqEllipsoidalDistance, params);
+        p->trace = nullptr;
         int err = BL_cg_run(p, 100);
         ASSERT_EQ(ESUCCESS, err);
-        printf("xyz final = (%f,%f,%f)\n", p->xv[0], p->xv[1], p->xv[2]);
+        printf("xyz final = (%f,%f,%f), f final = %f\n", p->xv[0], p->xv[1], p->xv[2], p->f);
         BL_SAFEFREE(&p);
     }
 }

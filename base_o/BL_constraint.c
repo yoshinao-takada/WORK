@@ -14,8 +14,8 @@ pBL_constraint_t BL_constraint_new(
         p->eqc = eqc;
         p->neqc = neqc;
         p->vardim_objective = vardim_objective;
-        p->eqc_dim = eqc->unit_count >> 1;
-        p->neqc_dim = neqc->unit_count >> 1;
+        p->eqc_dim = eqc->unit_count;
+        p->neqc_dim = neqc->unit_count;
         p->vardim = vardim_objective + p->eqc_dim + p->neqc_dim;
         p->fn_objective = fn_objective;
         p->params_objective = params_objective;

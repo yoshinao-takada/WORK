@@ -17,32 +17,32 @@ debug	:	$(DEBUG_TARGET)
 
 release	:	$(RELEASE_TARGET)
 
-DEBUG_OBJECTS = Debug/containers.o Debug/putils.o Debug/diag.o Debug/futils.o Debug/json.o \
+DEBUG_OBJECTS = Debug/containers.o Debug/putils.o Debug/diag.o Debug/futils.o \
 	Debug/json2.o
 
 $(DEBUG_TARGET)	:	$(DEBUG_OBJECTS)
 	mkdir -p $(WORK_DIR)/Debug
 	$(CC) -o $@ $(DEBUG_OBJECTS) $(DEBUG_LIB_FLAGS)
 
-Debug/containers.o	:	containers.cc
+Debug/containers.o	:	containers.cc ../base_l/BL_containers.h
 	mkdir -p Debug
-	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
+	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $<
 
-Debug/putils.o	:	putils.cc
+Debug/putils.o	:	putils.cc ../base_l/BL_putils.h ../base_l/BL_putils.c
 	mkdir -p Debug
-	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
+	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $<
 
 Debug/diag.o	:	diag.cc
 	mkdir -p Debug
 	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
 
-Debug/futils.o	:	futils.cc
+Debug/futils.o	:	futils.cc ../base_l/BL_futils.h ../base_l/BL_futils.c
 	mkdir -p Debug
-	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
+	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $<
 
-Debug/json.o	:	json.cc
-	mkdir -p Debug
-	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
+# Debug/json.o	:	json.cc
+# 	mkdir -p Debug
+# 	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
 
 Debug/json2.o	:	json2.cc
 	mkdir -p Debug

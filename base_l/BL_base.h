@@ -88,6 +88,7 @@ inline double BL_timespec_to_double(const struct timespec* ts)
     return (double)(ts->tv_sec) + 1.0e-9 * (double)(ts->tv_nsec);
 }
 
+#define CLAMP_R32_TO_U8(rnum) (uint8_t)__min(255.0f, __max(0.0f, rnum))
 #ifdef __cplusplus
 }
 #endif

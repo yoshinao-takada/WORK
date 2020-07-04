@@ -111,7 +111,7 @@ in the world space.
         const BL_2u32_t wh_nodes,
         const BL_2r32_t table_origin,
         const BL_2r32_t grid_pitch,
-        uint32_t dim);
+        uint32_t dim_element_vector);
 
     
     /*!
@@ -119,7 +119,7 @@ in the world space.
         not-initialized or already-deleted objects.
     \param ppobj [in,out] pointer-pointer to an object
     */
-    void BL_bilinearinterpv_delete(pBL_bilinearinterp_t* ppobj);
+   #define  BL_bilinearinterpv_delete(ppobj)    BL_bilinearinterp_delete(ppobj)
 
 
     /*!
@@ -138,6 +138,14 @@ in the world space.
     */
     int BL_bilinearinterpv_calc_value(pcBL_bilinearinterp_t obj, const BL_2r32_t xy, BL_1r32_t* value);
 
+    /*!
+    \brief get a range of (x,y) applicable to interpolation
+    (bebin[0] <= x < end[0], begin[1] <= y < end[1])
+    \param obj [in] interpolating object
+    \param begin [out] beginning of the range
+    \param end [out] end of the range
+    */
+    void    BL_bilinearinterpv_xy_range(pcBL_bilinearinterp_t obj, BL_2r32_t begin, BL_2r32_t end);
 
     /*!
     \brief execute bilinear interpolation on uniformly aligned 2D grid
@@ -152,18 +160,35 @@ in the world space.
         pcBL_bilinearinterp_t obj,
         const BL_2r32_t begin,
         const BL_2r32_t pitch,
-        pBL_arrayMD_t values);
+        const BL_2u32_t wh,
+        pBL_arrayMD_t* ppvalues);
 
-    pBL_bilinearinterp_t BL_bilinearinterpv_new2(
+    /*!
+    \brief create an interpolator object from B8G8R8 color pixel array
+    \param wh_nodes [in] 2D array size of bgr_pixels
+    \param bgr_pixels [in] pointer to the 1st element of the color pixel array
+    \return interpolator object 
+    */
+    pBL_bilinearinterp_t BL_bilinearinterpv_newBGR(
         const BL_2u32_t wh_nodes,
         const BL_3u8_t* bgr_pixels
     );
 
-
-    pBL_bilinearinterp_t BL_bilinearinterpv_new3(
-        const BL_2u32_t wh_nodes,
-        const BL_4u8_t* bgra_pixels
-    );
+    /*!
+    \brief get interpolated image as B8G8R8 color image
+    \param obj [in] interpolating object
+    \param begin [in] begining of the grid
+    \param pitch [in] grid pitch of the grid
+    \param wh [in] width and height of grid count
+    \param ppimage [out] BGR image created by interpolation
+    \return unix errno compatible error number
+    */
+    int BL_bilinearinterpv_getBGR(
+        pcBL_bilinearinterp_t obj,
+        const BL_2r32_t begin,
+        const BL_2r32_t pitch,
+        const BL_2u32_t wh,
+        pBL_arrayMD_t* ppimage);
 #ifdef __cplusplus
 }
 #endif

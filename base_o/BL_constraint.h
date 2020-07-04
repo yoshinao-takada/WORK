@@ -44,4 +44,15 @@ pBL_constraint_t BL_constraint_new(
     BL_OBJECTIVE_FUNC fn_objective,
     const void* params_objective);
 
+/*
+Notes about eqc and neqc
+1. Each of their elements holds 1) constraint function, 2) void-ptr-casted fixed parameters of it, 
+    3) penalty factor (coefficient when penalfy function optimization method is used)
+2. unequal constraint functions must be formated as f(x) < 0 is allowed.
+3. Type of each element of eqc and neqc is BL_3uptr_t (uintptr_t[3]).
+    element[0]: function of BL_OBJECTIVE_FUNC
+    element[1]: params argument of BL_OBJECTIVE_FUNC
+    element[2]: square of the function value is multiplied by element[2] before added to evaluation
+        function value.
+*/
 #endif /* BL_CONSTRAINT_H_ */

@@ -229,7 +229,13 @@ inline pBL_arrayMD_t BL_alloc_arrayMD(const BL_arrayMD_dims dims, uint32_t unit_
 #define BL_arrayMD_cbegin(ptr)  BL_array_cbegin(ptr)
 #define BL_arrayMD_end(ptr, unit_type_) BL_array_end(ptr, unit_type_)
 #define BL_arrayMD_cend(ptr, unit_type_)    BL_array_cend(ptr, unit_type_)
-
+#define BL_arrayMD_pushdims(ptr, int_num) { uint16_t* __dims_ptr = ptr->dims + 7; \
+    for (uint32_t i = 0; i != 7; i++) {  *__dims_ptr = *(__dims_ptr - 1); __dims_ptr--; } \
+    *__dims_ptr = (uint16_t)int_num; }
+#define BL_arrayMD_popdims(ptr, pint_num) { uint16_t* __dims_ptr = ptr->dims; \
+    *pint_num = *__dims_ptr; \
+    for (uint32_t i = 0; i != 7; i++) { *__dims_ptr = *(__dims_ptr + 1); __dims_ptr++; } \
+    *__dims_ptr = 0; }
 #ifdef __cplusplus
 }
 #endif

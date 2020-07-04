@@ -24,12 +24,12 @@ namespace
     }
 
     static const TEST_plane_t plane = {
-        { 0.0f, 0.0f, 0.0f}, { 1.0f/sqrtf(3.0f), 1.0f/sqrtf(3.0f), 1.0f/sqrtf(3.0f)}
+        { 0.0f, 0.0f, 2.0f}, { 1.0f/sqrtf(2.0f), 0.0, 1.0f/sqrtf(2.0f)}
     };
 
     static const TEST_cylinder_t cylinder {
-        { 0.0f, 0.0f, 0.0f}, { 1.0f/sqrtf(3.0f), 1.0f/sqrtf(3.0f), 1.0f/sqrtf(3.0f)},
-        1.5f
+        { 0.0f, 1.0f, 2.0f}, { 1.0f/sqrtf(2.0f), 0.0, 1.0f/sqrtf(2.0f)},
+        1.0f
     };
 
 
@@ -191,5 +191,28 @@ namespace
         ASSERT_EQ(ESUCCESS, TEST_eqc1(3, point_on_surface, (const void*)&cylinder, &eqc));
         printf("%s,eqc=%f\n", __FUNCTION__, eqc);
         ASSERT_TRUE(EqualF(0.0f, eqc, tolF));
+        BL_3r32_t point_outside, point_inside;
+        fnmat->add(point_on_surface, unit_normal_on_axis, point_outside, 3, 1);
+        fnmat->sub(point_on_surface, unit_normal_on_axis, point_inside, 3, 1);
+        ASSERT_EQ(ESUCCESS, TEST_eqc1(3, point_outside, (const void*)&cylinder, &eqc));
+        printf("%s,eqc=%f\n", __FUNCTION__, eqc);
+        ASSERT_EQ(ESUCCESS, TEST_eqc1(3, point_inside, (const void*)&cylinder, &eqc));
+        printf("%s,eqc=%f\n", __FUNCTION__, eqc);
+    }
+
+    // Solve constraint optmization problem using CG solver
+    TEST(SUIT, optcg0)
+    {
+        pBL_cg_t cg = nullptr;
+        ASSERT_EQ(ESUCCESS, TEST_create_penalty(&plane, &cylinder, &cg));
+        pcBL_constraint_t constraints = (pcBL_constraint_t)cg->params;
+        ASSERT_EQ(3, constraints->vardim_objective);
+        ASSERT_EQ(5, constraints->vardim);
+        ASSERT_EQ(2, constraints->eqc_dim);
+        ASSERT_EQ(0, constraints->neqc_dim);
+        cg->trace = nullptr;
+        ASSERT_EQ(ESUCCESS, BL_cg_run(cg, 100));
+        printf("xyz = %f,%f,%f, f = %f\n", cg->xv[0], cg->xv[1], cg->xv[2], cg->f);
+        TEST_destroy(&cg);
     }
 }

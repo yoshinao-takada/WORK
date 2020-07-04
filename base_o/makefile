@@ -5,14 +5,14 @@ DEBUG_LIBDIR = -L$(DEBUG_TARGET_DIR)
 DEBUG_LIBS = -lbase_g -lbase_l -lm
 DEBUG_TARGET = $(DEBUG_TARGET_DIR)/libbase_o.a
 DEBUG_OBJECTS = Debug/BL_linesearch.o Debug/BL_optimize.o Debug/BL_steepestdescent.o \
-	Debug/BL_cg.o Debug/BL_constraint.o Debug/BL_testappeqc.o
+	Debug/BL_cg.o Debug/BL_constraint.o Debug/BL_testappeqc.o Debug/BL_optc.o
 RELEASE_CCFLAGS = $(INCFLAGS) -c -O2 -DNDEBUG
 RELEASE_TARGET_DIR = ../Release
 RELEASE_LIBDIR = -L$(RELEASE_TARGET_DIR)
 RELEASE_LIBS = -lbase_o -lbase_l -lm
 RELEASE_TARGET = $(RELEASE_TARGET_DIR)/libbase_o.a
 RELEASE_OBJECTS = Release/BL_linesearch.o Release/BL_optimize.o Release/BL_steepestdescent.o \
-	Release/BL_cg.o Release/BL_constraint.o Release/BL_testappeqc.o
+	Release/BL_cg.o Release/BL_constraint.o Release/BL_testappeqc.o Release/BL_optc.o
 
 #-----------------------------------------------------------------------------------
 # debug
@@ -43,6 +43,10 @@ Debug/BL_cg.o	:	BL_cg.c BL_cg.h BL_optimize.h
 	$(CC) $(DEBUG_CCFLAGS) -o $@ $<
 
 Debug/BL_constraint.o	:	BL_constraint.c BL_constraint.h BL_optimize.h
+	mkdir -p Debug
+	$(CC) $(DEBUG_CCFLAGS) -o $@ $<
+
+Debug/BL_optc.o	:	BL_optc.c BL_optc.h BL_optimize.h
 	mkdir -p Debug
 	$(CC) $(DEBUG_CCFLAGS) -o $@ $<
 
@@ -84,6 +88,10 @@ Release/BL_cg.o	:	BL_cg.c BL_cg.h BL_optimize.h
 	$(CC) $(RELEASE_CCFLAGS) -o $@ $<
 
 Release/BL_constraint.o	:	BL_constraint.c BL_constraint.h BL_optimize.h
+	mkdir -p Release
+	$(CC) $(RELEASE_CCFLAGS) -o $@ $<
+
+Release/BL_optc.o	:	BL_optc.c BL_optc.h BL_optimize.h
 	mkdir -p Release
 	$(CC) $(RELEASE_CCFLAGS) -o $@ $<
 
