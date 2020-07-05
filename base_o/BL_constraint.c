@@ -24,3 +24,13 @@ pBL_constraint_t BL_constraint_new(
 }
 
 
+int BL_constraint_run(uint32_t iter_max_SUMT, uint32_t iter_max_cg)
+{
+    int err = ESUCCESS;
+    do {
+        do {
+            
+        } while (--iter_max_SUMT);
+    } while (0);
+    return err;
+}

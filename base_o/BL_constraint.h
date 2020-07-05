@@ -55,4 +55,10 @@ Notes about eqc and neqc
     element[2]: square of the function value is multiplied by element[2] before added to evaluation
         function value.
 */
+
+/*!
+\brief run constraint optimization solver
+\param iter_max [in] 
+*/
+int BL_constraint_run(uint32_t iter_max_SUMT, uint32_t iter_max_cg);
 #endif /* BL_CONSTRAINT_H_ */
