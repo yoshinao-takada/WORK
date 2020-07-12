@@ -33,7 +33,9 @@
         "stdlib.h": "c",
         "cstdlib": "c",
         "algorithm": "c",
-        "ranges": "c"
+        "ranges": "c",
+        "ccomplex": "cpp",
+        "complex": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

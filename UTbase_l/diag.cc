@@ -24,7 +24,14 @@ namespace
         ASSERT_EQ(ESUCCESS, err);
         err = pthread_create(&thread, &attr, BL_diag_timeout, (void*)&timeout);
         ASSERT_EQ(ESUCCESS, err);
-        while (timeout.status == BL_timeout_before) {;}
+        int i = 0;
+        while (timeout.status == BL_timeout_before) 
+        { // This while loop must do non-trivial action; only "continue;" does not work.
+            i++;
+            struct timespec very_shot_time = { 0, 1000 }; // 1 microsecond
+            struct timespec r = { 0, 0 };
+            nanosleep(&very_shot_time, &r);
+        }
         struct timespec realtime_end, usertime_end, systemtime_end;
         err = BL_diag_realtime(&realtime_end);
         ASSERT_EQ(ESUCCESS, err);
@@ -36,6 +43,8 @@ namespace
         double realtime_elapsedd = BL_timespec_to_double(&realtime_elapsed);
         double usertime_elapsedd = BL_timespec_to_double(&usertime_elapsed);
         double timeout_told = 0.3;
+        printf("realtime_elapsed = %f, usertime_elapsed = %f, tolerance = %f\n",
+            realtime_elapsedd, usertime_elapsedd, timeout_told);
         ASSERT_EQ(true, BL_diag_nearly_equald(timeout_refd, realtime_elapsedd, timeout_told));
         ASSERT_EQ(true, BL_diag_nearly_equald(timeout_refd, usertime_elapsedd, timeout_told));
     }

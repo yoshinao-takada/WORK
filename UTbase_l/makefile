@@ -11,14 +11,14 @@ DEBUG_LIB_FLAGS = $(DEBUG_LIB_DIR) -lbase_l -lgtestd -lgtest_maind -lstdc++ -lpt
 RELEASE_LIB_DIR = -L../Release -L$(GTEST_RELEASE_LIBPATH)
 RELEASE_LIB_FLAGS = $(RELEASE_LIB_DIR) -lbase_l -lgtest -lgtest_main -lstdc++ -lpthread
 INCFLAGS = -I../gtest/include -I..
-CC = cc
+DEF_DATA_DIR = -DDATA_DIR="\"../UTDATA_base_l/\""
 
 debug	:	$(DEBUG_TARGET)
 
 release	:	$(RELEASE_TARGET)
 
 DEBUG_OBJECTS = Debug/containers.o Debug/putils.o Debug/diag.o Debug/futils.o \
-	Debug/json2.o
+	Debug/json2.o Debug/rationalfunc.o
 
 $(DEBUG_TARGET)	:	$(DEBUG_OBJECTS)
 	mkdir -p $(WORK_DIR)/Debug
@@ -39,6 +39,10 @@ Debug/diag.o	:	diag.cc
 Debug/futils.o	:	futils.cc ../base_l/BL_futils.h ../base_l/BL_futils.c
 	mkdir -p Debug
 	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $<
+
+Debug/rationalfunc.o	:	rationalfunc.cc ../base_l/BL_rationalfunc.h ../base_l/BL_rationalfunc.c
+	mkdir -p Debug
+	$(CC) $(DEF_DATA_DIR) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $<
 
 # Debug/json.o	:	json.cc
 # 	mkdir -p Debug

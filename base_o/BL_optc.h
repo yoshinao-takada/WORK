@@ -9,80 +9,43 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-// 1. equality constraints are defined as function value is equal to zero.
-// eqc element is BL_2uptr_t. The 1st element is uptr_t casted BL_OBJECTIVE_FUNC.
-// The 2nd element is (const void*) casted fixed parameters of the constraint function.
-// In evaluating the equality constraints, the function values are squared and multiplied by a penalty factor multiplier.
-// The penalty factor multiplier is dynamically increasing over progressing optmization.
-// 2. non-equality constraints are defined as function value is less than or equal to zero.
-// neqc element is BL_2uptr_t.The 1st element is uptr_t casted BL_OBJECTIVE_FUNC.
-// The 2nd element is (const void*) casted fixed parameters of the constraint function.
-// In evaluating the nonequality constraints, A diode function D(f(x)) = (exp(M*f(x)) - 1.0f) is applied to the constraint
-// function value.
 typedef struct {
-    pBL_array_t eqc; // equality constraints
-    pBL_array_t neqc; // non-equality constraints
-    BL_OBJECTIVE_FUNC objective;
-    const void* objective_params;
-    uint32_t vardim; // dimension of independent variable vector of objective and constraint functions.
-} BL_OptFnParam_t, *pBL_OptFnParam_t;
-typedef const BL_OptFnParam_t *pcBL_OptFnParam_t;
+    uint32_t vardim;
+    BL_OBJECTIVE_FUNC main_objective;
+    const void* main_objective_params;
+    // constraint functions
+    pBL_array_t eqc; // equality constraint functions and parameters
+    pBL_array_t neqc; // nonequality constraint functions and parameters
+    BL_1r32_t meqc; // penalty function multiplier for equality constraints
+    BL_2r32_t mneqc; // penalty function multiplier for nonequality constraints
+} BL_ConstrainedObjective_t, *pBL_ConstrainedObjective_t;
+typedef const BL_ConstrainedObjective_t *pcBL_ConstrainedObjective_t;
 
 /*!
-\brief evaluate equality constraints
-\param m [in] penalty factor multiplier
-\param f [in] eqaulity constraint function value
-\return m * f^2
+\brief set meqc = 1.0f, mneqc = {1.0f, 1.0f}
 */
-BL_1r32_t BL_evaleqc(BL_1r32_t m, BL_1r32_t f);
+void BL_ConstrainedObjective_ResetPenaltyMultipliers(pBL_ConstrainedObjective_t p);
 
 /*!
-\brief evaluate nonequality constraints
-\param m [in] diode penalty factor multiplier
-\param f [in] nonequality constraint function value
-\return exp(m*f)-1
+\brief change meqc *= 2.0f, mneqc[0] *= 2.0f, mneqc[1] /= 2.0f, n times
+    for negative n, meqc /= 2.0f, mneqc[0] /= 2.0f, mneqc[1] *= 2.0f
+\param p [in,out] object under operation
+\param n [in] number of operation times
 */
-BL_1r32_t BL_evalneqc(BL_1r32_t m, BL_1r32_t f);
+void BL_ConstrainedObjective_ChangePenaltyMultipliers(pBL_ConstrainedObjective_t p, int32_t n);
 
-typedef struct {
-    BL_OptFnParam_t base; // objective and constraint functions
-    BL_1r32_t meqc; // penalty factor multiplier for eqc
-    BL_1r32_t mneqc; // penalty factor multiplier for neqc
-    pBL_array_t xvini; // initialization vector of independent variables in base CG solver
-} BL_OptConstrained_t, *pBL_OptConstrained_t;
-typedef const BL_OptConstrained_t *pcBL_OptConstrained_t;
+// default of n of BL_ConstrainedObjective_ChangePenaltyMultipliers(p, n)
+#define N_CHANGE        3
 
 /*!
-\brief create a cg solver and its parameter struct
-\param problem_functions [in] objective and constraint functions and their fixed parameters
-\param xvini [in] initialization vector of independent variables for base CG solver
-\param xvtol [in] convergence limits of xvini in each base CG solver convergence
-\param hmin [in] lower limit of linear search step
+\brief run SUMT optimization using CG solver
+\param p [in] constrained optimization problem under operation
+\param pCG [in,out] CG (Conjugate Gradient) solver
+\param iter_SUMT [in] maximum limit of SUMT iteration
+\param iter_CG [in] maximum limit of CG search
 */
-int BL_OptConstranied_create(
-    pcBL_OptFnParam_t problem_functions, const BL_1r32_t* xvini, BL_1r32_t xvtol, BL_1r32_t hmin,
-    pBL_OptConstrained_t* ppcgparams, pBL_cg_t* ppcg);
-
-/*!
-\brief update a cg solver and its parameter struct.
-cg solver is updated with a new initial vector of independent variables.
-cg objective function parameter is updated with new penalty multipliers
-\param pcgparams [in,out]
-\param pcg [in,out]
-\return ESUCCESS: optimization was converged. ERR_NO_CONVERGENCE: not yet converged.
-*/
-int BL_OptConstrained_update(pBL_OptConstrained_t pcgparams, pBL_cg_t pcg);
-
-/*!
-\brief objective function of CG optimizer for penalty function method
-\param vardim [in] dimension of independent variable vector
-\param x [in] independent variable vector
-\param params [in] (const void*) casted BL_OptConstrained_t instance
-\param f [out] function value
-\return unix errno compatible number. Errors in any of objective and constraint functions cause this.
-*/
-int BL_OPtConstrained_Objective(uint32_t vardim, const BL_1r32_t* x, const void* params, BL_1r32_t* f);
+int BL_ConstrainedObjective_run(
+    pBL_ConstrainedObjective_t p, pBL_cg_t pCG, uint32_t iter_SUMT, uint32_t iter_CG, BL_1r32_t* xv);
 #ifdef __cplusplus
 }
 #endif

@@ -169,6 +169,7 @@ inline int BL_linkable_delete(pBL_linkable_t anchor, const void* conditions, BL_
     return ESUCCESS;
 }
 
+// delete all nodes other than anchor
 inline void BL_linkable_unlink_other_than_anchor(pBL_linkable_t anchor)
 {
     pBL_linkable_t removed = NULL;
@@ -177,6 +178,14 @@ inline void BL_linkable_unlink_other_than_anchor(pBL_linkable_t anchor)
         free((void*)removed);
     }
 }
+
+// delete all nodes including anchor
+inline void BL_linkable_delete_all(pBL_linkable_t anchor)
+{
+    BL_linkable_unlink_other_than_anchor(anchor);
+    free((void*)anchor);
+}
+
 typedef uint16_t    BL_arrayMD_dims[8];
 
 typedef struct {
