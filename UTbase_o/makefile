@@ -9,9 +9,9 @@ DEBUG_TARGET = $(WORK_DIR)/Debug/UTbase_o.exe
 RELEASE_TARGET = $(WORK_DIR)/Release/UTbase_o.exe
 DEBUG_LIB_DIR = -L../Debug -L$(GTEST_DEBUG_LIBPATH) -L/usr/lib64
 OCV_LIB_FLAGS = -lopencv_imgcodecs -lopencv_imgproc -lopencv_core
-DEBUG_LIB_FLAGS = $(DEBUG_LIB_DIR) -lbase_o -lbase_g -lbase_l -lgtestd -lgtest_maind $(OCV_LIB_FLAGS) -lstdc++ -lpthread -lm
+DEBUG_LIB_FLAGS = $(DEBUG_LIB_DIR) -lgtestd -lgtest_maind -lbase_g -lbase_l -lbase_o $(OCV_LIB_FLAGS) -lstdc++ -lpthread -lm
 RELEASE_LIB_DIR = -L../Release -L$(GTEST_RELEASE_LIBPATH)
-RELEASE_LIB_FLAGS = $(RELEASE_LIB_DIR) -lbase_o -lbase_g -lbase_l -lgtest -lgtest_main $(OCV_LIB_FLAGS) -lstdc++ -lpthread -lm
+RELEASE_LIB_FLAGS = $(RELEASE_LIB_DIR) -lgtest -lgtest_main -lbase_o -lbase_g -lbase_l $(OCV_LIB_FLAGS) -lstdc++ -lpthread -lm
 INCFLAGS = -I../gtest/include -I..
 CC = cc
 
@@ -20,7 +20,7 @@ CC = cc
 #---------------------------------------------------
 debug	:	$(DEBUG_TARGET)
 
-DEBUG_OBJECTS = Debug/linesearch.o Debug/lagrange_mult.o
+DEBUG_OBJECTS = Debug/linesearch.o Debug/nelder1.o Debug/lagrange_mult.o Debug/dfo.o
 
 $(DEBUG_TARGET)	:	$(DEBUG_OBJECTS)
 	mkdir -p $(WORK_DIR)/Debug
@@ -34,6 +34,14 @@ Debug/lagrange_mult.o	:	lagrange_mult.cc
 	mkdir -p Debug
 	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
 
+Debug/nelder1.o	:	nelder1.cc
+	mkdir -p Debug
+	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
+
+Debug/dfo.o	:	dfo.cc
+	mkdir -p Debug
+	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
+
 clean_debug	:
 	rm -f Debug/*.o
 	rm -f ../Debug/*.exe
@@ -43,7 +51,7 @@ clean_debug	:
 #---------------------------------------------------
 release	:	$(RELEASE_TARGET)
 
-RELEASE_OBJECTS = Release/linesearch.o Release/lagrange_mult.o
+RELEASE_OBJECTS = Release/linesearch.o Release/nelder1.o Release/lagrange_mult.o Release/dfo.o
 
 $(RELEASE_TARGET)	:	$(RELEASE_OBJECTS)
 	mkdir -p $(WORK_DIR)/Release
@@ -54,6 +62,14 @@ Release/linesearch.o	:	linesearch.cc
 	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $?
 
 Release/lagrange_mult.o	:	lagrange_mult.cc
+	mkdir -p Release
+	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $?
+
+Release/nelder1.o	:	nelder1.cc
+	mkdir -p Release
+	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $?
+
+Release/dfo.o	:	dfo.cc
 	mkdir -p Release
 	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $?
 

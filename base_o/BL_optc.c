@@ -1,5 +1,5 @@
 #include    "base_o/BL_optc.h"
-
+#include    "base_o/BL_optimize.h"
 // evaluate penalty function of equality constraint
 static BL_1r32_t eval_eqc(BL_1r32_t m, BL_1r32_t f)
 {
@@ -13,7 +13,7 @@ static BL_1r32_t eval_neqc(const BL_2r32_t m, BL_1r32_t f)
 }
 
 #define BL_OPT_EVAL_BREAK_OBJECTIVE(err_, fn_, vardim_, x_, params_, pf_) if \
-(ESUCCESS != (err_=fn_(vardim_,x_,params_,pf_))) { break; }
+(ESUCCESS != (err_=(fn_)((vardim_),(x_),(params_),(pf_)))) { break; }
 
 // unconstrained objective function combining
 // (1) main objective function (usual unconstrained objective)
@@ -33,10 +33,10 @@ static int BL_optc_objective(uint32_t vardim, const BL_1r32_t* x, const void* pa
             BL_1r32_t f_eqc;
             BL_OPT_EVAL_BREAK_OBJECTIVE(
                 err,
-                (BL_OBJECTIVE_FUNC)(*i_eqc._2uptr)[0],
+                (BL_OBJECTIVE_FUNC)i_eqc._2uptr[i][0],
                 cobj->vardim,
                 x,
-                (const void*)(*i_eqc._2uptr)[1],
+                (const void*)i_eqc._2uptr[i][1],
                 &f_eqc
             );
             *f += eval_eqc(cobj->meqc, f_eqc);
@@ -50,10 +50,10 @@ static int BL_optc_objective(uint32_t vardim, const BL_1r32_t* x, const void* pa
             BL_1r32_t f_neqc;
             BL_OPT_EVAL_BREAK_OBJECTIVE(
                 err,
-                (BL_OBJECTIVE_FUNC)(*i_neqc._2uptr)[0],
+                (BL_OBJECTIVE_FUNC)i_neqc._2uptr[i][0],
                 cobj->vardim,
                 x,
-                (const void*)(*i_neqc._2uptr)[1],
+                (const void*)i_neqc._2uptr[i][1],
                 &f_neqc
             );
             *f += eval_neqc(cobj->mneqc, f_neqc);
