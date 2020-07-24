@@ -321,21 +321,21 @@ typedef union {
 
 typedef const BL_cptr_t *pcBL_cptr_t;
 
-#define BL_copy2(dst,src) { dst[0] = src[0]; dst[1] = src[1]; }
-#define BL_copy3(dst,src) { dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2]; }
-#define BL_copy4(dst,src) { dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2]; dst[3] = src[3]; }
-#define BL_copy5(dst,src) { dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2]; dst[3] = src[3]; \
-    dst[4] = src[4]; }
-#define BL_copy6(dst,src) { dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2]; dst[3] = src[3]; \
-    dst[4] = src[4]; dst[5] = src[5]; }
-#define BL_copy_array(dst,src,count)    {for (uint32_t i = 0; i != count; i++) { dst[i] = src[i]; }}
+#define BL_copy2(dst,src) { (dst)[0] = (src)[0]; (dst)[1] = (src)[1]; }
+#define BL_copy3(dst,src) { (dst)[0] = (src)[0]; (dst)[1] = (src)[1]; (dst)[2] = (src)[2]; }
+#define BL_copy4(dst,src) { (dst)[0] = (src)[0]; (dst)[1] = (src)[1]; (dst)[2] = (src)[2]; (dst)[3] = (src)[3]; }
+#define BL_copy5(dst,src) { (dst)[0] = (src)[0]; (dst)[1] = (src)[1]; (dst)[2] = (src)[2]; (dst)[3] = (src)[3]; \
+    (dst)[4] = (src)[4]; }
+#define BL_copy6(dst,src) { (dst)[0] = (src)[0]; (dst)[1] = (src)[1]; (dst)[2] = (src)[2]; (dst)[3] = (src)[3]; \
+    (dst)[4] = (src)[4]; (dst)[5] = (src)[5]; }
+#define BL_copy_array(dst,src,count)    {for (uint32_t i___ = 0; i___ != count; i___++) { (dst)[i___] = (src)[i___]; }}
 #define BL_copy9(dst,src)   BL_copy_array(dst,src,9)
 #define BL_copy16(dst,src)  BL_copy_array(dst,src,16)
 
-#define BL_accumulate_array(dst,src,count)   {for (uint32_t i = 0; i != count; i++) {dst[i] += src[i]; }}
-#define BL_accumulate2(dst,src) { dst[0]+=src[0]; dst[1]+=src[1]; }
-#define BL_accumulate3(dst,src) { dst[0]+=src[0]; dst[1]+=src[1]; dst[2]+=src[2]; }
-#define BL_accumulate4(dst,src) { dst[0]+=src[0]; dst[1]+=src[1]; dst[2]+=src[2]; dst[3]+=src[3]; }
+#define BL_accumulate_array(dst,src,count)   {for (uint32_t i___ = 0; i___ != count; i___++) { (dst)[i___] += (src)[i___]; }}
+#define BL_accumulate2(dst,src) { (dst)[0]+=(src)[0]; (dst)[1]+=(src)[1]; }
+#define BL_accumulate3(dst,src) { (dst)[0]+=(src)[0]; (dst)[1]+=(src)[1]; (dst)[2]+=(src)[2]; }
+#define BL_accumulate4(dst,src) { (dst)[0]+=(src)[0]; (dst)[1]+=(src)[1]; (dst)[2]+=(src)[2]; (dst)[3]+=(src)[3]; }
 
 #ifdef __cplusplus
 }

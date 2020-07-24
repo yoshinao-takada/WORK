@@ -6,7 +6,7 @@
 namespace
 {
 #if defined(ENABLE_DFO)
-
+#if 0
     TEST(SUIT, compare_varfuncpair)
     {
         BL_varfuncpair_t vf0 = { new float[11], 0.1f }, vf1 = { new float[11], 0.5f };
@@ -48,6 +48,7 @@ namespace
         {
             ASSERT_EQ(keys[keys_sorted_index[i]], p->xf[i].f);
         }
+        BL_SAFEFREE(&p);
     }
 
     TEST(SUIT, is_matched_segment_)
@@ -91,6 +92,93 @@ namespace
                 ASSERT_NE(4, i);
             }            
         }
+        BL_SAFEFREE(&p);
+    }
+    
+#endif
+    static int DISTANCE_FROM(uint32_t vardim, const BL_1r32_t *x, const void* params, BL_1r32_t* pf)
+    {
+        const BL_1r32_t *params_ = (const BL_1r32_t*)params;
+        *pf = 0.0f;
+        for (uint32_t i = 0; i != vardim; i++, params_ += 2)
+        {
+            BL_1r32_t weighted_diff = (x[i] - *params_)/(*(params_ + 1));
+            *pf += weighted_diff * weighted_diff;
+        }
+        return 0;
+    }
+
+#if 0
+    TEST(SUIT, nelderMD_centroid)
+    {
+        const BL_1r32_t xv0[] = { 10.0f, 0.0f, 1.0f };
+        const float params_[] = { 2.0f, 0.5f, 2.0f, 0.5f, 2.0f, 1.5f };
+        pBL_nelderMD_t p = BL_nelderMD_new(
+            3, xv0, 1.0e-5f, DISTANCE_FROM, (const void*)params_);
+        ASSERT_NE(nullptr, p);
+        BL_varfuncpair_t varfunc;
+        BL_nelderMD_centroid(p);
+        BL_nelderMD_candidates(p->vardim, &(p->xf[p->vardim+1]), p->work);
+        BL_nelderMD_eval_candidates(p);
+        for (uint32_t i = 0; i <= (p->vardim+1); i++)
+        {
+            printf("p->xf[%d]: ", i);
+            printf_varfuncpair(stdout, &(p->xf[i]), p->vardim);
+        }
+        for (uint32_t i = 0; i != BL_dfo_polytope_work_vertex_count; i++)
+        {
+            printf("work[%s]: ", BL_dfo_work_labels[i]);
+            printf_varfuncpair(stdout, &(p->work[i]), p->vardim);
+        }
+        pBL_varfuncpair_t best_candidate = BL_nelderMD_find_best_candidate(p->work);
+        printf("best candidate: ");
+        printf_varfuncpair(stdout, best_candidate, p->vardim);
+        ASSERT_EQ(ESUCCESS, insert(p->vardim+2, p->xf, best_candidate, p->vardim));
+        for (uint32_t i = 0; i <= (p->vardim+1); i++)
+        {
+            printf("p->xf[%d]: ", i);
+            printf_varfuncpair(stdout, &(p->xf[i]), p->vardim);
+        }
+
+        for (uint32_t i = 0; i != 70;i++)
+        {
+            BL_nelderMD_centroid(p);
+            BL_nelderMD_candidates(p->vardim, &(p->xf[p->vardim+1]), p->work);
+            BL_nelderMD_eval_candidates(p);
+            for (uint32_t i = 0; i != BL_dfo_polytope_work_vertex_count; i++)
+            {
+                printf("work[%s]: ", BL_dfo_work_labels[i]);
+                printf_varfuncpair(stdout, &(p->work[i]), p->vardim);
+            }
+            best_candidate = BL_nelderMD_find_best_candidate(p->work);
+            printf("best candidate: ");
+            printf_varfuncpair(stdout, best_candidate, p->vardim);
+            ASSERT_EQ(ESUCCESS, insert(p->vardim+2, p->xf, best_candidate, p->vardim));
+            for (uint32_t i = 0; i <= (p->vardim+1); i++)
+            {
+                printf("p->xf[%d]: ", i);
+                printf_varfuncpair(stdout, &(p->xf[i]), p->vardim);
+            }
+        }
+        BL_SAFEFREE(&p);
+    }
+#endif
+    TEST(SUIT, nelderMD_run)
+    {
+        const BL_1r32_t xv0[] = { 1.0f, 1.0f, 1.0f };
+        const float params_[] = { 2.0f, 0.5f, 2.0f, 0.5f, 2.0f, 1.5f };
+        pBL_nelderMD_t p = BL_nelderMD_new(
+            3, xv0, 1.0e-5f, DISTANCE_FROM, (const void*)params_);
+        p->pf = nullptr;
+        int result = BL_nelderMD_run(p, 60);
+        printf("result = %d\n", result);
+        for (uint32_t i = 0; i <= (p->vardim+1); i++)
+        {
+            printf("p->xf[%d]: ", i);
+            printf_varfuncpair(stdout, &(p->xf[i]), p->vardim);
+        }
+        printf("eval_count = %d\n", p->count_eval_OF);
+        BL_SAFEFREE(&p);
     }
 #endif
 }

@@ -35,7 +35,8 @@
         "algorithm": "c",
         "ranges": "c",
         "ccomplex": "cpp",
-        "complex": "cpp"
+        "complex": "cpp",
+        "random": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

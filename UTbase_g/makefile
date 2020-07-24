@@ -21,7 +21,7 @@ CC = cc
 debug	:	$(DEBUG_TARGET)
 
 DEBUG_OBJECTS = Debug/mat.o Debug/texture.o Debug/mesh.o Debug/distortion.o Debug/interp.o \
-	Debug/discriminate.o Debug/twolines.o Debug/intersect.o
+	Debug/discriminate.o Debug/twolines.o Debug/intersect.o Debug/3D.o
 
 $(DEBUG_TARGET)	:	$(DEBUG_OBJECTS)
 	mkdir -p $(WORK_DIR)/Debug
@@ -59,6 +59,10 @@ Debug/intersect.o	:	intersect.cc
 	mkdir -p Debug
 	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
 
+Debug/3D.o	:	3D.cc
+	mkdir -p Debug
+	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
+
 clean_debug	:
 	rm -f Debug/*.o
 	rm -f ../Debug/*.exe
@@ -69,7 +73,7 @@ clean_debug	:
 release	:	$(RELEASE_TARGET)
 
 RELEASE_OBJECTS = Release/mat.o Release/texture.o Release/mesh.o Release/distortion.o Release/interp.o \
-	Release/discriminate.o Release/twolines.o Release/intersect.o
+	Release/discriminate.o Release/twolines.o Release/intersect.o Release/3D.o
 
 $(RELEASE_TARGET)	:	$(RELEASE_OBJECTS)
 	mkdir -p $(WORK_DIR)/Release
@@ -104,6 +108,10 @@ Release/twolines.o	:	twolines.cc
 	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $?
 
 Release/intersect.o	:	intersect.cc
+	mkdir -p Release
+	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $?
+
+Release/3D.o	:	3D.cc
 	mkdir -p Release
 	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $?
 
