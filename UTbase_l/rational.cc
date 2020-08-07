@@ -1,4 +1,4 @@
-#include    <gtest/gtest.h>
+#include    "UTbase_l/test_defs.h"
 #include    <base_l/BL_rational.h>
 #define     SUIT    rational
 

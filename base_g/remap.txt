@@ -1,0 +1,24 @@
+Consideration notes of cv::remap
+
+A mapping table of cv::remap is defined on destination nodes node-by-node
+
+Creating test images, given mapping table is defined on source nodes node-by-node.
+It is necessary to convert the table to that on destination nodes.
+
+Source node 2D index (u, v)
+mapped destination coordinate is (Xi.Xf, Yi.Yf), where
+    Xi: integer part of a horizontal coordinate of the destination plane
+    Xf: fractional part of a horizontal coordinate of the destination plane
+    Yi: integer part of a vertical coordinate of the destination plane
+    Yf: fractional part of a vertical coordinate of the destination plane
+
+Reliable destination node must have four neighboring source nodes. Each destination node
+is indexed by (X, Y), 2D integer coordinate.
+
+Scanning the source plane mapping table m(u, v) = (Xi.Xf, Yi.Yf), 
+the neighboring source node table Sn(X, Y) is filled as follows.
+Sn(x,y) element is BL_2i16_t[4]
+
+    *---*
+    |   |
+    *---*

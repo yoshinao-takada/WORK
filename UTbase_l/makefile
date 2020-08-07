@@ -1,100 +1,73 @@
-WORK_DIR = ..
-GTEST_INCPATH = $(WORK_DIR)/gtest/include
-GTEST_DEBUG_LIBPATH = $(WORK_DIR)/gtest/lib
-GTEST_RELEASE_LIBPATH = $(WORK_DIR)/gtest/lib
-DEBUG_CC_FLAGS = -c -g -DUTDATA="\"$(HOME)/REPOS/WORK/UTData/\""
-RELEASE_CC_FLAGS = -c -O2 -DUTDATA="\"$(HOME)/REPOS/WORK/UTData/\""
-DEBUG_TARGET = $(WORK_DIR)/Debug/UT.exe
-RELEASE_TARGET = $(WORK_DIR)/Release/UT.exe
-DEBUG_LIB_DIR = -L../Debug -L$(GTEST_DEBUG_LIBPATH)
-DEBUG_LIB_FLAGS = $(DEBUG_LIB_DIR) -lbase_l -lgtestd -lgtest_maind -lstdc++ -lpthread
-RELEASE_LIB_DIR = -L../Release -L$(GTEST_RELEASE_LIBPATH)
-RELEASE_LIB_FLAGS = $(RELEASE_LIB_DIR) -lbase_l -lgtest -lgtest_main -lstdc++ -lpthread
+# WORK_DIR should be defined as a compile option like -DWORK_DIR=\"xxx/yyy/\"
+# RESULT_DIR should be defined as a compile option like -DRESULT_DIR=\"xxx/yyy/\"
+# DATA_DIR shold be defined as a compile option like -DDATA_DIR=\"aaa/bbb\"
+DEF_DATA_DIR = -DWORK_DIR=\"./\" -DRESULT_DIR=\"../RESULTS/\" -DDATA_DIR=\"../DATA/UTbase_l/\"
+GTEST_INCFLAGS = -I../gtest/include
+GTEST_DEBUG_LIBDIR = -L../gtest/lib
+GTEST_RELEASE_LIBDIR = -L../gtest/lib
 INCFLAGS = -I../gtest/include -I..
-DEF_DATA_DIR = -DDATA_DIR="\"../UTDATA_base_l/\""
+DEBUG_CC_FLAGS = -c -g $(INCFLAGS)
+RELEASE_CC_FLAGS = -c -O2 $(INCFLAGS)
+DEBUG_TARGET_DIR = ../../Debug
+RELEASE_TARGET_DIR = ../../Release
+DEBUG_TRGET = $(DEBUG_TARGET_DIR)/UTbase_l
+RELEASE_TARGET = $(RELEASE_TARGET_DIR)/UTbase_l
+DEBUG_LIB_DIR = -L$(DEBUG_TARGET_DIR)
+RELEASE_LIB_DIR = -L$(RELEASE_TARGET_DIR)
+DEBUG_LIBS = $(DEBUG_LIB_DIR) -lbase_l -lgtestd -lgtest_maind -lstdc++ -pthread
+RELEASE_LIBS = $(RELEASE_LIB_DIR) -lbase_l -lgtest -lgtest_main -lstdc++ -pthread
 
+#---------------------------------------------------------------
+# debug rules
+#---------------------------------------------------------------
 debug	:	$(DEBUG_TARGET)
 
-release	:	$(RELEASE_TARGET)
-
-DEBUG_OBJECTS = Debug/containers.o Debug/putils.o Debug/diag.o Debug/futils.o \
-	Debug/json2.o Debug/rationalfunc.o Debug/rational.o
+DEBUG_OBJECTS = Debug/containers.o Debug/putils.o Debug/diag.o
 
 $(DEBUG_TARGET)	:	$(DEBUG_OBJECTS)
-	mkdir -p $(WORK_DIR)/Debug
-	$(CC) -o $@ $(DEBUG_OBJECTS) $(DEBUG_LIB_FLAGS)
+	mkdir -p $(DEBUG_TARGET_DIR)
+	$(CC) -o $@ $(DEBUG_OBJECTS) $(DEBUG_LIBS)
 
 Debug/containers.o	:	containers.cc ../base_l/BL_containers.h
 	mkdir -p Debug
-	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $<
+	$(CC) $(DEBUG_CC_FLAGS) -o $@ $<
 
-Debug/putils.o	:	putils.cc ../base_l/BL_putils.h ../base_l/BL_putils.c
+Debug/putils.o	:	putils.cc ../base_l/BL_putils.h
 	mkdir -p Debug
-	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $<
+	$(CC) $(DEBUG_CC_FLAGS) -o $@ $<
 
-Debug/diag.o	:	diag.cc
+Debug/diag.o	:	diag.cc ../base_l/BL_diag.h
 	mkdir -p Debug
-	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
+	$(CC) $(DEBUG_CC_FLAGS) -o $@ $<
 
-Debug/futils.o	:	futils.cc ../base_l/BL_futils.h ../base_l/BL_futils.c
-	mkdir -p Debug
-	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $<
+clean_debug	:
+	rm -rf Debug/*.o
+	rm -f $(DEBUG_TARGET)
 
-Debug/rationalfunc.o	:	rationalfunc.cc ../base_l/BL_rationalfunc.h ../base_l/BL_rationalfunc.c
-	mkdir -p Debug
-	$(CC) $(DEF_DATA_DIR) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $<
+#---------------------------------------------------------------
+# release rules
+#---------------------------------------------------------------
+release	:	$(RELEASE_TARGET)
 
-Debug/rational.o	:	rational.cc ../base_l/BL_rational.h ../base_l/BL_rational.c
-	mkdir -p Debug
-	$(CC) $(DEF_DATA_DIR) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $<
-
-# Debug/json.o	:	json.cc
-# 	mkdir -p Debug
-# 	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
-
-Debug/json2.o	:	json2.cc
-	mkdir -p Debug
-	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
-
-RELEASE_OBJECTS = Release/containers.o Release/putils.o Release/diag.o Release/futils.o \
-	Release/json2.o Release/rationalfunc.o Release/rational.o
+RELEASE_OBJECTS = Release/containers.o Release/putils.o Release/diag.o
 
 $(RELEASE_TARGET)	:	$(RELEASE_OBJECTS)
-	mkdir -p $(WORK_DIR)/Release
-	$(CC) -o $@ $(RELEASE_OBJECTS) $(RELEASE_LIB_FLAGS)
+	mkdir -p $(RELEASE_TARGET_DIR)
+	$(CC) -o $@ $(RELEASE_OBJECTS) $(RELEASE_LIBS)
 
 Release/containers.o	:	containers.cc ../base_l/BL_containers.h
 	mkdir -p Release
-	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $<
+	$(CC) $(RELEASE_CC_FLAGS) -o $@ $<
 
-Release/putils.o	:	putils.cc ../base_l/BL_putils.h ../base_l/BL_putils.c
+Release/putils.o	:	putils.cc ../base_l/BL_putils.h
 	mkdir -p Release
-	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $<
+	$(CC) $(RELEASE_CC_FLAGS) -o $@ $<
 
-Release/diag.o	:	diag.cc
+Release/diag.o	:	diag.cc ../base_l/BL_diag.h
 	mkdir -p Release
-	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $?
-
-Release/futils.o	:	futils.cc ../base_l/BL_futils.h ../base_l/BL_futils.c
-	mkdir -p Release
-	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $<
-
-Release/rationalfunc.o	:	rationalfunc.cc ../base_l/BL_rationalfunc.h ../base_l/BL_rationalfunc.c
-	mkdir -p Release
-	$(CC) $(DEF_DATA_DIR) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $<
-
-Release/rational.o	:	rational.cc ../base_l/BL_rational.h ../base_l/BL_rational.c
-	mkdir -p Release
-	$(CC) $(DEF_DATA_DIR) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $<
-
-Release/json2.o	:	json2.cc
-	mkdir -p Release
-	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $?
+	$(CC) $(RELEASE_CC_FLAGS) -o $@ $<
 
 clean_debug	:
-	rm -f Debug/*.o
-	rm -f ../Debug/*.exe
+	rm -rf Release/*.o
+	rm -f $(RELEASE_TARGET)
 
-clean_release	:
-	rm -f Release/*.o
-	rm -f ../Release/*.exe

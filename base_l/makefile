@@ -1,10 +1,9 @@
-CC = cc
 INCFLAGS = -I..
-DEBUG_CC_FLAGS = -c -g
-DEBUG_TARGET_DIR = ../Debug
+DEBUG_CC_FLAGS = -c -g $(INCFLAGS)
+RELEASE_CC_FLAGS = -c -O2 $(INCFLAGS)
+DEBUG_TARGET_DIR = ../../Debug
+RELEASE_TARGET_DIR = ../../Release
 DEBUG_TARGET = $(DEBUG_TARGET_DIR)/libbase_l.a
-RELEASE_CC_FLAGS = -c -O2
-RELEASE_TARGET_DIR = ../Release
 RELEASE_TARGET = $(RELEASE_TARGET_DIR)/libbase_l.a
 DEBUG_OBJECTS = Debug/BL_putils.o Debug/BL_diag.o Debug/BL_futils.o Debug/BL_locker.o \
 	Debug/BL_loggerbase.o Debug/BL_fsm.o Debug/BL_serializebase.o Debug/BL_data2D.o \
@@ -13,9 +12,10 @@ RELEASE_OBJECTS = Release/BL_putils.o Release/BL_diag.o Release/BL_futils.o Rele
 	Release/BL_loggerbase.o Release/BL_fsm.o Release/BL_serializebase.o Release/BL_data2D.o \
 	Release/BL_debutil.o Release/BL_rationalfunc.o Release/BL_rational.o
 
+#-----------------------------------------------
+# debug rules
+#-----------------------------------------------
 debug	:	$(DEBUG_TARGET)
-
-release	:	$(RELEASE_TARGET)
 
 $(DEBUG_TARGET)	:	$(DEBUG_OBJECTS)
 	mkdir -p $(DEBUG_TARGET_DIR)
@@ -66,6 +66,16 @@ Debug/BL_rational.o	:	BL_rational.c
 	mkdir -p Debug
 	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ BL_rational.c
 
+
+clean_debug	:
+	rm -f Debug/*
+	rm -f $(DEBUG_TARGET)
+
+#-----------------------------------------------
+# release rules
+#-----------------------------------------------
+release	:	$(RELEASE_TARGET)
+
 $(RELEASE_TARGET)	:	$(RELEASE_OBJECTS)
 	mkdir -p $(RELEASE_TARGET_DIR)
 	ar r $@ $(RELEASE_OBJECTS)
@@ -115,10 +125,15 @@ Release/BL_rational.o	:	BL_rational.c
 	mkdir -p Release
 	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ BL_rational.c
 
-clean_debug	:
-	rm -f Debug/*
-	rm -f $(DEBUG_TARGET)
-
 clean_release	:
 	rm -f Release/*
 	rm -f $(RELEASE_TARGET)
+
+clean	:
+	$(MAKE) clean_debug
+	$(MAKE) clean_release
+
+all	:
+	$(MAKE) clean
+	$(MAKE) debug
+	$(MAKE) release

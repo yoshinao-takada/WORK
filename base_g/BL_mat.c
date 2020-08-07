@@ -9,7 +9,13 @@
 #elif defined(NUMTYPEr64)
 #include    "base_g/localdefr64.h"
 #include    "base_g/globaldefr64RM.h"
-#endif /* NUMTYPErXX */
+#elif defined(NUMTYPEc64)
+#include    "base_g/localdefc64.h"
+#include    "base_g/globaldefc64RM.h"
+#elif defined(NUMTYPEc128)
+#include    "base_g/localdefc128.h"
+#include    "base_g/globaldefc128RM.h"
+#endif /* NUMTYPEXXX */
 #elif defined(MATLAYOUTCM)
 #if defined(NUMTYPEr32)
 #include    "base_g/localdefr32.h"
@@ -17,7 +23,13 @@
 #elif defined(NUMTYPEr64)
 #include    "base_g/localdefr64.h"
 #include    "base_g/globaldefr64CM.h"
-#endif /* NUMTYPErXX */
+#elif defined(NUMTYPEc64)
+#include    "base_g/localdefc64.h"
+#include    "base_g/globaldefc64CM.h"
+#elif defined(NUMTYPEc128)
+#include    "base_g/localdefc128.h"
+#include    "base_g/globaldefc128CM.h"
+#endif /* NUMTYPEXXX */
 #endif  /* MATLAYOUTXX */
 #include    <assert.h>
 #include    <errno.h>
@@ -54,10 +66,10 @@ static Tenum soldense(Pnum m0, Tsize nc0, Tsize nr0, Pnum m1);
 static Tenum writef(CPnum m0, Tsize nc0, Tsize nr0, FILE* pf);
 static Tenum readf(Pnum* ppm0, Psize nc0, Psize nr0, FILE* pf);
 #if defined(MATLAYOUTRM)
-static Tenum calc_normalized_norm(CPnum ipv, Tsize nsum, Pnum normalized_norm);
+static Tenum calc_normalized_norm(CPnum ipv, Tsize nsum, Prnum normalized_norm);
 static Tsize find_best_pivot_row(CPnum m0, Tsize nc, Tsize nr, Tsize icol);
 #elif defined(MATLAYOUTCM)
-static Tenum calc_normalized_norm(CPnum ipv, Tsize nsum, Tsize nr, Pnum normalized_norm);
+static Tenum calc_normalized_norm(CPnum ipv, Tsize nsum, Tsize nr, Prnum normalized_norm);
 static Tsize find_best_pivot_row(CPnum m0, Tsize nr, Tsize icol);
 #endif
 #pragma endregion
@@ -210,20 +222,20 @@ static Tenum readb(Pnum* ppm0, Psize nc0, Psize nr0, FILE* pf)
 // check vector equality
 static Tenum equalv(CPnum m0, CPnum m1, Tsize nc0, Tnum s0)
 {
-    Tnum sumsqdiff = _0, sumsqadd = _0;
+    Trnum sumnormdiff = REAL_PART(_0), sumnormadd = REAL_PART(_0);
     for (Tsize i = 0; i != nc0; i++)
     {
         Tnum diff_i = m0[i] - m1[i];
         Tnum add_i = m0[i] + m1[i];
-        sumsqdiff += diff_i * diff_i;
-        sumsqadd += add_i * add_i;
+        sumnormdiff += L2NORM(diff_i);
+        sumnormadd += L2NORM(add_i);
     }
-    Tnum sq_s0 = s0 * s0;
-    if (sumsqadd < sq_s0)
+    Trnum norm_s0 = L2NORM(s0);
+    if (sumnormadd < norm_s0)
     {
-        sumsqadd += sq_s0;
+        sumnormadd += norm_s0;
     }
-    return (sumsqdiff / sumsqadd) < sq_s0 ? 1 : 0;
+    return (sumnormdiff / sumnormadd) < norm_s0 ? 1 : 0;
 }
 
 static CPnum crossproduct(CPnum m0, CPnum m1, Pnum m)
@@ -353,22 +365,22 @@ static CPnum getsub(CPnum m0, Pnum m1, Tsize nc0, Tsize nr0, Tsize nc1, Tsize nr
 }
 
 // calculate normalized pivot norm
-static Tenum calc_normalized_norm(CPnum ipv, Tsize nsum, Pnum normalized_norm)
+static Tenum calc_normalized_norm(CPnum ipv, Tsize nsum, Prnum normalized_norm)
 {
     Tenum err = EFAULT;
     do {
-        Tnum pivot_norm = *ipv * *ipv;
-        Tnum partial_sum = pivot_norm;
+        Trnum pivot_norm = L2NORM(*ipv);
+        Trnum partial_sum = pivot_norm;
         for (Tsize i = 1; i < nsum; i++)
         {
             ipv++;
-            partial_sum += *ipv * *ipv;
+            partial_sum += L2NORM(*ipv);
         }
         *normalized_norm = _0;
-        if (partial_sum > MIN_L2SUM)
+        if (partial_sum > (MIN_L2SUM))
         {
             err = ESUCCESS;
-            *normalized_norm = pivot_norm / partial_sum;
+            *normalized_norm = RNUM_TO_NUM(pivot_norm / partial_sum);
         }
     } while (0);
     return err;
@@ -382,11 +394,11 @@ static Tenum calc_normalized_norm(CPnum ipv, Tsize nsum, Pnum normalized_norm)
 static Tsize find_best_pivot_row(CPnum m0, Tsize nc, Tsize nr, Tsize icol)
 {
     Tsize irow_found = nr;
-    Tnum normalized_norm = _0;
+    Trnum normalized_norm = _0;
     do {
         CPnum ipv = m0 + icol + icol * nc;
         Tsize n_partial_sum_range = nr - icol;
-        Tnum normalized_norm_temp = _0;
+        Trnum normalized_norm_temp = _0;
         for (Tsize irow = icol; irow != nr; irow++)
         {
             if (EFAULT == calc_normalized_norm(ipv, n_partial_sum_range, &normalized_norm_temp))
@@ -394,7 +406,7 @@ static Tsize find_best_pivot_row(CPnum m0, Tsize nc, Tsize nr, Tsize icol)
                 irow_found = nr;
                 break;
             }
-            if (normalized_norm_temp > normalized_norm)
+            if (L2NORM(normalized_norm_temp) > L2NORM(normalized_norm))
             {
                 normalized_norm = normalized_norm_temp;
                 irow_found = irow;
@@ -665,19 +677,19 @@ static CPnum getsub(CPnum m0, Pnum m1, Tsize nc0, Tsize nr0, Tsize nc1, Tsize nr
     return m1;
 }
 
-static Tenum calc_normalized_norm(CPnum ipv, Tsize nsum, Tsize nr, Pnum normalized_norm)
+static Tenum calc_normalized_norm(CPnum ipv, Tsize nsum, Tsize nr, Prnum normalized_norm)
 {
     Tenum err = EFAULT;
     do {
-        Tnum pivot_norm = *ipv * *ipv;
-        Tnum partial_sum = pivot_norm;
+        Trnum pivot_norm = L2NORM(*ipv);
+        Trnum partial_sum = pivot_norm;
         for (Tsize i = 1; i < nsum; i++)
         {
             ipv += nr;
-            partial_sum += *ipv * *ipv;
+            partial_sum += L2NORM(*ipv);
         }
         *normalized_norm = _0;
-        if (partial_sum > MIN_L2SUM)
+        if (partial_sum > (MIN_L2SUM))
         {
             err = ESUCCESS;
             *normalized_norm = pivot_norm / partial_sum;
@@ -689,11 +701,11 @@ static Tenum calc_normalized_norm(CPnum ipv, Tsize nsum, Tsize nr, Pnum normaliz
 static Tsize find_best_pivot_row(CPnum m0, Tsize nr, Tsize icol)
 {
     Tsize irow_found = nr;
-    Tnum normalized_norm = _0;
+    Trnum normalized_norm = _0;
     do {
         CPnum ipv = m0 + icol + icol * nr;
         Tsize n_partial_sum_range = nr - icol;
-        Tnum normalized_norm_temp = _0;
+        Trnum normalized_norm_temp = _0;
         for (Tsize irow = icol; irow != nr; irow++)
         {
             if (EFAULT == calc_normalized_norm(ipv, n_partial_sum_range, nr, &normalized_norm_temp))

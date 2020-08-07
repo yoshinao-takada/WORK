@@ -1,6 +1,9 @@
 #undef Tnum
 #undef Pnum
 #undef CPnum
+#undef Trnum
+#undef Prnum
+#undef CPrnum
 #undef Tsize
 #undef Psize
 #undef CPsize
@@ -26,3 +29,8 @@
 #undef MIN_L2SUM
 #undef NUMFORMATS
 #undef WRITENUMF
+#undef REAL_PART
+#undef IMAG_PART
+#undef L2NORM
+#undef CONJ
+#undef RNUM_TO_NUM

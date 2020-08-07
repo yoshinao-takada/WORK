@@ -2,6 +2,9 @@
 #define	Tnum	BL_1r64_t
 #define Pnum	BL_1r64_t*
 #define	CPnum	const BL_1r64_t*
+#define Trnum   BL_1r64_t
+#define Prnum   BL_1r64_t*
+#define CPrnum  const BL_1r64_t*
 #define	Tsize	BL_1u32_t
 #define	Psize	BL_1u32_t*
 #define	CPsize	const BL_1u32_t*
@@ -28,3 +31,8 @@
 #define MIN_L2SUM   1.0e-64
 #define NUMFORMATS  { "%f", ",%f" }
 #define WRITENUMF(pf,fmt,num) fprintf(pf,fmt,num)
+#define REAL_PART(_a)   (_a)
+#define IMAG_PART(_a)   0.0
+#define L2NORM(_a)      sqrt(_a * _a)
+#define CONJ(_a)        (_a)
+#define RNUM_TO_NUM(_r) (_r)

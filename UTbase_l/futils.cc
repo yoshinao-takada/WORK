@@ -1,9 +1,7 @@
-#include "gtest/gtest.h"
-#include "base_l/BL_base.h"
+#include    "UTbase_l/test_defs.h"
 #include "base_l/BL_futils.h"
 
 #define SUIT    futils
-#define DATADIR UTDATA
 
 namespace
 {

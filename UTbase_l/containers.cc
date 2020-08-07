@@ -1,7 +1,5 @@
-#include "gtest/gtest.h"
-#include "base_l/BL_base.h"
-#include "base_l/BL_containers.h"
-
+#include    "UTbase_l/test_defs.h"
+#include    "base_l/BL_containers.h"
 #define SUIT    containers
 
 namespace

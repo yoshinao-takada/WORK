@@ -1,11 +1,9 @@
-#include    <gtest/gtest.h>
-#include    <base_l/BL_rationalfunc.h>
-#include    <base_l/BL_errno.h>
+#include    "UTbase_l/test_defs.h"
 #include    <base_l/BL_futils.h>
 #include    <ccomplex>
 
 #define     SUIT    rationalfunc
-#define     RATIONAL_DATA_DIR       DATA_DIR    "rational/"
+#define     RATIONAL_DATA_DIR       RESULT_DIR    "rational/"
 #define     RATIONAL1DR_CSV         RATIONAL_DATA_DIR   "RATIONAL1DR.csv"
 #define     RATIONAL1DC_CSV         RATIONAL_DATA_DIR   "RATIONAL1DC.csv"
 
