@@ -337,6 +337,12 @@ typedef const BL_cptr_t *pcBL_cptr_t;
 #define BL_accumulate3(dst,src) { (dst)[0]+=(src)[0]; (dst)[1]+=(src)[1]; (dst)[2]+=(src)[2]; }
 #define BL_accumulate4(dst,src) { (dst)[0]+=(src)[0]; (dst)[1]+=(src)[1]; (dst)[2]+=(src)[2]; (dst)[3]+=(src)[3]; }
 
+#define BL_is_in_rect(index2D,rect) ( \
+    ( \
+        (index2D[0] < rect[0]) || (index2D[1] < rect[1]) || \
+        (index2D[0] >= (rect[0] + rect[2])) || (index2D[1] >= (rect[1] + rect[3])) \
+    ) ? ERANGE : ESUCCESS \
+)
 #ifdef __cplusplus
 }
 #endif

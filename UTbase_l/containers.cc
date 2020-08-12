@@ -19,7 +19,7 @@ namespace
         ASSERT_EQ(7, end0._1u16 - begin0._1u16);
         ASSERT_EQ((const void*)begin0._1u16, (const void*)cbegin0._1u16);
         ASSERT_EQ((const void*)end0._1u16, (const void*)cend0._1u16);
-        BL_free(&parray0);
+        BL_SAFEFREE(&parray0);
     }
     
     /*!
@@ -29,30 +29,30 @@ namespace
     {
         BL_linkable_declare_anchor(anchor);
         pBL_linkable_array_t nodes[4] = { NULL, NULL, NULL, NULL };
-        for (int i = 0; i < ARRAYSIZE(nodes); i++)
+        for (int i = 0; i < (int)ARRAYSIZE(nodes); i++)
         {
             nodes[i] = BL_linkable_array_new((i + 10) * 33, uint32_t);
             BL_linkable_link_prev(&anchor, &(nodes[i]->link));
         }
         uint32_t node_count = BL_linkable_count(&anchor);
         ASSERT_EQ(ARRAYSIZE(nodes), node_count);
-        for (int i = 0; i < ARRAYSIZE(nodes); i++)
+        for (int i = 0; i < (int)ARRAYSIZE(nodes); i++)
         {
             pBL_linkable_array_t node = (pBL_linkable_array_t)BL_linkable_unlink_next(&anchor);
             ASSERT_EQ((void*)nodes[i], (void*)node);
         }
 
-        for (int i = 0; i < ARRAYSIZE(nodes); i++)
+        for (int i = 0; i < (int)ARRAYSIZE(nodes); i++)
         {
             BL_linkable_link_next(&anchor, &(nodes[i]->link));
         }
         node_count = BL_linkable_count(&anchor);
         ASSERT_EQ(ARRAYSIZE(nodes), node_count);
-        for (int i = 0; i < ARRAYSIZE(nodes); i++)
+        for (int i = 0; i < (int)ARRAYSIZE(nodes); i++)
         {
             pBL_linkable_array_t node = (pBL_linkable_array_t)BL_linkable_unlink_prev(&anchor);
             ASSERT_EQ((void*)nodes[i], (void*)node);
-            BL_free(&node);
+            BL_SAFEFREE(&node);
         }
     }
 
@@ -71,7 +71,7 @@ namespace
             BL_cptr_t node_begin = BL_linkable_array_cbegin(node);
             BL_cptr_t ref_begin = BL_array_cbegin(ref_array);
 
-            for (int i=0; i< ref_array->unit_count; i++)
+            for (int i=0; i< (int)ref_array->unit_count; i++)
             {
                 b &= node_begin._1i32[i] == ref_begin._1i32[i];
             }
@@ -96,21 +96,21 @@ namespace
         pBL_array_t ref_array = BL_array_new(node_sizes[2], int32_t);
         BL_ptr_t ref_begin = BL_array_begin(ref_array);
         BL_ptr_t node_2_begin = BL_linkable_array_begin(nodes[2]);
-        for (int i = 0; i < nodes[2]->data.unit_count; i++)
+        for (int i = 0; i < (int)nodes[2]->data.unit_count; i++)
         {
             ref_begin._1i32[i] = i;
             node_2_begin._1i32[i] = i;
         }
-        for (int i = 0; i < ARRAYSIZE(nodes); i++)
+        for (int i = 0; i < (int)ARRAYSIZE(nodes); i++)
         {
             BL_linkable_link_next(&anchor, &(nodes[i]->link));
         }
 
         pBL_linkable_array_t found = (pBL_linkable_array_t)BL_linkable_find(&anchor, (const void*)ref_array, EqualArray);
         ASSERT_EQ((const void*)found, (const void*)nodes[2]);
-        for (int i = 0; i < ARRAYSIZE(nodes); i++)
+        for (int i = 0; i < (int)ARRAYSIZE(nodes); i++)
         {
-            BL_free(&nodes[i]);
+            BL_SAFEFREE(&nodes[i]);
         }
     }
 
@@ -122,7 +122,7 @@ namespace
         BL_arrayMD_dims dims = { 33, 37, 22 };
         pBL_arrayMD_t p = BL_arrayMD_new(dims, BL_3i32_t);
         ASSERT_EQ(33 * 37 * 22, p->data.unit_count);
-        BL_free(&p);
+        BL_SAFEFREE(&p);
     }
 
     /*!

@@ -4,7 +4,7 @@
 #include    "base_o/BL_cg.h"
 
 #define SUIT    linesearch
-#define TRACE1  UTDATA "Linesearch/trace1.csv"
+#define TRACE1  RESULT_DIR "Linesearch/trace1.csv"
 
 namespace 
 {

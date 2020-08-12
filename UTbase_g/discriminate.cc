@@ -2,32 +2,48 @@
 #include    "base_g/BL_discriminate.h"
 #include    "base_g/BL_texture.h"
 #include    <base_l/BL_futils.h>
+#include    <base_l/BL_errno.h>
 #include    <opencv2/core.hpp>
 #include    <opencv2/imgproc.hpp>
 #include    <opencv2/imgcodecs.hpp>
 #include    <base_l/BL_debutil.h>
+#include    "UTbase_g/testdefs.h"
 
-#define IMAGE_SAVE_CSV      UTDATA  "image.csv"
-#define II0_SAVE_CSV         UTDATA  "ii0.csv"
-#define RESTORED_CSV        UTDATA  "restored.csv"
-#define IMAGE_BEFORE_FILTER_JPG UTDATA  "image_before_filter.jpg"
-#define IMAGE_AFTER_FILTER_JPG  UTDATA  "image_after_filter.jpg"
-#define IMAGE_FOR_COLOR_DISCRIMINATION  UTDATA  "image_color_disc.jpg"
-#define IMAGE_RED_DOTS      UTDATA  "red_dots.jpg"
-#define IMAGE_BLUE_DOTS     UTDATA  "blue_dots.jpg"
-#define RED_DOT_CENTERS_CSV UTDATA  "red_dot_centers.csv"
-#define BLUE_DOT_CENTERS_CSV    UTDATA  "blue_dot_centers.csv"
-#define COLOR_INDEX_MAP_CSV UTDATA  "color_index_map.csv"
-#define RED_DOT_SEGIDS_CSV  UTDATA  "red_dot_segIDs.csv"
-#define BLUE_DOT_SEGIDS_CSV UTDATA  "blue_dot_segIDs.csv"
-#define BLUE_DOT_CENTERS_CSV    UTDATA  "blue_dot_centers.csv"
-#define RED_DOT_CENTERS_CSV     UTDATA  "red_dot_centers.csv"
+#define DISCRIMINATE_WORK_DIR   WORK_DIR   "discriminate/"
+#define IMAGE_SAVE_CSV      DISCRIMINATE_WORK_DIR  "image.csv"
+#define II0_SAVE_CSV         DISCRIMINATE_WORK_DIR  "ii0.csv"
+#define RESTORED_CSV        DISCRIMINATE_WORK_DIR  "restored.csv"
+#define IMAGE_BEFORE_FILTER_JPG DISCRIMINATE_WORK_DIR  "image_before_filter.jpg"
+#define IMAGE_AFTER_FILTER_JPG  DISCRIMINATE_WORK_DIR  "image_after_filter.jpg"
+#define IMAGE_FOR_COLOR_DISCRIMINATION  DISCRIMINATE_WORK_DIR  "image_color_disc.jpg"
+#define IMAGE_RED_DOTS      DISCRIMINATE_WORK_DIR  "red_dots.jpg"
+#define IMAGE_BLUE_DOTS     DISCRIMINATE_WORK_DIR  "blue_dots.jpg"
+#define RED_DOT_CENTERS_CSV DISCRIMINATE_WORK_DIR  "red_dot_centers.csv"
+#define BLUE_DOT_CENTERS_CSV    DISCRIMINATE_WORK_DIR  "blue_dot_centers.csv"
+#define COLOR_INDEX_MAP_CSV DISCRIMINATE_WORK_DIR  "color_index_map.csv"
+#define RED_DOT_SEGIDS_CSV  DISCRIMINATE_WORK_DIR  "red_dot_segIDs.csv"
+#define BLUE_DOT_SEGIDS_CSV DISCRIMINATE_WORK_DIR  "blue_dot_segIDs.csv"
+#define BLUE_DOT_CENTERS_CSV    DISCRIMINATE_WORK_DIR  "blue_dot_centers.csv"
+#define RED_DOT_CENTERS_CSV     DISCRIMINATE_WORK_DIR  "red_dot_centers.csv"
 
 #define SUIT    discriminate
 namespace
 {
+    int PrepareWorkDir()
+    {
+        int err = ESUCCESS;
+        do {
+            if (!BL_futils_exists(DISCRIMINATE_WORK_DIR))
+            {
+                err = BL_futils_create_directories(DISCRIMINATE_WORK_DIR);
+            }
+        } while (false);
+        return err;
+    }
+
     TEST(SUIT, sum1x1)
     {
+        ASSERT_EQ(ESUCCESS, PrepareWorkDir());
         BL_arrayMD_dims dims = { 16, 16, 1,1,1,1,1,1 };
         pBL_arrayMD_t src_image = BL_arrayMD_new(dims, uint8_t);
         BL_ptr_t i_src_image = BL_arrayMD_begin(src_image);
@@ -78,6 +94,7 @@ namespace
 
     TEST(SUIT, boxfilter)
     {
+        ASSERT_EQ(ESUCCESS, PrepareWorkDir());
         BL_checkerconf_t texture_conf = {
             false, { 640, 480 }, { 64,64 },
             {{ 255, 255, 0 }, { 0, 255, 255 }}
@@ -152,6 +169,7 @@ namespace
 
     TEST(SUIT, nearest_color)
     {
+        ASSERT_EQ(ESUCCESS, PrepareWorkDir());
         const BL_3u8_t ref_colors[] = { COLOR_WHITE, COLOR_RED, COLOR_BLUE };
         const BL_3u8_t colors[] = { COLOR_WHITE, COLOR_RED, COLOR_BLUE, COLOR_ORANGE, COLOR_BLUEGREEN };
         const uint8_t ref_values[] = { 0, 1, 2, 1, 2 };
@@ -243,6 +261,7 @@ namespace
 
     TEST(SUIT, color_discriminate)
     {
+        ASSERT_EQ(ESUCCESS, PrepareWorkDir());
         BL_checkerconf2_t texture_conf = {
             { false, { 640, 480 }, { 64, 64 }, { COLOR_ORANGE, COLOR_WHITE }},
             { 256, 128 }, { COLOR_BLUEGREEN, COLOR_WHITE }

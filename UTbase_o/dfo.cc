@@ -114,7 +114,7 @@ namespace
         const BL_1r32_t xv0[] = { 10.0f, 0.0f, 1.0f };
         const float params_[] = { 2.0f, 0.5f, 2.0f, 0.5f, 2.0f, 1.5f };
         pBL_nelderMD_t p = BL_nelderMD_new(
-            3, xv0, 1.0e-5f, DISTANCE_FROM, (const void*)params_);
+            3, xv0, 1.0f, 1.0e-5f, DISTANCE_FROM, (const void*)params_);
         ASSERT_NE(nullptr, p);
         BL_varfuncpair_t varfunc;
         BL_nelderMD_centroid(p);
@@ -168,7 +168,7 @@ namespace
         const BL_1r32_t xv0[] = { 1.0f, 1.0f, 1.0f };
         const float params_[] = { 2.0f, 0.5f, 2.0f, 0.5f, 2.0f, 1.5f };
         pBL_nelderMD_t p = BL_nelderMD_new(
-            3, xv0, 1.0e-5f, DISTANCE_FROM, (const void*)params_);
+            3, xv0, 1.0f, 1.0e-5f, DISTANCE_FROM, (const void*)params_);
         p->pf = nullptr;
         int result = BL_nelderMD_run(p, 60);
         printf("result = %d\n", result);

@@ -5,11 +5,12 @@
 #include    "base_g/BL_bilinearinterp.h"
 #include    "base_g/BL_matexport.h"
 #include    "base_l/BL_futils.h"
+#include    "UTbase_g/testdefs.h"
 #define SUIT    interp
-#define INTERP_WORK_DIR     UTDATA  "interp/"
-#define IMAGE_SAVE_PATH0    INTERP_WORK_DIR  "img0.jpg"
-#define IMAGE_SAVE_PATH1    INTERP_WORK_DIR  "img1.jpg"
-#define IMAGE_SAVE_PATH2    INTERP_WORK_DIR  "imgc.jpg"
+#define INTERP_RESULT_DIR   RESULT_DIR "interp/"
+#define IMAGE_SAVE_PATH0    INTERP_RESULT_DIR  "img0.jpg"
+#define IMAGE_SAVE_PATH1    INTERP_RESULT_DIR  "img1.jpg"
+#define IMAGE_SAVE_PATH2    INTERP_RESULT_DIR  "imgc.jpg"
 namespace
 {
     static const float tolF = 1.0e-5f;
@@ -29,9 +30,9 @@ namespace
     {
         int err = ESUCCESS;
         do {
-            if (!BL_futils_exists(INTERP_WORK_DIR))
+            if (!BL_futils_exists(INTERP_RESULT_DIR))
             {
-                err = BL_futils_create_directories(INTERP_WORK_DIR);
+                err = BL_futils_create_directories(INTERP_RESULT_DIR);
             }
         } while (0);
         return err;

@@ -64,8 +64,13 @@ where c is the centroid of the best vardim dimensional polytope of xv.
 \param params [in] fixed parameter of the objective function
 \return pointer to a newly created object
 */
-pBL_nelderMD_t  BL_nelderMD_new(uint32_t vardim, const BL_1r32_t* xv0, BL_1r32_t dx, BL_1r32_t eps,
-    BL_OBJECTIVE_FUNC fn_eval, const void* params);
+pBL_nelderMD_t  BL_nelderMD_new(
+    uint32_t vardim, 
+    const BL_1r32_t* xv0, 
+    BL_1r32_t dx, 
+    BL_1r32_t eps,
+    BL_OBJECTIVE_FUNC fn_eval, 
+    const void* params);
 
 /*!
 \brief execute optimization

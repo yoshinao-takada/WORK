@@ -1,12 +1,31 @@
 {
     "configurations": [
         {
-            "name": "Linux",
+            "name": "Linux-matRM",
             "includePath": [
                 "${workspaceFolder}/**",
                 "/usr/include/opencv4/**"
             ],
-            "defines": ["NUMTYPEr32", "MATLAYOUTCM"],
+            "defines": [
+                "NUMTYPEr32",
+                "MATLAYOUTRM"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64",
+            "configurationProvider": "ms-vscode.cmake-tools"
+        },
+        {
+            "name": "Linux-matCM",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/include/opencv4/**"
+            ],
+            "defines": [
+                "NUMTYPEr32",
+                "MATLAYOUTCM"
+            ],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c11",
             "cppStandard": "c++17",

@@ -1,0 +1,2 @@
+/usr/bin/ar qc libbase_o.a CMakeFiles/base_o.dir/BL_linesearch.c.o CMakeFiles/base_o.dir/BL_optimize.c.o CMakeFiles/base_o.dir/BL_steepestdescent.c.o CMakeFiles/base_o.dir/BL_cg.c.o CMakeFiles/base_o.dir/BL_constraint.c.o CMakeFiles/base_o.dir/BL_nelder1.c.o CMakeFiles/base_o.dir/BL_dfo.c.o CMakeFiles/base_o.dir/BL_penalty.c.o
+/usr/bin/ranlib libbase_o.a

@@ -9,10 +9,10 @@ namespace
     {
         static const char* ref_str[] = { "123", "456", "abc", "def" };
         char path_str[] = "/123/456/abc/def";
-        const char* end_path_str = path_str + strlen(path_str);
+        // const char* end_path_str = path_str + strlen(path_str);
         BL_futils_split(path_str);
         char* scanner = path_str;
-        for (int i = 0; i < ARRAYSIZE(ref_str); i++)
+        for (int i = 0; i < (int)ARRAYSIZE(ref_str); i++)
         {
             while (*scanner == '\0') scanner++;
             ASSERT_EQ(0, strcmp(ref_str[i], scanner));
@@ -36,13 +36,13 @@ namespace
             "/"
         };
 
-        for (int i = 0; i < ARRAYSIZE(filepaths); i++)
+        for (int i = 0; i < (int)ARRAYSIZE(filepaths); i++)
         {
             const char* fname_begin = BL_futils_findfilename(filepaths[i]);
             ASSERT_EQ(ref_char[i], *fname_begin);
         }
 
-        for (int i = 0; i < ARRAYSIZE(filepaths); i++)
+        for (int i = 0; i < (int)ARRAYSIZE(filepaths); i++)
         {
             char* dirpath = BL_futils_copydirpath(filepaths[i]);
             ASSERT_EQ(0, strcmp(dirpaths[i], dirpath));
@@ -55,7 +55,7 @@ namespace
         const char* left_parts[] = { "/usr/bin", "/usr/bin/" };
         const char* right_parts[] = { "bash", "bash"};
         const char* ref_str[] = { "/usr/bin/bash", "/usr/bin/bash" };
-        for (int i = 0; i < ARRAYSIZE(left_parts); i++)
+        for (int i = 0; i < (int)ARRAYSIZE(left_parts); i++)
         {
             char* combined = BL_futils_append(left_parts[i], right_parts[i]);
             ASSERT_EQ(0, strcmp(ref_str[i], combined));
@@ -63,7 +63,7 @@ namespace
         }
     }
 
-#define SAMPLE_FILE DATADIR "In/sample-abc.txt"
+#define SAMPLE_FILE DATA_DIR "In/sample-abc.txt"
     TEST(SUIT, filesize)
     {
         uint32_t cb_filesize;
@@ -72,8 +72,8 @@ namespace
         ASSERT_EQ(4, cb_filesize);
     }
 
-#define TEST_DIRECTORIES    DATADIR "Out/1/2/3"
-#define TEST_DIRECTORIES2   DATADIR "Out/1"
+#define TEST_DIRECTORIES    WORK_DIR "Out/1/2/3"
+#define TEST_DIRECTORIES2   WORK_DIR "Out/1"
 
     TEST(SUIT, create_remove_directories)
     {

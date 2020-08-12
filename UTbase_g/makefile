@@ -1,120 +1,83 @@
-WORK_DIR = ..
-GTEST_INCPATH = $(WORK_DIR)/gtest/include
-GTEST_DEBUG_LIBPATH = $(WORK_DIR)/gtest/lib
-GTEST_RELEASE_LIBPATH = $(WORK_DIR)/gtest/lib
-OCV_INCFLAGS = -I/usr/include/opencv4
-DEBUG_CC_FLAGS = $(OCV_INCFLAGS) -c -g -DUTDATA="\"$(HOME)/REPOS/WORK/UTData/\""
-RELEASE_CC_FLAGS = $(OCV_INCFLAGS) -c -O2 -DUTDATA="\"$(HOME)/REPOS/WORK/UTData/\""
-DEBUG_TARGET = $(WORK_DIR)/Debug/UTbase_g.exe
-RELEASE_TARGET = $(WORK_DIR)/Release/UTbase_g.exe
-DEBUG_LIB_DIR = -L../Debug -L$(GTEST_DEBUG_LIBPATH) -L/usr/lib64
-OCV_LIB_FLAGS = -lopencv_imgcodecs -lopencv_imgproc -lopencv_core
-DEBUG_LIB_FLAGS = $(DEBUG_LIB_DIR) -lbase_g -lbase_l -lgtestd -lgtest_maind $(OCV_LIB_FLAGS) -lstdc++ -lpthread -lm
-RELEASE_LIB_DIR = -L../Release -L$(GTEST_RELEASE_LIBPATH)
-RELEASE_LIB_FLAGS = $(RELEASE_LIB_DIR) -lbase_g -lbase_l -lgtest -lgtest_main $(OCV_LIB_FLAGS) -lstdc++ -lpthread -lm
-INCFLAGS = -I../gtest/include -I..
-CC = cc
+INCFLAGS = -I.. -I/usr/include/opencv4
+DEBUG_TARGET_DIR = ../../Debug
+DEBUG_TARGET = $(DEBUG_TARGET_DIR)/UTbase_g.exe
+DEBUG_DEPENDS = $(DEBUG_TARGET_DIR)/libbase_l.a $(DEBUG_TARGET_DIR)/libbase_g.a
+OCV_LIBS = -lopencv_imgcodecs -lopencv_imgproc -lopencv_core
+GTEST_LIBS = -lgtest -lgtest_main
+DEBUG_CCFLAGS = $(INCFLAGS) -c -g
+DEBUG_LIBFLAGS = -L$(DEBUG_TARGET_DIR) -lbase_g -lbase_l $(GTEST_LIBS) $(OCV_LIBS) -lstdc++ -lm
+RELEASE_TARGET_DIR = ../../Release
+RELEASE_TARGET = $(RELEASE_TARGET_DIR)/UTbase_g.exe
+RELEASE_DEPENDS = $(RELEASE_TARGET_DIR)/libbase_l.a $(RELEASE_TARGET_DIR)/libbase_g.a
+RELEASE_CCFLAGS = $(INCFLAGS) -c -O2
+RELEASE_LIBFLAGS = -L$(RELEASE_TARGET_DIR) -lbase_g -lbase_l $(GTEST_LIBS) $(OCV_LIBS) -lstdc++ -lm
 
-#---------------------------------------------------
-# debug
-#---------------------------------------------------
+DEBUG_OBJECTS = Debug/mat.o Debug/interp.o Debug/discriminate.o Debug/invremap.o
+RELEASE_OBJECTS = Release/mat.o Release/interp.o Release/discriminate.o Release/invremap.o
+
+all	:
+	$(MAKE) clean
+	$(MAKE) debug
+	$(MAKE) release
+
+#----------------------------------------------
+# debug rules
+#----------------------------------------------
 debug	:	$(DEBUG_TARGET)
 
-DEBUG_OBJECTS = Debug/mat.o Debug/texture.o Debug/mesh.o Debug/distortion.o Debug/interp.o \
-	Debug/discriminate.o Debug/twolines.o Debug/intersect.o Debug/3D.o
-
 $(DEBUG_TARGET)	:	$(DEBUG_OBJECTS)
-	mkdir -p $(WORK_DIR)/Debug
-	$(CC) -o $@ $(DEBUG_OBJECTS) $(DEBUG_LIB_FLAGS)
+	mkdir -p $(DEBUG_TARGET_DIR)
+	$(CC) -o $@ $(DEBUG_OBJECTS) $(DEBUG_LIBFLAGS)
 
 Debug/mat.o	:	mat.cc
 	mkdir -p Debug
-	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
-
-Debug/texture.o	:	texture.cc
-	mkdir -p Debug
-	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
-
-Debug/mesh.o	:	mesh.cc
-	mkdir -p Debug
-	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
-
-Debug/distortion.o	:	distortion.cc
-	mkdir -p Debug
-	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
+	$(CC) $(DEBUG_CCFLAGS) -o$@ $<
 
 Debug/interp.o	:	interp.cc
 	mkdir -p Debug
-	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
+	$(CC) $(DEBUG_CCFLAGS) -o$@ $<
 
 Debug/discriminate.o	:	discriminate.cc
 	mkdir -p Debug
-	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
+	$(CC) $(DEBUG_CCFLAGS) -o$@ $<
 
-Debug/twolines.o	:	twolines.cc
+Debug/invremap.o	:	invremap.cc
 	mkdir -p Debug
-	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
-
-Debug/intersect.o	:	intersect.cc
-	mkdir -p Debug
-	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
-
-Debug/3D.o	:	3D.cc
-	mkdir -p Debug
-	$(CC) $(DEBUG_CC_FLAGS) $(INCFLAGS) -o $@ $?
+	$(CC) $(DEBUG_CCFLAGS) -o$@ $<
 
 clean_debug	:
-	rm -f Debug/*.o
-	rm -f ../Debug/*.exe
+	rm -rf Debug/*.o
+	rm -rf $(DEBUG_TARGET)
 
-#---------------------------------------------------
-# debug
-#---------------------------------------------------
+#----------------------------------------------
+# release rules
+#----------------------------------------------
 release	:	$(RELEASE_TARGET)
 
-RELEASE_OBJECTS = Release/mat.o Release/texture.o Release/mesh.o Release/distortion.o Release/interp.o \
-	Release/discriminate.o Release/twolines.o Release/intersect.o Release/3D.o
-
 $(RELEASE_TARGET)	:	$(RELEASE_OBJECTS)
-	mkdir -p $(WORK_DIR)/Release
-	$(CC) -o $@ $(RELEASE_OBJECTS) $(RELEASE_LIB_FLAGS)
+	mkdir -p $(RELEASE_TARGET_DIR)
+	$(CC) -o $@ $(RELEASE_OBJECTS) $(RELEASE_LIBFLAGS)
 
 Release/mat.o	:	mat.cc
 	mkdir -p Release
-	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $?
-
-Release/texture.o	:	texture.cc
-	mkdir -p Release
-	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $?
-
-Release/mesh.o	:	mesh.cc
-	mkdir -p Release
-	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $?
-
-Release/distortion.o	:	distortion.cc
-	mkdir -p Release
-	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $?
+	$(CC) $(RELEASE_CCFLAGS) -o$@ $<
 
 Release/interp.o	:	interp.cc
 	mkdir -p Release
-	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $?
+	$(CC) $(RELEASE_CCFLAGS) -o$@ $<
 
 Release/discriminate.o	:	discriminate.cc
 	mkdir -p Release
-	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $?
+	$(CC) $(RELEASE_CCFLAGS) -o$@ $<
 
-Release/twolines.o	:	twolines.cc
+Release/invremap.o	:	invremap.cc
 	mkdir -p Release
-	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $?
-
-Release/intersect.o	:	intersect.cc
-	mkdir -p Release
-	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $?
-
-Release/3D.o	:	3D.cc
-	mkdir -p Release
-	$(CC) $(RELEASE_CC_FLAGS) $(INCFLAGS) -o $@ $?
+	$(CC) $(RELEASE_CCFLAGS) -o$@ $<
 
 clean_release	:
-	rm -f Release/*.o
-	rm -f ../Release/*.exe
+	rm -rf Release/*.o
+	rm -rf $(RELEASE_TARGET)
+
+clean	:
+	$(MAKE) clean_debug
+	$(MAKE) clean_release

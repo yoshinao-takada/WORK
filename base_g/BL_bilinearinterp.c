@@ -295,7 +295,7 @@ int BL_bilinearinterpv_calc_values(
         pBL_arrayMD_t values = (*ppvalues = BL_arrayMD_new(dims_values, BL_1r32_t));
 
         // interpolation
-        uint32_t element_dim = obj->coeff->dims[2];
+        // uint32_t element_dim = obj->coeff->dims[2];
         BL_ptr_t i_values = BL_arrayMD_begin(values);
         for (uint16_t iy = 0; iy != values->dims[2]; iy++)
         {

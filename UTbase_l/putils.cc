@@ -48,8 +48,8 @@ namespace
     /*!
     execute a child process synchronously.
     */
-#define DATA_DIR    UTDATA
-#define DATA_DIR_OUT    DATA_DIR "Out/"
+
+#define DATA_DIR_OUT    WORK_DIR
 #define TOUCH_FILE      DATA_DIR_OUT "touch_file.txt"
 #define TOUCH_CMD   "/usr/bin/touch"
 #ifdef  __linux__

@@ -9,7 +9,8 @@ DEBUG_OBJECTS = Debug/BL_matr32RM.o Debug/BL_matr64RM.o Debug/BL_matr32CM.o Debu
 	Debug/BL_matc64RM.o Debug/BL_matc64CM.o Debug/BL_matc128RM.o Debug/BL_matc128CM.o \
 	Debug/BL_mesh.o Debug/BL_texture.o Debug/BL_distortion.o Debug/BL_bilinearinterp.o \
 	Debug/BL_discriminate.o Debug/BL_twolines.o Debug/BL_intersect.o Debug/BL_plate.o \
-	Debug/BL_3Dcylinder.o Debug/BL_3Dplane.o Debug/BL_3Dline.o
+	Debug/BL_3Dcylinder.o Debug/BL_3Dplane.o Debug/BL_3Dline.o Debug/BL_invremap.o \
+	Debug/BL_invremap_testgen.o
 RELEASE_CCFLAGS = $(INCFLAGS) -c -O2
 RELEASE_TARGET_DIR = ../../Release
 RELEASE_LIBDIR = -L$(RELEASE_TARGET_DIR)
@@ -19,9 +20,11 @@ RELEASE_OBJECTS = Release/BL_matr32RM.o Release/BL_matr64RM.o Release/BL_matr32C
 	Release/BL_matc64RM.o Release/BL_matc64CM.o Release/BL_matc128RM.o Release/BL_matc128CM.o \
 	Release/BL_mesh.o Release/BL_texture.o Release/BL_distortion.o Release/BL_bilinearinterp.o \
 	Release/BL_discriminate.o Release/BL_twolines.o Release/BL_intersect.o Release/BL_plate.o \
-	Release/BL_3Dcylinder.o Release/BL_3Dplane.o Release/BL_3Dline.o
+	Release/BL_3Dcylinder.o Release/BL_3Dplane.o Release/BL_3Dline.o Release/BL_invremap.o \
+	Release/BL_invremap_testgen.o
+
 #-----------------------------------------------------------------------------------
-# debug
+# debug rules
 #-----------------------------------------------------------------------------------
 
 debug	:	$(DEBUG_TARGET)
@@ -108,12 +111,20 @@ Debug/BL_3Dline.o	:	BL_3Dline.c BL_3Dline.h
 	mkdir -p Debug
 	$(CC) $(OCVINCFLAGS) $(DEBUG_CCFLAGS) -o $@ $<
 
+Debug/BL_invremap.o	:	BL_invremap.c BL_invremap.h
+	mkdir -p Debug
+	$(CC) $(OCVINCFLAGS) $(DEBUG_CCFLAGS) -o $@ $<
+
+Debug/BL_invremap_testgen.o	:	BL_invremap_testgen.c BL_invremap_testgen.h
+	mkdir -p Debug
+	$(CC) $(OCVINCFLAGS) $(DEBUG_CCFLAGS) -o $@ $<
+
 clean_debug	:
 	rm -f Debug/*.o
 	rm -f $(DEBUG_TARGET)
 
 #-----------------------------------------------------------------------------------
-# release
+# release rules
 #-----------------------------------------------------------------------------------
 
 release	:	$(RELEASE_TARGET)
@@ -199,16 +210,24 @@ Release/BL_3Dplane.o	:	BL_3Dplane.c BL_3Dplane.h
 Release/BL_3Dline.o	:	BL_3Dline.c BL_3Dline.h
 	mkdir -p Release
 	$(CC) $(OCVINCFLAGS) $(RELEASE_CCFLAGS) -o $@ $<
+
+Release/BL_invremap.o	:	BL_invremap.c BL_invremap.h
+	mkdir -p Release
+	$(CC) $(OCVINCFLAGS) $(RELEASE_CCFLAGS) -o $@ $<
+
+Release/BL_invremap_testgen.o	:	BL_invremap_testgen.c BL_invremap_testgen.h
+	mkdir -p Release
+	$(CC) $(OCVINCFLAGS) $(RELEASE_CCFLAGS) -o $@ $<
 	
 clean_release	:
 	rm -f Release/*.o
 	rm -f $(RELEASE_TARGET)
 
-clean	:	clean_debug clean_release
+clean	:
 	$(MAKE) clean_debug
 	$(MAKE) clean_release
 
-all	:	clean debug release
+all	:
 	$(MAKE) clean
 	$(MAKE) debug
 	$(MAKE) release

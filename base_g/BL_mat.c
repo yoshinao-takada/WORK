@@ -243,6 +243,7 @@ static CPnum crossproduct(CPnum m0, CPnum m1, Pnum m)
     m[0] = m0[1] * m1[2] - m0[2] * m1[1];
     m[1] = m0[2] * m1[0] - m0[0] * m1[2];
     m[2] = m0[0] * m1[1] - m0[1] * m1[0];
+    return m;
 }
 
 static CPnum normalize(CPnum m0, Pnum m, Tsize ndim)
@@ -430,7 +431,6 @@ static CPnum inv(CPnum m0, Pnum m, Pnum mwork, Tsize n)
     Tsize step_pivot = _2n + 1;
     Tsize n_row_length = _2n;
     Tsize n_partial_sum_range = n;
-    Tsize irow = 0;
     // Gaussian elimination
     for (int irow = 0; irow != (int)n; irow++, ipivot += step_pivot, n_row_length--, n_partial_sum_range--)
     {
@@ -562,6 +562,7 @@ static Tenum writef(CPnum m0, Tsize nc0, Tsize nr0, FILE* pf)
         fprintf(pf, "\n");
     }
     fprintf(pf, "\n");
+    return ESUCCESS;
 }
 
 static Tenum readf(Pnum* ppm0, Psize nc0, Psize nr0, FILE* pf)
@@ -733,7 +734,6 @@ static CPnum inv(CPnum m0, Pnum m, Pnum mwork, Tsize n)
     Tsize step_pivot = n + 1;
     Tsize n_row_length = _2n;
     Tsize n_partial_sum_range = n;
-    Tsize irow = 0;
     // delete lower-left triangle of the left half of mwork
     for (int irow = 0; irow != (int)n; irow++, ipivot += step_pivot, n_row_length--, n_partial_sum_range--)
     {
@@ -869,6 +869,7 @@ static Tenum writef(CPnum m0, Tsize nc0, Tsize nr0, FILE* pf)
         fprintf(pf, "\n");
     }
     fprintf(pf, "\n");
+    return ESUCCESS;
 }
 
 static Tenum readf(Pnum* ppm0, Psize nc0, Psize nr0, FILE* pf)
