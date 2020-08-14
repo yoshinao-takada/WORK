@@ -50,6 +50,10 @@ namespace
         BL_1r32_t hmin = 1.0e-4, hmax = 1.0f, eps = 1.0e-6;
         pBL_linesearch_t p = BL_linesearch_new(SqEllipsoidalDistance, params, 3, xv0, vdir, hmin, hmax, eps);
         int err = BL_linesearch_run(p, 100);
+        if (err)
+        {
+            printf("%s,%d,err=%d\n", __FUNCTION__, __LINE__, err);
+        }
         BL_SAFEFREE(&p);
     }
 

@@ -62,6 +62,7 @@ typedef const BL_neighbormap_t *pcBL_neighbormap_t;
 
 int BL_neighbormap_new(const BL_2u32_t work_size, pBL_neighbormap_t *ppmap);
 void BL_neighbormap_fill(pBL_neighbormap_t nbmap, pcBL_source_shift_map_t ssmap);
+void BL_neighbormap_refine(pBL_neighbormap_t nbmap);
 int BL_calc_source_coord(const BL_1r32_t *xy, const BL_1r32_t *uv, BL_2r32_t u0v0);
 void BL_neighbormap_savecsv(FILE* pf, pcBL_neighbormap_t nbmap);
 void BL_remap_savecsv(FILE* pf, pcBL_remap_t remap);

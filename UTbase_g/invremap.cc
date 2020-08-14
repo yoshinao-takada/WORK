@@ -117,11 +117,12 @@ namespace
 
     cv::Mat1b CreateSourceImage()
     {
+        const int grid_pitch = 5;
         const BL_2u32_t work_size = WK_SIZE;
         cv::Mat1b m((int)work_size[1], (int)work_size[0]);
         srand(1);
         cv::Point2i index;
-        cv::Mat1b org_image(work_size[1]/10, work_size[0]/10);
+        cv::Mat1b org_image(work_size[1]/grid_pitch, work_size[0]/grid_pitch);
         for (index.y = 0; index.y != org_image.rows; index.y++)
         {
             for (index.x = 0; index.x != org_image.cols; index.x++)
@@ -134,7 +135,7 @@ namespace
         {
             for (index.x = 0; index.x != m.cols; index.x++)
             {
-                cv::Point2i index_org = index/10;
+                cv::Point2i index_org = index/grid_pitch;
                 m(index) = org_image(index_org);
             }
         }

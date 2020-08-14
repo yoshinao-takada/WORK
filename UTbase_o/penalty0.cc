@@ -55,7 +55,6 @@ namespace {
         }
         BL_3r32_t xv0 = { 0.0f, 0.0f, 0.0f };
         BL_1r32_t dx = 1.0f;
-        bool continue_flag = true;
         int err;
         for (uint32_t i = 0; i < 16; i++)
         {

@@ -1,2 +1,0 @@
-/usr/bin/ar qc libbase_l.a CMakeFiles/base_l.dir/BL_diag.c.o CMakeFiles/base_l.dir/BL_fsm.c.o CMakeFiles/base_l.dir/BL_futils.c.o CMakeFiles/base_l.dir/BL_locker.c.o CMakeFiles/base_l.dir/BL_loggerbase.c.o CMakeFiles/base_l.dir/BL_rational.c.o CMakeFiles/base_l.dir/BL_rationalfunc.c.o
-/usr/bin/ranlib libbase_l.a

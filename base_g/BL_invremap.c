@@ -75,6 +75,69 @@ void BL_neighbormap_fill(pBL_neighbormap_t nbmap, pcBL_source_shift_map_t ssmap)
             }
         }
     }
+    BL_neighbormap_refine(nbmap);
+}
+
+void BL_neighbormap_refine(pBL_neighbormap_t nbmap)
+{
+    static const uint32_t flag_masks[] = { 1, 2, 4, 8 };
+    static const BL_2i32_t i2D_offset[] = { {-2,0}, {-2,0}, {-2,0}, {-2,0}};
+    static const BL_2i32_t i2D_offset2[] = { {1,0}, {1,0}, {1,0}, {1,0}};
+    BL_2u32_t i_nbmap;
+    for (i_nbmap[1] = 0; i_nbmap[1] != nbmap->work_size[1]; i_nbmap[1]++)
+    {
+        for (i_nbmap[0] = 0; i_nbmap[0] != nbmap->work_size[0]; i_nbmap[0]++)
+        {
+            uint32_t linear_index = i_nbmap[0] + i_nbmap[1] * nbmap->work_size[0];
+            pBL_neighbormap_element_t pelement = nbmap->elements + linear_index;
+            for (uint32_t i_flag_masks = 0; i_flag_masks != ARRAYSIZE(flag_masks); i_flag_masks++)
+            {
+                if ((pelement->flags & flag_masks[i_flag_masks]) == 0)
+                { // copy from the right lower element if it is not empty
+                    BL_2u32_t i_nbmap_src = {
+                        i_nbmap[0] + i2D_offset[i_flag_masks][0],
+                        i_nbmap[1] + i2D_offset[i_flag_masks][1]
+                    };
+                    uint32_t linear_index = i_nbmap_src[0] + i_nbmap_src[1] * nbmap->work_size[0];
+                    if ((i_nbmap_src[0] < nbmap->work_size[0]) && (i_nbmap_src[1] < nbmap->work_size[1]) &&
+                        (i_nbmap_src[0] >= 0) && (i_nbmap_src[1] >= 0))
+                    {
+                        pBL_neighbormap_element_t pelement_src = nbmap->elements + linear_index;
+                        if ((pelement_src->flags & flag_masks[i_flag_masks]) != 0)
+                        {
+                            pelement->flags |= flag_masks[i_flag_masks];
+                            BL_copy2(
+                                pelement->neighbor_sources[i_flag_masks],
+                                pelement_src->neighbor_sources[i_flag_masks]);
+                        }
+                    }
+                }
+            }
+            for (uint32_t i_flag_masks = 0; i_flag_masks != ARRAYSIZE(flag_masks); i_flag_masks++)
+            {
+                if ((pelement->flags & flag_masks[i_flag_masks]) == 0)
+                { // copy from the right lower element if it is not empty
+                    BL_2u32_t i_nbmap_src = {
+                        i_nbmap[0] + i2D_offset2[i_flag_masks][0],
+                        i_nbmap[1] + i2D_offset2[i_flag_masks][1]
+                    };
+                    uint32_t linear_index = i_nbmap_src[0] + i_nbmap_src[1] * nbmap->work_size[0];
+                    if ((i_nbmap_src[0] < nbmap->work_size[0]) && (i_nbmap_src[1] < nbmap->work_size[1]) &&
+                        (i_nbmap_src[0] >= 0) && (i_nbmap_src[1] >= 0))
+                    {
+                        pBL_neighbormap_element_t pelement_src = nbmap->elements + linear_index;
+                        if ((pelement_src->flags & flag_masks[i_flag_masks]) != 0)
+                        {
+                            pelement->flags |= flag_masks[i_flag_masks];
+                            BL_copy2(
+                                pelement->neighbor_sources[i_flag_masks],
+                                pelement_src->neighbor_sources[i_flag_masks]);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 /*!
@@ -166,7 +229,7 @@ static void BL_neighbormap_to_remap(pBL_remap_t remap, pcBL_neighbormap_t nbmap,
                         remap->source_coord[linear_index]);
                     if (err)
                     {
-                        fprintf(stderr, "%s,%d,singular,(u,v)=%d,%d\n", __FUNCTION__, __LINE__, dest_uv[0], dest_uv[1]);
+                        // fprintf(stderr, "%s,%d,singular,(u,v)=%d,%d\n", __FUNCTION__, __LINE__, dest_uv[0], dest_uv[1]);
                     }
                 }
             }

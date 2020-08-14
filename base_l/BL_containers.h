@@ -19,16 +19,7 @@ typedef const BL_array_t *pcBL_array_t;
 
 #define BL_CB_ARRAY_HEAD    sizeof(BL_array_t)
 
-inline pBL_array_t BL_alloc_array(uint32_t unit_count, uint32_t unit_size)
-{
-    pBL_array_t p = (pBL_array_t)calloc(BL_CB_ARRAY_HEAD + unit_count * unit_size, 1);
-    if (p == NULL)
-    {
-        return p;
-    }
-    p->unit_count = unit_count;
-    return p;
-}
+pBL_array_t BL_alloc_array(uint32_t unit_count, uint32_t unit_size);
 
 #define BL_array_new(unit_count_, unit_type_)  BL_alloc_array(unit_count_, sizeof(unit_type_))
 #define BL_array_begin(ptr)   { (int8_t*)((ptr) + 1) }
@@ -57,17 +48,7 @@ typedef const BL_linkable_array_t *pcBL_linkable_array_t;
 #define BL_CB_LINKABLE_ARRAY(unit_count_, unit_type_) \
    (BL_CB_LINKABLE_ARRAY_HEAD + BL_CB_ARRAY_DATA(unit_count_, unit_type_))
 
-inline pBL_linkable_array_t BL_alloc_linkable_array(uint32_t unit_count, uint32_t unit_size)
-{
-    pBL_linkable_array_t p = (pBL_linkable_array_t)calloc(BL_CB_LINKABLE_ARRAY_HEAD + unit_count * unit_size, 1);
-    if (p == NULL)
-    {
-        return p;
-    }
-    p->link.next = p->link.prev = &(p->link);
-    p->data.unit_count = unit_count;
-    return p;
-}
+pBL_linkable_array_t BL_alloc_linkable_array(uint32_t unit_count, uint32_t unit_size);
 
 #define BL_linkable_array_new(unit_count_, unit_type_)  BL_alloc_linkable_array(unit_count_, sizeof(unit_type_))
 #define BL_linkable_array_begin(ptr)    BL_array_begin(ptr)
@@ -89,31 +70,9 @@ inline pBL_linkable_array_t BL_alloc_linkable_array(uint32_t unit_count, uint32_
     (anchor)->next = (node); \
 }
 
-inline pBL_linkable_t BL_linkable_unlink_prev(pBL_linkable_t anchor)
-{
-    pBL_linkable_t unlinked = NULL;
-    if (anchor->prev != anchor)
-    {
-        unlinked = anchor->prev;
-        unlinked->prev->next = anchor;
-        anchor->prev = unlinked->prev;
-        unlinked->prev = unlinked->next = unlinked;
-    }
-    return unlinked;
-}
+pBL_linkable_t BL_linkable_unlink_prev(pBL_linkable_t anchor);
 
-inline pBL_linkable_t BL_linkable_unlink_next(pBL_linkable_t anchor)
-{
-    pBL_linkable_t unlinked = NULL;
-    if (anchor->prev != anchor)
-    {
-        unlinked = anchor->next;
-        unlinked->next->prev = anchor;
-        anchor->next = unlinked->next;
-        unlinked->prev = unlinked->next = unlinked;
-    }
-    return unlinked;
-}
+pBL_linkable_t BL_linkable_unlink_next(pBL_linkable_t anchor);
 
 /*!
 \brief Testing condition matching function type
@@ -132,59 +91,18 @@ satisfies the matching condition.
 \param test_func [in] test function comparing conditions and contents of the nodes in the list.
 \return NULL: NOT found, any pointer: found node
 */
-inline pcBL_linkable_t BL_linkable_find(pcBL_linkable_t anchor, const void* conditions, BL_LINKABLE_MATCH test_func)
-{
-    pcBL_linkable_t found = NULL;
-    for (pBL_linkable_t scanner = anchor->next; scanner != anchor; scanner = scanner->next)
-    {
-        if (test_func(scanner, conditions))
-        {
-            found = scanner;
-            break;
-        }
-    }
-    return found;
-}
+pcBL_linkable_t BL_linkable_find(pcBL_linkable_t anchor, const void* conditions, BL_LINKABLE_MATCH test_func);
 
-inline uint32_t BL_linkable_count(pcBL_linkable_t anchor)
-{
-    uint32_t c = 0;
-    for (pcBL_linkable_t scanner = anchor->next; scanner != anchor; scanner = scanner->next)
-    {
-        c++;
-    }
-    return c;
-}
+uint32_t BL_linkable_count(pcBL_linkable_t anchor);
 
-inline int BL_linkable_delete(pBL_linkable_t anchor, const void* conditions, BL_LINKABLE_MATCH test_func)
-{
-    pcBL_linkable_t found = BL_linkable_find(anchor, conditions, test_func);
-    if (found == NULL)
-    {
-        return ENOLINK;
-    }
-    pBL_linkable_t prev = found->prev;
-    pBL_linkable_t to_remove = BL_linkable_unlink_next(prev);
-    free((void*)to_remove);
-    return ESUCCESS;
-}
+int BL_linkable_delete(pBL_linkable_t anchor, const void* conditions, BL_LINKABLE_MATCH test_func);
 
 // delete all nodes other than anchor
-inline void BL_linkable_unlink_other_than_anchor(pBL_linkable_t anchor)
-{
-    pBL_linkable_t removed = NULL;
-    while (NULL != (removed = BL_linkable_unlink_next(anchor)))
-    {
-        free((void*)removed);
-    }
-}
+void BL_linkable_unlink_other_than_anchor(pBL_linkable_t anchor);
+
 
 // delete all nodes including anchor
-inline void BL_linkable_delete_all(pBL_linkable_t anchor)
-{
-    BL_linkable_unlink_other_than_anchor(anchor);
-    free((void*)anchor);
-}
+void BL_linkable_delete_all(pBL_linkable_t anchor);
 
 typedef uint16_t    BL_arrayMD_dims[8];
 
@@ -196,43 +114,13 @@ typedef struct {
 typedef const BL_arrayMD_t *pcBL_arrayMD_t;
 
 #define BL_CB_ARRAYMD_HEAD   sizeof(BL_arrayMD_t)
-inline uint32_t BL_product_dims(const BL_arrayMD_dims dims)
-{
-    uint32_t prod = 1;
-    for (uint16_t i = 0; i < 8; i++)
-    {
-        if (dims[i])
-        {
-            prod *= dims[i];
-        }
-        else
-        {
-            break;
-        }
-    }
-    return prod;
-}
 
-inline void BL_copy_dims(const BL_arrayMD_dims dims_src, BL_arrayMD_dims dims_dst)
-{
-    const uint64_t* ptr_src = (const uint64_t*)dims_src;
-    uint64_t* ptr_dst = (uint64_t*)dims_dst;
-    *ptr_dst++ = *ptr_src++;
-    *ptr_dst = *ptr_src;
-}
+uint32_t BL_product_dims(const BL_arrayMD_dims dims);
 
-inline pBL_arrayMD_t BL_alloc_arrayMD(const BL_arrayMD_dims dims, uint32_t unit_size)
-{
-    uint32_t unit_count = BL_product_dims(dims);
-    pBL_arrayMD_t p = (pBL_arrayMD_t)calloc(BL_CB_ARRAYMD_HEAD + unit_size * unit_count, 1);
-    if (p == NULL)
-    {
-        return p;
-    }
-    BL_copy_dims(dims, p->dims);
-    p->data.unit_count = unit_count;
-    return p;
-}
+void BL_copy_dims(const BL_arrayMD_dims dims_src, BL_arrayMD_dims dims_dst);
+
+pBL_arrayMD_t BL_alloc_arrayMD(const BL_arrayMD_dims dims, uint32_t unit_size);
+
 #define BL_arrayMD_new(dims_, unit_type_)  BL_alloc_arrayMD(dims_, sizeof(unit_type_))
 #define BL_arrayMD_begin(ptr)   BL_array_begin(ptr)
 #define BL_arrayMD_cbegin(ptr)  BL_array_cbegin(ptr)
