@@ -1,0 +1,22 @@
+[1]] Y,z and S
+consider normalized impedance and admittance matrices, Zn and Yn, where
+Yn = Sz*Y
+Zn = Sy*Z
+Sz = diag[sqrt(Zc0), sqrt(Zc1),...] (diag[*] is a diagonal matrix)
+Sy = diag[sqrt(Yc0), sqrt(Yc1),...]
+
+normalized voltage and current
+I = Sy(Vfn - Vbn)
+V = Sz(Vfn + Vbn)
+I = YV
+Sy(Vfn - Vbn) = Y Sz (Vfn + Vbn)
+
+Vbn = SVfn
+Sy (U - S) Vfn = Y Sz (U + S) Vfn
+Sy Y^(-1) Sy (U - 1) = (U + S)
+Sy Z Sy = (U + S)(U - S)^(-1)
+Z = Sz (U + S)(U -S)^(-1) Sz
+Sy Z Sy = (U + S)(U - S)^(-1)
+Sy Z Sy (U - S) = U + S
+(Sy Z Sy - U) = (Sy Z Sy + U) S
+S = (Sy Z Sy + U)^(-1) (Sy Z Sy - U)

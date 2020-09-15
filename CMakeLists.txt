@@ -13,6 +13,7 @@ add_compile_options(
 add_subdirectory(base_l)
 add_subdirectory(base_g)
 add_subdirectory(base_o)
+add_subdirectory(base_z)
 add_subdirectory(UTbase_l)
 add_subdirectory(UTbase_g)
 add_subdirectory(UTbase_o)

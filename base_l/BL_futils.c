@@ -118,6 +118,7 @@ int BL_futils_open(FILE* *ppf, const char* path, const char* mode)
 
 int BL_futils_create_directories(const char* path)
 {
+    if (strlen(path) == 0) return ESUCCESS;
     char cmd_path[] = MKDIR_CMD;
     char cmd_flag[] = "-p";
     char* const argv[] = {
