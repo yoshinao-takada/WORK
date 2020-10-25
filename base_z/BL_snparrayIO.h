@@ -1,5 +1,6 @@
 #ifndef BL_SNPARRAYIO_H_
 #define BL_SNPARRAYIO_H_
+#include    "base_z/BL_snparray.h"
 #include    "base_z/BL_snparrayIO.h"
 #include    "base_l/BL_futils.h"
 #include    "base_l/BL_errno.h"
@@ -58,8 +59,7 @@ extern "C" {
 
     int BL_snparrayIO_read1(const char* filepath, pBL_snparray_t* pp, pBL_snpheaderinfo_t headerinfo);
 
-
-    int BL_snparrayIO_parseHeader(const char* header, pBL_snpheaderinfo_t headerinfo)
+    int BL_snparrayIO_parseHeader(const char* header, pBL_snpheaderinfo_t headerinfo);
 #ifdef __cplusplus
 }
 #endif

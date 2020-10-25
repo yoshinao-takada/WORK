@@ -14,7 +14,6 @@ pBL_linesearch_t BL_linesearch_new(
         matfn = BL_matfnr32RM();
     }
     pBL_linesearch_t p = (pBL_linesearch_t)NULL;
-    int err = ESUCCESS;
     do {
         size_t cb_block = sizeof(BL_1r32_t) * vardim;
         size_t cb_data = cb_block * 6;

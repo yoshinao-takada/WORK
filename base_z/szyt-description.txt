@@ -1,7 +1,7 @@
 [1]] Y,z and S
 consider normalized impedance and admittance matrices, Zn and Yn, where
-Yn = Sz*Y
-Zn = Sy*Z
+Yn = Sz*Y*Sz
+Zn = Sy*Z*Sy
 Sz = diag[sqrt(Zc0), sqrt(Zc1),...] (diag[*] is a diagonal matrix)
 Sy = diag[sqrt(Yc0), sqrt(Yc1),...]
 
@@ -20,3 +20,90 @@ Sy Z Sy = (U + S)(U - S)^(-1)
 Sy Z Sy (U - S) = U + S
 (Sy Z Sy - U) = (Sy Z Sy + U) S
 S = (Sy Z Sy + U)^(-1) (Sy Z Sy - U)
+S = (U + Yn)^(-1) (U - Yn)
+  = (U + Sz Y Sz)^(-1) (U - Sz Y Sz)
+
+Vf1 ->                        -> Vb(k+1)
+  o-----|port 1    port k+1|------o
+Vb1 <-  |                  |  <- Vf(k+1)
+        |                  |
+Vf2 ->  |                  |  -> Vb(k+2)
+  o-----|port 2    port k+2|------o
+Vb2 <-  |                  |  <- Vf(k+2)
+        ...               ...
+        |                  |
+Vfk ->  |                  |  -> Vb(2k)
+  o-----|port k    port 2k |------o
+Vbk <-  |                  |  <- Vf(2k)
+
+[Vb1]   [T11 T12 ... T1,2k] [Vf(k+1)]
+[Vb2]   [T21 T22 ... T2,2k] [Vf(k+2)]
+[...]   [ ...             ] [...    ]
+[Vbk]   [Tk1 Tk2     Tk,2k] [Vf(2k) ]
+[   ] = [                 ] [       ]
+[Vf1]   [Tk+1,1 ...Tk+1,2k] [Vb(k+1)]
+[Vf2]   [Tk+2,1 ...Tk+2,2k] [Vb(k+2)]
+[...]   [...              ] [...    ]
+[Vfk]   [T2k,1 ...  T2k,2k] [Vb(2k) ]
+
+[Vb1]   [         |       ] [Vf(k+1)]
+[Vb2]   [   TUL   |  TUR  ] [Vf(k+2)]
+[...]   [         |       ] [...    ]
+[Vbk]   [         |       ] [Vf(2k) ]
+[   ] = [---------+-------] [       ]
+[Vf1]   [         |       ] [Vb(k+1)]
+[Vf2]   [         |       ] [Vb(k+2)]
+[...]   [   TLL   |  TLR  ] [...    ]
+[Vfk]   [         |       ] [Vb(2k) ]
+
+[Vb1    ]   [S11 S12 ... S1,2k] [Vf1    ]
+[Vb2    ]   [S21 S22 ... S2,2k] [Vf2    ]
+[...    ]   [ ...             ] [...    ]
+[Vbk    ]   [Sk1 Sk2     Sk,2k] [Vfk    ]
+[       ] = [                 ] [       ]
+[Vb(k+1)]   [Sk+1,1 ...Sk+1,2k] [Vf(k+1)]
+[Vb(k+2)]   [Sk+2,1 ...Sk+2,2k] [Vf(k+2)]
+[...    ]   [...              ] [...    ]
+[Vb(2k) ]   [S2k,1 ...  S2k,2k] [Vf(2k) ]
+
+[Vb1    ]   [         |       ] [Vf1    ]
+[Vb2    ]   [  SUL    |  SUR  ] [Vf2    ]
+[...    ]   [         |       ] [...    ]
+[Vbk    ]   [         |       ] [Vfk    ]
+[       ] = [---------+-------] [       ]
+[Vb(k+1)]   [         |       ] [Vf(k+1)]
+[Vb(k+2)]   [         |       ] [Vf(k+2)]
+[...    ]   [  SLL    |  SLR  ] [...    ]
+[Vb(2k) ]   [         |       ] [Vf(2k) ]
+
+VbL = TUL * VfR + TUR * VbR       (1)
+VfL = TLL * VfR + TLR * VbR       (2)
+VbL = SUL * VfL + SUR * VfR       (3)
+VbR = SLL * VfL + SLR * VfR       (4)
+
+modify (2)
+VbR = inv(TLR) * (VfL - TLL * VfR)
+    = inv(TLR) * VfL - inv(TLR) * TLL * VfR (2A)
+Put (2A) ==> (1)
+VbL = TUL * VfR + TUR * (inv(TLR) * VfL - inv(TLR) * TLL * VfR)
+    = TUR * inv(TLR) * VfL + (TUL - TUR*inv(TLR)*TLL) * VfR   (1A)
+
+Comparing (1A) and (3)
+SUL = TUR * inv(TLR) = TUR * SLL
+SUR = TUL - TUR * inv(TLR) * TLL = TUL + TUR * SLR
+Comparing (2A) and (4)
+SLL = inv(TLR)
+SLR = -inv(TLR) * TLL = -SLL * TLL
+
+modify (4)
+SLL * VfL = -SLR * VfR + VbR
+VfL = -inv(SLL) * SLR * VfR + inv(SLL) * VbR  (4A)
+Put (4A) ==> (3)
+VbL = SUL * (-inv(SLL) * SLR * VfR + inv(SLL) * VbR) + SUR * VfR
+    = (SUR - SUL * inv(SLL) * SLR) * VfR + SUL * inv(SLL) * VbR     (3A)
+Comparing (1) and (3A)
+TUL = SUR - SUL * inv(SLL) * SLR = SUR + SUL * TLL
+TUR = SUL * inv(SLL) = SUL * TLR
+Comparing (2) and (4A)
+TLL = -inv(SLL) * SLR = -TLR * SLR
+TLR = inv(SLL)

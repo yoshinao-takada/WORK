@@ -1,0 +1,32 @@
+Actual linear 2-port device admittance and impedance matrices
+
+[1] shunt Lossy LC series
+I1 -->   <-- I2
+V1 o-Rs-+-Rs-o V2
+        |
+        C
+        |
+        L
+        |
+        R
+        |
+       GND
+
+V1 = V2 = (R + sL + (1/(sC))) * (I1 + I2)
+Z = [[Rs + Zb, Zb], [Zb, Rs + Zb]]
+
+Zb = R + sL + (1/(sC))
+
+[2] series Lossy LC parallel
+I1 -->           <-- I2
+V1 o-+--+---C---+-+-o V2
+     |  |       | |
+     Gs +-R--L--+ Gs
+     |            |
+    GND          GND
+
+I1 = (V1 - V2) * Yb
+Yb = Ybc + Ybl
+Ybc = sC
+Ybl = 1/(Rl + sL)
+Y = [[Gs + Yb, -Yb], [-Yb, Gs + Yb]]

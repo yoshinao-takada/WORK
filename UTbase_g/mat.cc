@@ -18,12 +18,12 @@ namespace
         return (absdiff/abssum) < tol;
     }
 
-    bool Equalr64(BL_1r64_t r0, BL_1r64_t r1, BL_1r64_t tol)
-    {
-        BL_1r64_t abssum = fabs(r0 + r1);
-        BL_1r64_t absdiff = fabs(r0 - r1);
-        return (absdiff/abssum) < tol;
-    }
+    // bool Equalr64(BL_1r64_t r0, BL_1r64_t r1, BL_1r64_t tol)
+    // {
+    //     BL_1r64_t abssum = fabs(r0 + r1);
+    //     BL_1r64_t absdiff = fabs(r0 - r1);
+    //     return (absdiff/abssum) < tol;
+    // }
 
     bool EqualMatr32(BL_1r32_t* m0, BL_1r32_t* m1, uint32_t nr, uint32_t nc, BL_1r32_t tol)
     {
@@ -266,7 +266,7 @@ namespace
         BL_1r32_t mwork[2*ARRAYSIZE(m0)];
         BL_1r32_t m0m1[ARRAYSIZE(m0)];
         const BL_1r32_t* m1_ = matfnr32RM->inv(m0, m1, mwork, M0_COLS);
-        const BL_1r32_t* m0m1_ = matfnr32RM->mul(m0, m1, m0m1, M0_COLS, M0_COLS, M0_COLS);
+        const BL_1r32_t* m0m1_ = matfnr32RM->mul(m0, m1_, m0m1, M0_COLS, M0_COLS, M0_COLS);
         for (uint32_t irow = 0; irow != M0_COLS; irow++)
         {
             for (uint32_t icol = 0; icol != M0_COLS; icol++)
@@ -288,7 +288,7 @@ namespace
         BL_1r32_t mwork[2*ARRAYSIZE(m0)];
         BL_1r32_t m0m1[ARRAYSIZE(m0)];
         const BL_1r32_t* m1_ = matfnr32CM->inv(m0, m1, mwork, M0_COLS);
-        const BL_1r32_t* m0m1_ = matfnr32CM->mul(m0, m1, m0m1, M0_COLS, M0_COLS, M0_COLS);
+        const BL_1r32_t* m0m1_ = matfnr32CM->mul(m0, m1_, m0m1, M0_COLS, M0_COLS, M0_COLS);
         for (uint32_t irow = 0; irow != M0_COLS; irow++)
         {
             for (uint32_t icol = 0; icol != M0_COLS; icol++)
@@ -423,9 +423,9 @@ namespace
 
     void setLHSRM(size_t N, BL_1r32_t* LHS)
     {
-        for (int irow = 0; irow != N; irow++)
+        for (size_t irow = 0; irow != N; irow++)
         {
-            for (int icol=0; icol != N; icol++)
+            for (size_t icol=0; icol != N; icol++)
             {
                 LHS[icol + irow*N] = (float)rand()/(float)RAND_MAX;
             }
@@ -462,9 +462,9 @@ namespace
 
     void setLHSCM(size_t N, BL_1r32_t* LHS)
     {
-        for (int irow = 0; irow != N; irow++)
+        for (size_t irow = 0; irow != N; irow++)
         {
-            for (int icol=0; icol != N; icol++)
+            for (size_t icol=0; icol != N; icol++)
             {
                 LHS[irow + icol*N] = (float)rand()/(float)RAND_MAX;
             }

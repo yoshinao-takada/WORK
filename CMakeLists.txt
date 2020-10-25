@@ -17,4 +17,5 @@ add_subdirectory(base_z)
 add_subdirectory(UTbase_l)
 add_subdirectory(UTbase_g)
 add_subdirectory(UTbase_o)
+add_subdirectory(UTbase_z)
 
