@@ -22,6 +22,11 @@ Sy Z Sy (U - S) = U + S
 S = (Sy Z Sy + U)^(-1) (Sy Z Sy - U)
 S = (U + Yn)^(-1) (U - Yn)
   = (U + Sz Y Sz)^(-1) (U - Sz Y Sz)
+(U + Sz Y Sz) S = (U - Sz Y Sz)
+(S - U) = (Sz Y Sz)(-S -U)
+(U - S) = (Sz Y Sz)(S + U)
+(U - S)(U + S)^(-1) = Sz Y Sz
+Y = Sy (U - S)(U + S)^(-1) Sy
 
 Vf1 ->                        -> Vb(k+1)
   o-----|port 1    port k+1|------o

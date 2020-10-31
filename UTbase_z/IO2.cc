@@ -1,9 +1,10 @@
 #include    <gtest/gtest.h>
+#include    <base_l/BL_base.h>
 #include    <base_l/BL_futils.h>
 #include    <base_z/BL_snparrayIO2.h>
 #include    <ccomplex>
 #define SUIT    IO2
-#define SUIT_RESULT_DIR RESULT_DIR "IO2/"
+#define SUIT_RESULT_DIR RESULT_DIR "IO2" STR_DIRSEP
 #define TEST0_SAVE_PATH SUIT_RESULT_DIR "test0.csv"
 
 namespace 

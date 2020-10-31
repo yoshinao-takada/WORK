@@ -13,8 +13,8 @@ typedef enum {
 typedef enum {
     BL_2port_topology_shunt_2port,
     BL_2port_topology_series_2port,
-    BL_2port_topology_series_shunt,
-    BL_2port_topology_shunt_series,
+    BL_2port_topology_series_shunt, // 1st stage: series branch, 2nd stage: shunt branch
+    BL_2port_topology_shunt_series, // 1st stage: shunt branch , 2nd stage: series branch
 } BL_2port_topology_t;
 
 typedef struct {

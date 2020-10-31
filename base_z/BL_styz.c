@@ -72,6 +72,10 @@ pBL_styz_t BL_styz_new1(uint32_t port_count, double Zc)
     {
         return p;
     }
+    for (uint32_t i = 0; i != port_count; i++)
+    {
+        pzc[i] = Zc;
+    }
     p = BL_styz_new2(port_count, pzc);
     BL_SAFEFREE(&pzc);
     return p;
@@ -85,58 +89,58 @@ pBL_styz_t BL_styz_new(uint32_t port_count)
 const BL_1c128_t* BL_styz_zs(pBL_styz_t p, const BL_1c128_t* z, uint32_t index_offset)
 {
     // work[0] = Sy * z, work[1] = work[0] * Sy, work[1] = Zn
-    matfnc->mul(p->Sy, z, p->work[0], p->port_count, p->port_count, p->port_count);
-    matfnc->mul(p->work[0], p->Sy, p->work[1], p->port_count, p->port_count, p->port_count);
+    matfnc->mul(p->Sy, z, p->work[index_offset+0], p->port_count, p->port_count, p->port_count);
+    matfnc->mul(p->work[index_offset+0], p->Sy, p->work[index_offset+1], p->port_count, p->port_count, p->port_count);
 
     // work[0] = Zn + I
-    matfnc->add(p->IMat, p->work[1], p->work[0], p->port_count, p->port_count);
+    matfnc->add(p->IMat, p->work[index_offset+1], p->work[index_offset+0], p->port_count, p->port_count);
     // work[2] = Zn - I
-    matfnc->sub(p->work[1], p->IMat, p->work[2], p->port_count, p->port_count);
+    matfnc->sub(p->work[index_offset+1], p->IMat, p->work[index_offset+2], p->port_count, p->port_count);
     // work[1] = inv(work[0])
-    matfnc->inv(p->work[0], p->work[1], p->work[3], p->port_count);
+    matfnc->inv(p->work[index_offset+0], p->work[index_offset+1], p->work[index_offset+3], p->port_count);
     // s = work[0] = work[1] * work[2]
-    return matfnc->mul(p->work[1], p->work[2], p->work[0], p->port_count, p->port_count, p->port_count);
+    return matfnc->mul(p->work[index_offset+1], p->work[index_offset+2], p->work[index_offset+0], p->port_count, p->port_count, p->port_count);
 }
 
 const BL_1c128_t* BL_styz_sz(pBL_styz_t p, const BL_1c128_t* s, uint32_t index_offset)
 {
     // work[0] = IMat + s, work[1] = IMat - s
-    matfnc->add(p->IMat, s, p->work[0], p->port_count, p->port_count);
-    matfnc->sub(p->IMat, s, p->work[1], p->port_count, p->port_count);
+    matfnc->add(p->IMat, s, p->work[index_offset+0], p->port_count, p->port_count);
+    matfnc->sub(p->IMat, s, p->work[index_offset+1], p->port_count, p->port_count);
     // work[2] = inv(work[1])
-    matfnc->inv(p->work[1], p->work[2], p->work[3], p->port_count);
+    matfnc->inv(p->work[index_offset+1], p->work[index_offset+2], p->work[index_offset+3], p->port_count);
     // work[3] = work[0] * work[2]
-    matfnc->mul(p->work[0], p->work[2], p->work[3], p->port_count, p->port_count, p->port_count);
+    matfnc->mul(p->work[index_offset+0], p->work[index_offset+2], p->work[index_offset+3], p->port_count, p->port_count, p->port_count);
     // work[2] = Sz * work[3], work[0] = work[2] * Sz
-    matfnc->mul(p->Sz, p->work[3], p->work[2], p->port_count, p->port_count, p->port_count);
-    return matfnc->mul(p->work[2], p->Sz, p->work[0], p->port_count, p->port_count, p->port_count);
+    matfnc->mul(p->Sz, p->work[index_offset+3], p->work[index_offset+2], p->port_count, p->port_count, p->port_count);
+    return matfnc->mul(p->work[index_offset+2], p->Sz, p->work[index_offset+0], p->port_count, p->port_count, p->port_count);
 }
 
 const BL_1c128_t* BL_styz_ys(pBL_styz_t p, const BL_1c128_t* y, uint32_t index_offset)
 {
     // work[0] = Sz * y, work[1] = work[0] * Sz = Sz * y * Sz = Yn
-    matfnc->mul(p->Sz, y, p->work[0], p->port_count, p->port_count, p->port_count);
-    matfnc->mul(p->work[0], p->Sz, p->work[1], p->port_count, p->port_count, p->port_count);
+    matfnc->mul(p->Sz, y, p->work[index_offset+0], p->port_count, p->port_count, p->port_count);
+    matfnc->mul(p->work[index_offset+0], p->Sz, p->work[index_offset+1], p->port_count, p->port_count, p->port_count);
     // work[0] = U + Yn, work[2] = U - Yn
-    matfnc->add(p->IMat, p->work[1], p->work[0], p->port_count, p->port_count);
-    matfnc->sub(p->IMat, p->work[1], p->work[2], p->port_count, p->port_count);
+    matfnc->add(p->IMat, p->work[index_offset+1], p->work[index_offset+0], p->port_count, p->port_count);
+    matfnc->sub(p->IMat, p->work[index_offset+1], p->work[index_offset+2], p->port_count, p->port_count);
     // work[1] = inv(work[0])
-    matfnc->inv(p->work[0], p->work[1], p->work[3], p->port_count);
-    return matfnc->mul(p->work[1], p->work[2], p->work[0], p->port_count, p->port_count, p->port_count);
+    matfnc->inv(p->work[index_offset+0], p->work[index_offset+1], p->work[index_offset+3], p->port_count);
+    return matfnc->mul(p->work[index_offset+1], p->work[index_offset+2], p->work[index_offset+0], p->port_count, p->port_count, p->port_count);
 }
 
 const BL_1c128_t* BL_styz_sy(pBL_styz_t p, const BL_1c128_t* s, uint32_t index_offset)
 {
     // work[0] = U - S, work[1] = U + S
-    matfnc->sub(p->IMat, s, p->work[0], p->port_count, p->port_count);
-    matfnc->add(p->IMat, s, p->work[1], p->port_count, p->port_count);
+    matfnc->sub(p->IMat, s, p->work[index_offset+0], p->port_count, p->port_count);
+    matfnc->add(p->IMat, s, p->work[index_offset+1], p->port_count, p->port_count);
     // work[2] = inv(work[1])
-    matfnc->inv(p->work[1], p->work[2], p->work[3], p->port_count);
+    matfnc->inv(p->work[index_offset+1], p->work[index_offset+2], p->work[index_offset+3], p->port_count);
     // work[1] = work[0] * work[2]
-    matfnc->mul(p->work[0], p->work[2], p->work[1], p->port_count, p->port_count, p->port_count);
+    matfnc->mul(p->work[index_offset+0], p->work[index_offset+2], p->work[index_offset+1], p->port_count, p->port_count, p->port_count);
     // work[2] = Sy * work[1], work[0] = work[2] * Sy
-    matfnc->mul(p->Sy, p->work[1], p->work[2], p->port_count, p->port_count, p->port_count);
-    return matfnc->mul(p->work[2], p->Sy, p->work[0], p->port_count, p->port_count, p->port_count);
+    matfnc->mul(p->Sy, p->work[index_offset+1], p->work[index_offset+2], p->port_count, p->port_count, p->port_count);
+    return matfnc->mul(p->work[index_offset+2], p->Sy, p->work[index_offset+0], p->port_count, p->port_count, p->port_count);
 }
 
 /*!
