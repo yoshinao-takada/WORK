@@ -335,6 +335,30 @@ pBL_bilinearinterp_t BL_bilinearinterpv_newBGR(
     return p;
 }
 
+pBL_bilinearinterp_t BL_bilinearinterpv_newBGRA(
+    const BL_2u32_t wh_nodes,
+    const BL_4u8_t* bgra_pixels
+) {
+    const BL_2r32_t table_origin = {0.0f, 0.0f};
+    const BL_2r32_t grid_pitch = {1.0f, 1.0f};
+    pBL_bilinearinterp_t p = BL_bilinearinterpv_new(wh_nodes, table_origin, grid_pitch, 4);
+    const uint16_t* dims = p->values->dims;
+    BL_ptr_t i_values = BL_arrayMD_begin(p->values);
+    const BL_1u8_t* src = (const BL_1u8_t*)bgra_pixels;
+    for (uint16_t iy = 0; iy != dims[2]; iy++)
+    {
+        for (uint16_t ix = 0; ix != dims[1]; ix++)
+        {
+            for (uint16_t iv = 0; iv != dims[0]; iv++)
+            {
+                *i_values._1r32++ = (BL_1r32_t)(*src++);
+            }
+        }
+    }
+    BL_bilinearinterpv_fill_coeff(p);
+    return p;
+}
+
 int BL_bilinearinterpv_getBGR(
     pcBL_bilinearinterp_t obj,
     const BL_2r32_t begin,
@@ -363,4 +387,94 @@ int BL_bilinearinterpv_getBGR(
     } while (0);
     BL_SAFEFREE(&values);
     return err;
+}
+
+int BL_bilinearinterpv_getBGRPoint(
+    pcBL_bilinearinterp_t obj,
+    const BL_2r32_t xy,
+    BL_3u8_t color_value
+) {
+    int err = ESUCCESS;
+    do {
+        BL_3r32_t value;
+        if (ESUCCESS != (err = BL_bilinearinterpv_calc_value(obj, xy, value)))
+        {
+            break;
+        }
+        color_value[0] = CLAMP_R32_TO_U8(value[0]);
+        color_value[1] = CLAMP_R32_TO_U8(value[1]);
+        color_value[2] = CLAMP_R32_TO_U8(value[2]);
+    } while (0);
+    return err;
+}
+
+int BL_bilinearinterpv_getBGRAPoint(
+    pcBL_bilinearinterp_t obj,
+    const BL_2r32_t xy,
+    BL_4u8_t color_value
+) {
+    int err = ESUCCESS;
+    do {
+        BL_4r32_t value;
+        if (ESUCCESS != (err = BL_bilinearinterpv_calc_value(obj, xy, value)))
+        {
+            break;
+        }
+        color_value[0] = CLAMP_R32_TO_U8(value[0]);
+        color_value[1] = CLAMP_R32_TO_U8(value[1]);
+        color_value[2] = CLAMP_R32_TO_U8(value[2]);
+        color_value[3] = CLAMP_R32_TO_U8(value[3]);
+    } while (0);
+    return err;
+}
+
+
+static int BL_newu8vec_normalized(
+    const BL_2u32_t wh_nodes,
+    const void* pixels,
+    BL_bilinearinterpv_axisconf_t axis_conf,
+    uint32_t nch, // array size of each pixel, e.g. BGR:3, BGRA:4, grayscale:1
+    pBL_bilinearinterp_t* ppobj
+) {
+    static const BL_2r32_t origins[] = {{0.0f,0.0f}, {0.0f, 1.0f}};
+    static const BL_1r32_t yaxis_directions[] = {1.0f, -1.0f};
+    int err = ESUCCESS;
+    do {
+        const BL_2r32_t grid_pitch_incfac = { 1.0f + 0.1f/(float)wh_nodes[0], 1.0f + 0.1f/(float)wh_nodes[1] };
+        const BL_2r32_t grid_pitch = 
+        { 
+            grid_pitch_incfac[0]/(float)(wh_nodes[0]-1),
+            yaxis_directions[axis_conf] * grid_pitch_incfac[1]/(float)(wh_nodes[1]-1)
+        };
+        pBL_bilinearinterp_t interpolator = (*ppobj = BL_bilinearinterpv_new(
+            wh_nodes, origins[axis_conf], grid_pitch, nch));
+        if (!interpolator) break;
+        BL_ptr_t i_values = BL_arrayMD_begin(interpolator->values);
+        const BL_1u8_t* psrc = (const BL_1u8_t*)pixels;
+        uint32_t element_count = wh_nodes[0] * wh_nodes[1] * nch;
+        do {
+            *i_values._1r32++ = (float)(*psrc++); // should be vectorize
+        } while (--element_count);
+        BL_bilinearinterpv_fill_coeff(interpolator);
+    } while (0);
+    return err;
+}
+
+int BL_bilinearinterpv_newBGRn(
+    const BL_2u32_t wh_nodes,
+    const void* pixels,
+    BL_bilinearinterpv_axisconf_t axis_conf,
+    pBL_bilinearinterp_t* ppobj
+) {
+    return BL_newu8vec_normalized(wh_nodes, pixels, axis_conf, 3, ppobj);
+}
+
+
+int BL_bilinearinterpv_newBGRAn(
+    const BL_2u32_t wh_nodes,
+    const void* pixels,
+    BL_bilinearinterpv_axisconf_t axis_conf,
+    pBL_bilinearinterp_t* ppobj
+) {
+    return BL_newu8vec_normalized(wh_nodes, pixels, axis_conf, 4, ppobj);
 }

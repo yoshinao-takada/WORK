@@ -175,6 +175,17 @@ in the world space.
     );
 
     /*!
+    \brief create an interpolator object from B8G8R8A8 color pixel array
+    \param wh_nodes [in] 2D array size of bgr_pixels
+    \param bgr_pixels [in] pointer to the 1st element of the color pixel array
+    \return interpolator object 
+    */
+    pBL_bilinearinterp_t BL_bilinearinterpv_newBGRA(
+        const BL_2u32_t wh_nodes,
+        const BL_4u8_t* bgra_pixels
+    );
+
+    /*!
     \brief get interpolated image as B8G8R8 color image
     \param obj [in] interpolating object
     \param begin [in] begining of the grid
@@ -189,6 +200,55 @@ in the world space.
         const BL_2r32_t pitch,
         const BL_2u32_t wh,
         pBL_arrayMD_t* ppimage);
+
+    /*!
+    \brief get interpolated color value on the image
+    \param obj [in] interpolating object
+    \param xy [in] xy coordinate on the image
+    \param color_value [out] color value at xy
+    \return unix errno compatible error number
+    */
+    int BL_bilinearinterpv_getBGRPoint(
+        pcBL_bilinearinterp_t obj,
+        const BL_2r32_t xy,
+        BL_3u8_t color_value);
+    int BL_bilinearinterpv_getBGRAPoint(
+        pcBL_bilinearinterp_t obj,
+        const BL_2r32_t xy,
+        BL_4u8_t color_value);
+
+    typedef enum {
+        BL_bilinearinterpv_TLO, // pixel(0,0) is the normalized image axis(usual 2D graphics)
+        BL_bilinearinterpv_BLO, // pixel(H,0) is the normalized image axis(scientific, engineering tools)
+    } BL_bilinearinterpv_axisconf_t;
+    /*!
+    \brief create an imageinterpolator object normalized in (0,0) - (1,1) rectangle
+    \param wh_nodes [in] pixel count of the source image
+    \param pixels [in] B8G8R8 image pixel map
+    \param axis_conf [in] axis configuration
+    \param ppobj [out] interpolator object pointer-pointer
+    \return unix errno compatible error number
+    */
+    int BL_bilinearinterpv_newBGRn(
+        const BL_2u32_t wh_nodes,
+        const void* pixels,
+        BL_bilinearinterpv_axisconf_t axis_conf,
+        pBL_bilinearinterp_t* ppobj
+    );
+
+    /*!
+    \brief create an imageinterpolator object normalized in (0,0) - (1,1) rectangle
+    \param wh_nodes [in] pixel count of the source image
+    \param pixels [in] B8G8R8A8 image pixel map
+    \param ppobj [out] interpolator object pointer-pointer
+    \return unix errno compatible error number
+    */
+    int BL_bilinearinterpv_newBGRAn(
+        const BL_2u32_t wh_nodes,
+        const void* pixels,
+        BL_bilinearinterpv_axisconf_t axis_conf,
+        pBL_bilinearinterp_t* ppobj
+    );
 #ifdef __cplusplus
 }
 #endif

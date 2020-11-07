@@ -39,4 +39,7 @@ add_library(base_g STATIC
     BL_3Dline.c
     BL_invremap.c
     BL_invremap_testgen.c
+    BL_fisheye.c
+    BL_texmesh.c
+    BL_see_triangle.c
     )

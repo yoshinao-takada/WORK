@@ -11,6 +11,12 @@
 #define IMAGE_SAVE_PATH0    INTERP_RESULT_DIR  "img0.jpg"
 #define IMAGE_SAVE_PATH1    INTERP_RESULT_DIR  "img1.jpg"
 #define IMAGE_SAVE_PATH2    INTERP_RESULT_DIR  "imgc.jpg"
+#define IMAGE_SAVE_PATH3    INTERP_RESULT_DIR  "imgc_normalized0.jpg"
+#define IMAGE_SAVE_PATH4    INTERP_RESULT_DIR  "imgc_normalized1.png"
+#define IMAGE_SAVE_PATH5    INTERP_RESULT_DIR  "imgc_normalized2.jpg"
+#define IMAGE_SAVE_PATH6    INTERP_RESULT_DIR  "imgc_normalized3.jpg"
+#define IMAGE_SAVE_PATH5A    INTERP_RESULT_DIR  "imgc_normalized2A.png"
+#define IMAGE_SAVE_PATH6A    INTERP_RESULT_DIR  "imgc_normalized3A.png"
 namespace
 {
     static const float tolF = 1.0e-5f;
@@ -60,6 +66,7 @@ namespace
     {
         ASSERT_EQ(ESUCCESS, MakeWorkDir());
         const float node_value_ref[] = {
+            // left edge: black, right top corner: 128 gray, right bottom corner: 255 white
             0.0f, 128.0f,
             0.0f, 255.0f
         };
@@ -112,9 +119,9 @@ namespace
     {
         ASSERT_EQ(ESUCCESS, MakeWorkDir());
         const float node_value_ref[] = {
-            0.0f, 0.0f, 0.0f,
-            127.0f, 254.0f, 127.0f,
-            0.0f, 0.0f, 0.0f
+            0.0f, 0.0f, 0.0f, // top edge : black
+            127.0f, 254.0f, 127.0f, // center left: gray 127, center-center: 254 white, center right: gray 127
+            0.0f, 0.0f, 0.0f // bottom edge black
         };
         const BL_2u32_t wh_nodes = { 3, 3 };
         const BL_2r32_t table_origin = { 0.0f, 0.0f };
@@ -135,7 +142,7 @@ namespace
             {
                 float value;
                 BL_2r32_t xy = { (BL_1r32_t)i_img.x, (BL_1r32_t)i_img.y };
-                int err = BL_bilinearinterp_calc_value(interpolator, xy, &value);
+                ASSERT_EQ(ESUCCESS, BL_bilinearinterp_calc_value(interpolator, xy, &value));
                 img(i_img) = clamp(value);
             }
         }
@@ -148,9 +155,9 @@ namespace
     {
         ASSERT_EQ(ESUCCESS, MakeWorkDir());
         const float node_value_ref[] = {
-            0, 0, 0,   0, 127, 0,   0, 255, 0,
-            127, 0, 0,   0, 0, 127,   0, 0, 0,
-            255, 0, 0,   0, 0, 0,   0, 0, 255
+            0, 0, 0,   0, 127, 0,   0, 255, 0, // black, dark green, bright green
+            127, 0, 0,   0, 0, 127,   0, 0, 0, // dark blue, dark red, black
+            255, 0, 0,   0, 0, 0,   0, 0, 255 // light blue, black, bright red
         };
         const BL_2u32_t wh_nodes = { 3, 3 };
         const BL_2r32_t table_origin = { 0.0f, 0.0f };
@@ -170,7 +177,7 @@ namespace
             {
                 BL_3r32_t value;
                 BL_2r32_t xy = { (BL_1r32_t)i_img.x, (BL_1r32_t)i_img.y };
-                int err = BL_bilinearinterpv_calc_value(interpolator, xy, value);
+                ASSERT_EQ(ESUCCESS, BL_bilinearinterpv_calc_value(interpolator, xy, value));
                 img(i_img)[0] = clamp(value[0]);
                 img(i_img)[1] = clamp(value[1]);
                 img(i_img)[2] = clamp(value[2]);
@@ -179,6 +186,7 @@ namespace
         }
         cv::imwrite(IMAGE_SAVE_PATH2, img);
         BL_bilinearinterpv_delete(&interpolator);
+        ASSERT_EQ(nullptr, interpolator);
     }
 
     TEST(SUIT, _4cell3ch_interpolation_range_check)
@@ -214,5 +222,162 @@ namespace
                 ASSERT_TRUE(matfn->equalv(vrefs[i], v, ARRAYSIZE(v), tolF));
             }
         }
+        BL_bilinearinterpv_delete(&interpolator);
+        ASSERT_EQ(nullptr, interpolator);
+    }
+
+    TEST(SUIT, _4cell3ch_normalized_interpolation_BGR)
+    {
+        ASSERT_EQ(ESUCCESS, MakeWorkDir());
+        const float node_value_ref[] = {
+            0, 0, 0,   0, 127, 0,   0, 255, 0, // black, dark green, bright green
+            127, 0, 0,   0, 0, 127,   0, 0, 0, // dark blue, dark red, black
+            255, 0, 0,   0, 0, 0,   0, 0, 255 // light blue, black, bright red
+        };
+        const BL_2u32_t wh_nodes = { 3, 3 };
+        const BL_2r32_t table_origin = { 0.0f, 0.0f };
+        const BL_2r32_t grid_pitch = { 1.0f/(float)(wh_nodes[0]-1), 1.0f/(float)(wh_nodes[1]-1) };
+        pBL_bilinearinterp_t interpolator = BL_bilinearinterpv_new(wh_nodes, table_origin, grid_pitch, 3);
+        BL_ptr_t i_values = BL_arrayMD_begin(interpolator->values);
+        for (uint16_t i = 0; i != ARRAYSIZE(node_value_ref); i++)
+        {
+            i_values._1r32[i] = node_value_ref[i];
+        }
+        BL_bilinearinterpv_fill_coeff(interpolator);
+        cv::Mat3b img(180, 240);
+        for (int iy = 0; iy != img.rows; iy++)
+        {
+            BL_2r32_t xy = { 0.0f, (float)iy/(float)img.rows };
+            for (int ix = 0; ix != img.cols; ix++)
+            {
+                xy[0] = (float)ix/(float)img.cols;
+                BL_3u8_t color_value;                
+                ASSERT_EQ(ESUCCESS, BL_bilinearinterpv_getBGRPoint(interpolator, xy, color_value));
+                img(cv::Point2i(ix, iy)) = cv::Vec3b(color_value[0], color_value[1], color_value[2]);
+            }
+        }
+        cv::imwrite(IMAGE_SAVE_PATH3, img);
+        BL_bilinearinterpv_delete(&interpolator);
+        ASSERT_EQ(nullptr, interpolator);
+    }
+
+    TEST(SUIT, _4cell3ch_normalized_interpolation_BGRA)
+    {
+        ASSERT_EQ(ESUCCESS, MakeWorkDir());
+        const float node_value_ref[] = {
+            0, 0, 0, 0,   0, 127, 0, 127,  0, 255, 0, 255, // black, dark green, bright green
+            127, 0, 0, 0,   0, 0, 127, 127,   0, 0, 0, 255, // dark blue, dark red, black
+            255, 0, 0, 0,   0, 0, 0, 127,   0, 0, 255, 255 // light blue, black, bright red
+        };
+        const BL_2u32_t wh_nodes = { 3, 3 };
+        const BL_2r32_t table_origin = { 0.0f, 1.0f };
+        const BL_2r32_t grid_pitch_incfac = { 1.0f + 0.1f/(float)wh_nodes[0], 1.0f + 0.1f/(float)wh_nodes[1] };
+        const BL_2r32_t grid_pitch = { grid_pitch_incfac[0]/(float)(wh_nodes[0]-1), -grid_pitch_incfac[1]/(float)(wh_nodes[1]-1) };
+        pBL_bilinearinterp_t interpolator = BL_bilinearinterpv_new(wh_nodes, table_origin, grid_pitch, 4);
+        BL_ptr_t i_values = BL_arrayMD_begin(interpolator->values);
+        for (uint16_t i = 0; i != ARRAYSIZE(node_value_ref); i++)
+        {
+            i_values._1r32[i] = node_value_ref[i];
+        }
+        BL_bilinearinterpv_fill_coeff(interpolator);
+        cv::Mat4b img(180, 240);
+        for (int iy = 0; iy != img.rows; iy++)
+        {
+            BL_2r32_t xy = { 0.0f, (float)iy/(float)img.rows };
+            for (int ix = 0; ix != img.cols; ix++)
+            {
+                xy[0] = (float)ix/(float)img.cols;
+                BL_4u8_t color_value;                
+                ASSERT_EQ(ESUCCESS, BL_bilinearinterpv_getBGRAPoint(interpolator, xy, color_value));
+                img(cv::Point2i(ix, iy)) = cv::Vec4b(color_value[0], color_value[1], color_value[2], color_value[3]);
+            }
+        }
+        cv::imwrite(IMAGE_SAVE_PATH4, img);
+        BL_bilinearinterpv_delete(&interpolator);
+        ASSERT_EQ(nullptr, interpolator);
+    }
+    
+    TEST(SUIT, newBGRn)
+    {
+        ASSERT_EQ(ESUCCESS, MakeWorkDir());
+        const BL_3u8_t pixels[] = {
+            {0,0,0}, {0,127,0}, {0,255,0}, // black, dark green, bright green
+            {127,0,0}, {0,0,127}, {0,0,0}, // dark blue, dark red, black
+            {255,0,0}, {0,0,0}, {0,0,255} // light blue, black, bright red
+        };
+        const BL_2u32_t wh = {3,3};
+        pBL_bilinearinterp_t interpolator = nullptr;
+        ASSERT_EQ(ESUCCESS, BL_bilinearinterpv_newBGRn(wh, (const void*)pixels, BL_bilinearinterpv_TLO, &interpolator));
+        cv::Mat3b img(48,64);
+        for (int iy = 0; iy != img.rows; iy++)
+        {
+            BL_2r32_t xy = { 0.0f, (float)iy/(float)img.rows };
+            for (int ix = 0; ix != img.cols; ix++)
+            {
+                xy[0] = (float)ix/(float)img.cols;
+                BL_3u8_t color_value;                
+                ASSERT_EQ(ESUCCESS, BL_bilinearinterpv_getBGRPoint(interpolator, xy, color_value));
+                img(cv::Point2i(ix, iy)) = *(cv::Vec3b*)color_value;
+            }
+        }
+        cv::imwrite(IMAGE_SAVE_PATH5, img);
+        BL_bilinearinterpv_delete(&interpolator);
+        ASSERT_EQ(nullptr, interpolator);
+        ASSERT_EQ(ESUCCESS, BL_bilinearinterpv_newBGRn(wh, (const void*)pixels, BL_bilinearinterpv_BLO, &interpolator));
+        for (int iy = 0; iy != img.rows; iy++)
+        {
+            BL_2r32_t xy = { 0.0f, (float)iy/(float)img.rows };
+            for (int ix = 0; ix != img.cols; ix++)
+            {
+                xy[0] = (float)ix/(float)img.cols;
+                BL_3u8_t color_value;                
+                ASSERT_EQ(ESUCCESS, BL_bilinearinterpv_getBGRPoint(interpolator, xy, color_value));
+                img(cv::Point2i(ix, iy)) = *(cv::Vec3b*)color_value;
+            }
+        }
+        cv::imwrite(IMAGE_SAVE_PATH6, img);
+        BL_bilinearinterpv_delete(&interpolator);
+    }
+
+    TEST(SUIT, newBGRAn)
+    {
+        ASSERT_EQ(ESUCCESS, MakeWorkDir());
+        const BL_4u8_t pixels[] = {
+            {0,0,0,0}, {0,127,0,127}, {0,255,0,255}, // black, dark green, bright green
+            {127,0,0,127}, {0,0,127,127}, {0,0,0,127}, // dark blue, dark red, black
+            {255,0,0,255}, {0,0,0,127}, {0,0,255,0} // light blue, black, bright red
+        };
+        const BL_2u32_t wh = {3,3};
+        pBL_bilinearinterp_t interpolator = nullptr;
+        ASSERT_EQ(ESUCCESS, BL_bilinearinterpv_newBGRAn(wh, (const void*)pixels, BL_bilinearinterpv_TLO, &interpolator));
+        cv::Mat4b img(48,64);
+        for (int iy = 0; iy != img.rows; iy++)
+        {
+            BL_2r32_t xy = { 0.0f, (float)iy/(float)img.rows };
+            for (int ix = 0; ix != img.cols; ix++)
+            {
+                xy[0] = (float)ix/(float)img.cols;
+                BL_4u8_t color_value;                
+                ASSERT_EQ(ESUCCESS, BL_bilinearinterpv_getBGRAPoint(interpolator, xy, color_value));
+                img(cv::Point2i(ix, iy)) = *(cv::Vec4b*)color_value;
+            }
+        }
+        cv::imwrite(IMAGE_SAVE_PATH5A, img);
+        BL_bilinearinterpv_delete(&interpolator);
+        ASSERT_EQ(nullptr, interpolator);
+        ASSERT_EQ(ESUCCESS, BL_bilinearinterpv_newBGRAn(wh, (const void*)pixels, BL_bilinearinterpv_BLO, &interpolator));
+        for (int iy = 0; iy != img.rows; iy++)
+        {
+            BL_2r32_t xy = { 0.0f, (float)iy/(float)img.rows };
+            for (int ix = 0; ix != img.cols; ix++)
+            {
+                xy[0] = (float)ix/(float)img.cols;
+                BL_4u8_t color_value;
+                ASSERT_EQ(ESUCCESS, BL_bilinearinterpv_getBGRAPoint(interpolator, xy, color_value));
+                img(cv::Point2i(ix, iy)) = *(cv::Vec4b*)color_value;
+            }
+        }
+        cv::imwrite(IMAGE_SAVE_PATH6A, img);
+        BL_bilinearinterpv_delete(&interpolator);
     }
 }
