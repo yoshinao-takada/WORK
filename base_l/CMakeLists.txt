@@ -3,3 +3,4 @@ add_library(base_l STATIC
     BL_putils.c BL_debutil.c BL_containers.c)
 target_compile_options(base_l
 	PRIVATE	-Wno-unknown-pragmas)
+install(TARGETS base_l DESTINATION lib)

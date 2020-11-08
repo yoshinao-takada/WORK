@@ -43,3 +43,4 @@ add_library(base_g STATIC
     BL_texmesh.c
     BL_see_triangle.c
     )
+install(TARGETS base_g DESTINATION lib)
